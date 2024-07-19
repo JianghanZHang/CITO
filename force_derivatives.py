@@ -56,3 +56,29 @@ def LocalWorldAlignedForceDerivatives(Flw, x, fid, rmodel, rdata):
 
     return np.array(fc.linear), dfc_df, dfc_dx
 
+def ForceDerivatives(Flw, x, fid, rmodel, rdata):
+    """
+    This function computes the force and derivatives in the local world aligned frame
+    Input:
+        Flw : force in the local world aligned frame
+        x : state of the system (q,v)
+        fid : frame id of the local frame
+        rmodel : pinocchio model
+        rdata : pinocchio data
+    """
+    assert len(Flw)
+    nq, nv = rmodel.nq, rmodel.nv
+
+    q, v = x[:nq], x[nq:nq+nv]
+    
+    pin.framesForwardKinematics(rmodel, rdata, q)
+    pin.computeAllTerms(rmodel, rdata, q, v)
+    pin.updateFramePlacements(rmodel, rdata)
+
+    flw = pin.Force(Flw.copy(), np.zeros(3))
+
+    # derivatives
+    dflw_dx = np.zeros((3, 2*nv))
+
+    return np.array(flw.linear), dflw_dx
+
