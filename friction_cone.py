@@ -3,11 +3,11 @@
 import pinocchio as pin
 import numpy as np
 import crocoddyl
-from force_derivatives import LocalWorldAlignedForceDerivatives
+from force_derivatives import LocalWorldAlignedForceDerivatives, ForceDerivatives
 
 
 class ResidualLinearFrictionCone(crocoddyl.ResidualModelAbstract):
-    def __init__(self, state, scene, fid, idx, mu = 0.8):
+    def __init__(self, state, njoints, nContants, nu, fid, idx, mu = 0.8):
         """
         Ensures the normal force is positive
         Input:
@@ -18,13 +18,13 @@ class ResidualLinearFrictionCone(crocoddyl.ResidualModelAbstract):
             mu : friction coeff
         """
         self.nc = 5
-        crocoddyl.ResidualModelAbstract.__init__(self, state, self.nc, scene["nu"], True, False, True)
+        crocoddyl.ResidualModelAbstract.__init__(self, state, self.nc, nu, True, False, True)
         self.idx = idx
         self.fid = fid
         self.mu = mu
-        self.rnv = scene["rnv"]
-        self.nb_contacts = scene["nbContactFrames"]
-        self.dcone_df = np.zeros((self.nc, 3*self.nb_contacts + scene["rnv"]))
+        self.nq_j = njoints
+        self.nb_contacts = nContants
+        self.dcone_df = np.zeros((self.nc, 3*self.nb_contacts + njoints))
         self.dcone_dx = np.zeros((self.nc, state.pinocchio.nv + state.pinocchio.nv))
         self.rdata = pin.Data(state.pinocchio)
         self.rmodel = state.pinocchio
@@ -34,23 +34,36 @@ class ResidualLinearFrictionCone(crocoddyl.ResidualModelAbstract):
 
         idx = self.idx
         rmodel, rdata = self.rmodel, self.rdata
-        forces = u[self.rnv: ]
+        forces = u[self.nq_j: ]
         localWorldAlignedForces = [forces[3*i:3*i+3] for i in range(self.nb_contacts)]
 
-        fc, dfc_df, dfc_dx = LocalWorldAlignedForceDerivatives(localWorldAlignedForces[idx], x, self.fid, rmodel, rdata)
-        data.r = np.array([self.mu*fc[0] + fc[1], 
-                           self.mu*fc[0] - fc[1],
-                           self.mu*fc[0] + fc[2],
-                           self.mu*fc[0] - fc[2],
-                           fc[0]])
-        dcone_dfc = np.array([[self.mu,  1.0,  0.0], 
-                              [self.mu, -1.0,  0.0],
-                              [self.mu,  0.0,  1.0],
-                              [self.mu,  0.0, -1.0],
-                              [1.0,      0.0,  0.0]])
+        f, df_dx = ForceDerivatives(localWorldAlignedForces[idx], x, self.fid, rmodel, rdata)
+
+
+        data.r = np.array([self.mu*f[2] + f[0], 
+                           self.mu*f[2] - f[0],
+                           self.mu*f[2] + f[1],
+                           self.mu*f[2] - f[1],
+                           f[2]])
         
-        self.dcone_df[:, self.rnv + 3*idx : self.rnv + 3*(idx+1)] =  dcone_dfc @ dfc_df
-        self.dcone_dx =  dcone_dfc @ dfc_dx
+        dcone_df = np.array([[1.0, 0.0, self.mu], 
+                              [-1.0, 0.0, self.mu],
+                              [0.0, 1.0, self.mu,],
+                              [0.0, -1.0, self.mu,],
+                              [0.0, 0.0,  1.0]])
+        
+        self.dcone_df[:, self.nq_j + 3*idx : self.nq_j + 3*(idx+1)] =  dcone_df
+        self.dcone_dx =  dcone_df @ df_dx
+
+        # print(f"Friction Constraints:")
+        # print(f"idx:{idx}")
+        # print(f'confact frame ID:{self.fid}')
+        # print(f'force:{f}' )
+        # print(f"Residual:{data.r}")
+        # print(f'drdu:{self.dcone_df}')
+        # print(f'drdx:{self.dcone_dx}')
+
+        # print(f'confact frame:{rdata.oMf[self.fid]}')
 
     def calcDiff(self, data, x, u):
         self.calc(data, x, u)
