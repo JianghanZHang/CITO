@@ -6,7 +6,7 @@ import pinocchio as pin
 import meshcat
 import time
 from utils import Arrow
-from complementarity_constraints import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal
+from complementarity_constraints import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
 from friction_cone import  ResidualLinearFrictionCone
 from force_derivatives import LocalWorldAlignedForceDerivatives
 from solo12_env import create_solo12_env
@@ -24,7 +24,7 @@ v0 = env['v0']
 rmodel = env['rmodel']
 rdata = rmodel.createData()
 dt = 1e-3
-T = 100
+T = 30
 
 state = crocoddyl.StateMultibody(rmodel)
 actuation = crocoddyl.ActuationModelFloatingBase(state)
@@ -51,10 +51,7 @@ xreg = np.array([0.0, 0.0, 0.0,      # base position
                  0.0, 0.0, 0.0]      # base angular velocity
                 + v0[6:])                # joint velocities
 
-# import pdb; pdb.set_trace()
 xResidual = crocoddyl.ResidualModelState(state, xreg, nu)
-print("nx:", state.nx)
-print("nr:", xResidual.nr)
 xRegCost = crocoddyl.CostModelResidual(state, xRegActivation, xResidual)
 
 runningCostModel.addCost("uReg", uRegCost, 1e-2)
@@ -77,12 +74,16 @@ for idx, fid in enumerate(env["contactFids"]):
 
 for idx, fid in enumerate(env["contactFids"]):
     ComplementarityResidual = ResidualModelComplementarityErrorNormal(state, nu, fid, idx, njoints)
-    ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -np.inf *np.ones(3), 1e0*np.ones(3))
-    constraintModelManager.addConstraint("ComplementarityConstraint_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
-    # constraintModelManager.changeConstraintStatus("ComplementarityConstraint_"+ env["contactFnames"][idx] + str(idx), False)
+    ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -np.inf *np.ones(1), 1e-2 * np.ones(1))
+    constraintModelManager.addConstraint("ComplementarityConstraintNormal_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
+
+for idx, fid in enumerate(env["contactFids"]):
+    ComplementarityResidual = ResidualModelComplementarityErrorTangential(state, nu, fid, idx, njoints)
+    ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -1e-2 *np.ones(4), 1e-2 * np.ones(4))
+    constraintModelManager.addConstraint("ComplementarityConstraintTangential_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
 
 
-P_des = [0.6, 0.0, 0.2]
+P_des = [0.2, 0.0, 0.3]
 O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
 V_des = [0.0, 0.0, 0.0]
 W_des = [0.0, 0.0, 0.0]
@@ -101,13 +102,13 @@ xDesActivation = crocoddyl.ActivationModelWeightedQuad(np.array(3 * [1e2] +  # b
 
 xDesResidual = crocoddyl.ResidualModelState(state, x_des, nu)
 xDesCost = crocoddyl.CostModelResidual(state, xDesActivation, xDesResidual)
-terminalCostModel.addCost("xDes", xDesCost, 5)
+terminalCostModel.addCost("xDes", xDesCost, 5e1)
 
 running_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], runningCostModel, constraintModelManager)
 terminal_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], terminalCostModel)
 
-runningModel = crocoddyl.IntegratedActionModelRK4(running_DAM, dt)
-terminalModel = crocoddyl.IntegratedActionModelRK4(terminal_DAM, 0.)
+runningModel = crocoddyl.IntegratedActionModelEuler(running_DAM, dt)
+terminalModel = crocoddyl.IntegratedActionModelEuler(terminal_DAM, 0.)
 
 x0 = np.array(q0 + v0)
 problem = crocoddyl.ShootingProblem(x0, [runningModel] * T, terminalModel)
@@ -117,9 +118,9 @@ solver.use_filter_line_search = True
 solver.verbose = True
 solver.with_callbacks = True
 # solver.with_qp_callbacks = True
-solver.termination_tolerance = 1e-2
-solver.max_qp_iters = 10000
-solver.remove_reg = False
+solver.termination_tolerance = 1e-3
+solver.max_qp_iters = 50000
+solver.remove_reg = True
 
 xs_init = [x0 for i in range(T+1)]
 us_init = [np.zeros(nu) for i in range(T)]
@@ -127,7 +128,7 @@ us_init = [np.zeros(nu) for i in range(T)]
 flag = solver.solve(xs_init, us_init, maxiter=500)
 
 xs, us = solver.xs, solver.us
-
+print(f"Solver status: {solver.status}")
 # import pdb; pdb.set_trace()
 viz = pin.visualize.MeshcatVisualizer(rmodel, env["gmodel"], env["vmodel"])
 import zmq
@@ -149,6 +150,7 @@ for i in range(len(xs)-1):
     force_t = us[i][env["njoints"]:]
     x_t = xs[i]
     print(f"\n********************Time:{i*dt}********************\n")
+    print(f'Base position:{x_t[:3]}')
     for eff, fid in enumerate(fids):
         q, v = x_t[:rmodel.nq], x_t[rmodel.nq:]
         cntForce, _, _ = LocalWorldAlignedForceDerivatives(force_t[3*eff:3*(eff+1)], x_t, fids[eff], rmodel, rdata)
