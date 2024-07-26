@@ -23,9 +23,10 @@ q0 = env['q0']
 v0 = env['v0']
 rmodel = env['rmodel']
 rdata = rmodel.createData()
-dt = 1e-3
-T = 30
+dt = 5e-3
+T = 50
 
+print(f'x0:{q0 + v0}')
 state = crocoddyl.StateMultibody(rmodel)
 actuation = crocoddyl.ActuationModelFloatingBase(state)
 
@@ -54,15 +55,15 @@ xreg = np.array([0.0, 0.0, 0.0,      # base position
 xResidual = crocoddyl.ResidualModelState(state, xreg, nu)
 xRegCost = crocoddyl.CostModelResidual(state, xRegActivation, xResidual)
 
-runningCostModel.addCost("uReg", uRegCost, 1e-2)
+runningCostModel.addCost("uReg", uRegCost, 1e-1)
 runningCostModel.addCost("xReg", xRegCost, 1e-2)
 # Constraints (friction cones + complementarity contraints)
 constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
 
-# # Friction cone constraints
+# Friction cone constraints
 for idx, fid in enumerate(env["contactFids"]):
     FrictionConeResidual = ResidualLinearFrictionCone(state, njoints, ncontacts, nu, fid, idx, mu = 0.9)
-    FrictionConeConstraint = crocoddyl.ConstraintModelResidual(state, FrictionConeResidual, np.zeros(5), np.inf * np.ones(5))
+    FrictionConeConstraint = crocoddyl.ConstraintModelResidual(state, FrictionConeResidual, -1e-3 * np.ones(5), np.inf * np.ones(5))
     constraintModelManager.addConstraint("FrictionConeConstraint_"+ env["contactFnames"][idx] + str(idx), FrictionConeConstraint)
 
 # # Complementarity constraints
@@ -77,13 +78,13 @@ for idx, fid in enumerate(env["contactFids"]):
     ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -np.inf *np.ones(1), 1e-2 * np.ones(1))
     constraintModelManager.addConstraint("ComplementarityConstraintNormal_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
 
-for idx, fid in enumerate(env["contactFids"]):
-    ComplementarityResidual = ResidualModelComplementarityErrorTangential(state, nu, fid, idx, njoints)
-    ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -1e-2 *np.ones(4), 1e-2 * np.ones(4))
-    constraintModelManager.addConstraint("ComplementarityConstraintTangential_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
+# for idx, fid in enumerate(env["contactFids"]):
+#     ComplementarityResidual = ResidualModelComplementarityErrorTangential(state, nu, fid, idx, njoints)
+#     ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -1e-3 *np.ones(4), 1e-3 * np.ones(4))
+#     constraintModelManager.addConstraint("ComplementarityConstraintTangential_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
 
 
-P_des = [0.2, 0.0, 0.3]
+P_des = [0.2, 0.0, 0.4]
 O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
 V_des = [0.0, 0.0, 0.0]
 W_des = [0.0, 0.0, 0.0]
@@ -102,6 +103,7 @@ xDesActivation = crocoddyl.ActivationModelWeightedQuad(np.array(3 * [1e2] +  # b
 
 xDesResidual = crocoddyl.ResidualModelState(state, x_des, nu)
 xDesCost = crocoddyl.CostModelResidual(state, xDesActivation, xDesResidual)
+runningCostModel.addCost("xDes", xDesCost, 1e0)
 terminalCostModel.addCost("xDes", xDesCost, 5e1)
 
 running_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], runningCostModel, constraintModelManager)
@@ -120,7 +122,7 @@ solver.with_callbacks = True
 # solver.with_qp_callbacks = True
 solver.termination_tolerance = 1e-3
 solver.max_qp_iters = 50000
-solver.remove_reg = True
+solver.remove_reg = False
 
 xs_init = [x0 for i in range(T+1)]
 us_init = [np.zeros(nu) for i in range(T)]
@@ -128,8 +130,6 @@ us_init = [np.zeros(nu) for i in range(T)]
 flag = solver.solve(xs_init, us_init, maxiter=500)
 
 xs, us = solver.xs, solver.us
-print(f"Solver status: {solver.status}")
-# import pdb; pdb.set_trace()
 viz = pin.visualize.MeshcatVisualizer(rmodel, env["gmodel"], env["vmodel"])
 import zmq
 try:
@@ -160,6 +160,6 @@ for i in range(len(xs)-1):
         print(f'distance:{rdata.oMf[fid].translation[2]}')
         print(f'complementarity constraint:{rdata.oMf[fid].translation[2] * force_t[3*eff:3*(eff+1)]}')
         arrows[eff].anchor_as_vector(rdata.oMf[fid].translation, force_t[3*eff:3*(eff+1)].copy())        
-    time.sleep(0.1)
+    # time.sleep(0.1)
     viz.display(xs[i][:rmodel.nq])
-    # input()
+    input()
