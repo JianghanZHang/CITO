@@ -88,7 +88,7 @@ for idx, fid in enumerate(env["contactFids"]):
 
 for idx, fid in enumerate(env["contactFids"]):
     ComplementarityResidual = ResidualModelComplementarityErrorTangential(state, nu, fid, idx, njoints)
-    ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -1e-2 *np.ones(4), 1e-2 * np.ones(4))
+    ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -1e-2 *np.ones(6), 1e-2 * np.ones(6))
     constraintModelManager.addConstraint("ComplementarityConstraintTangential_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
 
 
