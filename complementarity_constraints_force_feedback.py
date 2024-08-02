@@ -3,25 +3,27 @@ import crocoddyl
 import numpy as np
 import pinocchio as pin
 from JointKinematicHessian import JointKinematicHessian
-from solo12_env import create_solo12_env
+from solo12_env import create_solo12_env_force_feedback
 
 # Create the robot
-env = create_solo12_env()
+env = create_solo12_env_force_feedback()
 rmodel = env['rmodel']
 rdata = rmodel.createData()
     
 class ResidualModelFrameTranslationNormal(crocoddyl.ResidualModelAbstract):
 
-    def __init__(self, state, nu, fid):
+    def __init__(self, state, nu, fid, nf):
         crocoddyl.ResidualModelAbstract.__init__(
             self, state, 1, nu, True, False, False
         )
         self.fid = fid
+        self.nf = nf
 
     def calc(self, data, x, u = None):
         nq, nv = self.state.nq, self.state.nv
+        nf = self.nf
         ndx = self.state.ndx
-        q, v = x[:nq], x[-nv:]
+        q, v, f = x[:nq], x[nq:nq + nv], x[-nf:]
         rmodel, rdata = self.state.pinocchio, data.pinocchio
 
         pin.framesForwardKinematics(rmodel, rdata, q)
@@ -39,7 +41,7 @@ class ResidualModelFrameTranslationNormal(crocoddyl.ResidualModelAbstract):
 
         J1_rot = np.matmul(rdata.oMf[self.fid].rotation, J1[0:3, :]) # Extract the linear part of the Jacobian and rotate it to the world frame
         
-        dDist_dx = np.hstack((J1_rot[2], np.zeros((nv)))) # Extract the Z components
+        dDist_dx = np.hstack((J1_rot[2], np.zeros((nv), np.zeros(nf)))) # Extract the Z components
 
         # Compute the derivative and zero out the x and y components
         der = dDist_dx
@@ -55,29 +57,46 @@ class ResidualModelFrameTranslationNormal(crocoddyl.ResidualModelAbstract):
         return data
     
 class ResidualModelContactForceNormal(crocoddyl.ResidualModelAbstract):
-    def __init__(self, state, nu, fid, idx, nq_j):
+    def __init__(self, state, nu, fid, idx, nq_j, nf, K, B):
         crocoddyl.ResidualModelAbstract.__init__(
-            self, state, 1, nu, False, False, True
+            self, state, 1, nu, True, False, False
         )
         self.fid = fid
         self.idx = idx
         self.nq_j = nq_j
+        self.nf = nf
+        self.stiffness = K
+        self.damping = B
     
     def calc(self, data, x, u):
         nq, nv = self.state.nq, self.state.nv
-        q, v = x[:nq], x[-nv:]
+        nf = self.nf
+        q, v, f = x[:nq], x[nq:nq + nv], x[-nf:]
+
         rmodel, rdata = self.state.pinocchio, data.pinocchio
 
         pin.framesForwardKinematics(rmodel, rdata, q)
         pin.updateFramePlacements(rmodel, rdata)
         
-        data.r = np.array([u[self.nq_j + 3*self.idx + 2]])  # Ensure this is a 1D array
-        self.dr_du = np.zeros((len(u),))
-        self.dr_du[self.nq_j + 3*self.idx + 2] = 1
+        data.r = np.array([x[nq+nv+3*self.idx+2]])  # Ensure this is a 1D array
+        self.dr_dx = np.zeros((len(x),))
+
+        J1 = pin.computeFrameJacobian(rmodel, rdata, q, self.fid, pin.ReferenceFrame.LOCAL)
+        J1_rot = np.matmul(rdata.oMf[self.fid].rotation, J1[0:3, :]) # Extract the linear part of the Jacobian and rotate it to the world frame
+        pin.forwardKinematics(rmodel, rdata, q, v)
+        pin.computeForwardKinematicsDerivatives(rmodel, rdata, q, v, np.zeros(nv))
+        dV_dx_full = pin.getFrameVelocityDerivatives(rmodel, rdata, self.fid, pin.ReferenceFrame.WORLD)       
+
+        dV_dq = np.array(dV_dx_full[0][2, :])
+        dV_dv = np.array(dV_dx_full[1][2, :])
+
+        self.dr_dx[:nq] = -self.stiffness * J1_rot[2] - self.damping * dV_dq                        # dFz/dq
+        self.dr_dx[nq:nq+nv] = -self.damping * dV_dv                                                # dFz/dv
+        self.dr_dx[nq+nv+3*self.idx+2] = 1                                                          # dFz/df
      
     def calcDiff(self, data, x, u):
         self.calc(data, x, u)
-        data.Ru = self.dr_du
+        data.Rx = self.dr_dx
 
     def createData(self, data):
         data = crocoddyl.ResidualDataAbstract(self, data)
@@ -87,7 +106,7 @@ class ResidualModelContactForceNormal(crocoddyl.ResidualModelAbstract):
 
 class ResidualModelComplementarityErrorNormal(crocoddyl.ResidualModelAbstract):
 
-    def __init__(self, state, nu, fid, idx, nq_j):
+    def __init__(self, state, nu, fid, idx, nq_j, nf, K, B):
         """
         Creates complementarity constraints between a contact frame and end effector frame of robot
         Input:
@@ -98,22 +117,26 @@ class ResidualModelComplementarityErrorNormal(crocoddyl.ResidualModelAbstract):
         """
 
         crocoddyl.ResidualModelAbstract.__init__(
-            self, state, 1, nu, True, False, True
+            self, state, 1, nu, True, False, False
         )
 
         self.fid = fid
         self.idx = idx
         self.nq_j = nq_j
-
+        self.nf = nf
+        self.stiffness = K
+        self.damping = B
+    
     def calc(self, data, x, u):
         nq, nv = self.state.nq, self.state.nv
-        q, v = x[: nq], x[-nv :]
+        nf = self.nf
+        q, v, f = x[:nq], x[nq:nq + nv], x[-nf:]
+
         fid, idx = self.fid, self.idx
         rmodel, rdata = self.state.pinocchio, data.pinocchio
 
         # Extracting 3d contact force on idx end-effector
-        force = u[self.nq_j+3*idx : self.nq_j+3*(idx+1)]
-        force = force[2]
+        force = f[3 * idx + 2]
         pin.framesForwardKinematics(rmodel, rdata, q)
         pin.updateFramePlacements(rmodel, rdata)
         
@@ -123,32 +146,24 @@ class ResidualModelComplementarityErrorNormal(crocoddyl.ResidualModelAbstract):
         
         # computing derivatives
         J1 = pin.computeFrameJacobian(rmodel, rdata, q, self.fid, pin.ReferenceFrame.LOCAL)
+        J1_rot = np.matmul(rdata.oMf[self.fid].rotation, J1[0:3, :]) # Extract the linear part of the Jacobian and rotate it to the world frame
+        pin.forwardKinematics(rmodel, rdata, q, v)
+        pin.computeForwardKinematicsDerivatives(rmodel, rdata, q, v, np.zeros(nv))
+        dV_dx_full = pin.getFrameVelocityDerivatives(rmodel, rdata, self.fid, pin.ReferenceFrame.WORLD)       
 
-        J1_rot = np.matmul(rdata.oMf[fid].rotation, J1[0:3, :]) # Extract the linear part of the Jacobian and rotate it to the world frame
-        
+        dV_dq = np.array(dV_dx_full[0][2, :])
+        dV_dv = np.array(dV_dx_full[1][2, :])
+
         # import pdb; pdb.set_trace()
-        dDist_dx = np.hstack((J1_rot[2].reshape((1, nv)), np.zeros((1, nv)))) 
 
-        dr_dDist = np.array([force])
-        self.dr_dx = dr_dDist @ dDist_dx
-        self.dr_du = np.zeros((1, len(u)))
-        self.dr_du[:, self.nq_j+3*idx+2] = Dist
+        self.dr_dx[:nq] = J1_rot[2] * force + Dist * (-self.stiffness * J1_rot[2] - self.damping * dV_dq) # dr/dq
+        self.dr_dx[nq:nq+nv] = Dist * (-self.damping * dV_dv)                                             # dr/dv
+        self.dr_dx[nq+nv+3*idx+2] = Dist                                                                  # dr/df
         
-
-        # print(f"Complementarity Constraints:")
-        # print(f"idx:{idx}")
-        # print(f'confact frame ID:{fid}')
-        # print(f'force:{force}' )
-        # print(f"Dist:{Dist}")
-        # print(f"Residual:{np.array([Dist * force])}")
-        # print(f'drdu:{self.dr_du}')
-        # print(f'drdx:{self.dr_dx}')
-        # print(f'confact frame:{rdata.oMf[fid]}')
 
     def calcDiff(self, data, x, u):
         self.calc(data, x, u)
         data.Rx = self.dr_dx
-        data.Ru = self.dr_du
 
     def createData(self, data):
         data = crocoddyl.ResidualDataAbstract(self, data)
