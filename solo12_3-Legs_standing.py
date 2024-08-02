@@ -27,7 +27,7 @@ rdata = rmodel.createData()
 
 ###################
 dt = 1e-2         #  
-T = 100           #  
+T = 50            #  
 ###################
 
 q0[2] -= 0.02705
@@ -46,7 +46,7 @@ terminalCostModel = crocoddyl.CostModelSum(state, nu)
 
 uGuideResidual = crocoddyl.ResidualModelControl(state, nu)
 uGuideActivation = crocoddyl.ActivationModelWeightedQuad(np.array(12 * [1.0] +                             # joint torques
-                                                             [1e4, 1e4, 1e4] +                             # first contact forces
+                                                             [1.0, 1.0, 1.0] +                             # first contact forces
                                                             (env["ncontacts"] -1)*[1.0, 1.0, 1.0]))      # other contact forces
 uGuideCost = crocoddyl.CostModelResidual(state, uGuideActivation, uGuideResidual)
 
@@ -96,6 +96,11 @@ for idx, fid in enumerate(env["contactFids"]):
     ComplementarityConstraint = crocoddyl.ConstraintModelResidual(state, ComplementarityResidual, -1e-3 *np.ones(4), 1e-3 * np.ones(4))
     constraintModelManager.addConstraint("ComplementarityConstraintTangential_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
 
+idx = 0
+ForceResidual = ResidualModelContactForceNormal(state, nu, env["contactFids"][idx], idx, njoints)
+ForceConstraint = crocoddyl.ConstraintModelResidual(state, ForceResidual, -np.inf * np.ones(1), 0 * np.ones(1))
+constraintModelManager.addConstraint("ForceConstraintNormal_"+ env["contactFnames"][idx] + str(idx), ForceConstraint)
+
 
 P_des = [0.2, 0.0, q0[2]]
 O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
@@ -104,7 +109,7 @@ W_des = [0.0, 0.0, 0.0]
 x_des = np.array(P_des + 
                  [O_des[0], O_des[1], O_des[2], O_des[3]] + 
 
-                 [-np.pi*1/3, 0.0, 2.0] + 
+                 [-np.pi*2/5, 0.0, 1.6] + 
                  q0[10:] +
 
                  V_des + 
@@ -122,8 +127,8 @@ xDesActivation = crocoddyl.ActivationModelWeightedQuad(np.array(3 * [1.0] +  # b
 
 xDesResidual = crocoddyl.ResidualModelState(state, x_des, nu)
 xDesCost = crocoddyl.CostModelResidual(state, xDesActivation, xDesResidual)
-runningCostModel.addCost("xDes", xDesCost, 1e1)
-terminalCostModel.addCost("xDes", xDesCost, 5e2)
+runningCostModel.addCost("xDes", xDesCost, 1e2)
+terminalCostModel.addCost("xDes", xDesCost, 5e3)
 
 running_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], runningCostModel, constraintModelManager)
 terminal_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], terminalCostModel)
@@ -146,7 +151,7 @@ solver.remove_reg = False
 xs_init = [x0 for i in range(T+1)]
 us_init = [np.zeros(nu) for i in range(T)]
 
-xs_init, us_init = load_arrays("solo12_3-Legs_standing")
+# xs_init, us_init = load_arrays("solo12_3-Legs_standing")
 flag = solver.solve(xs_init, us_init, maxiter=1000)
 xs, us = solver.xs, solver.us
 
@@ -173,8 +178,10 @@ for i in range(len(fids)):
 for i in range(len(xs)-1):
     force_t = us[i][env["njoints"]:]
     x_t = xs[i]
+    T = pin.utils.XYZQUATToSE3(x_t[:7])
     print(f"\n********************Time:{i*dt}********************\n")
-    print(f'Base position:{x_t[:3]}')
+    print(f'Base position:{T.translation}')
+    print(f'Base rpy:{pin.utils.matrixtoRpy(T.rotation)}')
     for eff, fid in enumerate(fids):
         q, v = x_t[:rmodel.nq], x_t[rmodel.nq:]
         cntForce, _, _ = LocalWorldAlignedForceDerivatives(force_t[3*eff:3*(eff+1)], x_t, fids[eff], rmodel, rdata)
@@ -184,5 +191,5 @@ for i in range(len(xs)-1):
         print(f'distance:{rdata.oMf[fid].translation[2]}')
         print(f'complementarity constraint:{rdata.oMf[fid].translation[2] * force_t[3*eff:3*(eff+1)]}')
         arrows[eff].anchor_as_vector(rdata.oMf[fid].translation, force_t[3*eff:3*(eff+1)].copy())        
-    time.sleep(0.1)
+    time.sleep(0.01)
     viz.display(xs[i][:rmodel.nq])

@@ -10,7 +10,7 @@ solo12 = Solo12RobotWithoutPybullet()
 
 solo12_robot = solo12.pin_robot
 
-def create_solo12_env():
+def create_solo12_env_free_force():
     solo_rmodel, solo_gmodel, solo_vmodel  = solo12_robot.model, solo12_robot.collision_model, solo12_robot.visual_model
     env = {
         "nq" : 19,
@@ -35,3 +35,27 @@ def create_solo12_env():
 
     return env
 
+def create_solo12_env_force_feedback():
+    solo_rmodel, solo_gmodel, solo_vmodel  = solo12_robot.model, solo12_robot.collision_model, solo12_robot.visual_model
+    env = {
+        "nq" : 19,
+        "nv" : 18,
+        "rmodel" : solo_rmodel,
+        "gmodel" : solo_gmodel,
+        "vmodel" : solo_vmodel,
+        "nu" : 12,
+        "njoints" : 12,
+        "ncontacts" : 4,
+        "contactFnames" : ["FL_FOOT", "FR_FOOT", "HL_FOOT", "HR_FOOT"],
+        "contactFids" : [],
+        "q0" : Solo12Config.initial_configuration,
+        "v0" : Solo12Config.initial_velocity,
+    }
+
+    env["nf"] = 3 * env["ncontacts"]
+
+    for idx, frameName in enumerate(env["contactFnames"]):
+        env["contactFids"].append(env["rmodel"].getFrameId(frameName))
+        
+
+    return env
