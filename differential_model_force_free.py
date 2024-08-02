@@ -51,6 +51,12 @@ class DifferentialActionModelForceExplicit(crocoddyl.DifferentialActionModelAbst
             JointFrameForces[jid] += jMf.act(LocalFrameforce)  # 6d forces in the parent joint frame
 
         # import pdb; pdb.set_trace() 
+        # This is to ensure that the accelerations of the models are defined in the world frame
+        qtmp = np.zeros(rmodel.nq)
+        qtmp[self.nq_j::7] = 1
+        atmp = pin.aba(rmodel, rdata, qtmp, v.copy(), self.tau, JointFrameForces.copy())
+
+
         a = pin.aba(rmodel, rdata, q, v, self.tau, JointFrameForces)
 
         #computing derivatives
