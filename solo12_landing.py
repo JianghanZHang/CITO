@@ -9,7 +9,7 @@ from utils import Arrow
 from complementarity_constraints_force_free import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
 from friction_cone import  ResidualLinearFrictionCone
 from force_derivatives import LocalWorldAlignedForceDerivatives
-from solo12_env import create_solo12_env
+from robot_env import create_solo12_env
 from trajectory_data import save_arrays
 
 # Create the robot
