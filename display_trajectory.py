@@ -9,7 +9,7 @@ from utils import Arrow
 from complementarity_constraints_force_free import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
 from friction_cone import  ResidualLinearFrictionCone
 from force_derivatives import LocalWorldAlignedForceDerivatives
-from solo12_env import create_solo12_env_free_force
+from robot_env import create_solo12_env_free_force
 from trajectory_data import load_arrays
 formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
     
