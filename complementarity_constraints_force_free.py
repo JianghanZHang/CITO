@@ -2,8 +2,7 @@
 import crocoddyl
 import numpy as np
 import pinocchio as pin
-from JointKinematicHessian import JointKinematicHessian
-from solo12_env import create_solo12_env_free_force
+from robot_env import create_solo12_env_free_force
 
 # Create the robot
 env = create_solo12_env_free_force()
