@@ -12,7 +12,7 @@ import numpy as np
 from differential_model_force_free import DifferentialActionModelForceExplicit
 from friction_cone import  ResidualLinearFrictionCone
 from complementarity_constraints_force_free import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
-
+from robot_descriptions import go2_description
 
 eps = 1e-6
 
@@ -69,7 +69,6 @@ def test_DAM(model: crocoddyl.DifferentialActionModelAbstract, rmodel):
     # Random test state and control input
     x = np.hstack((pin.randomConfiguration(rmodel, -np.pi/2 * np.ones(nq), np.pi/2 * np.ones(nq)), np.random.rand(nv)))
     u = np.random.rand(model.nu)
-    
     # Compute analytical derivatives
     model.calcDiff(data, x, u)
     Fx_analytical = data.Fx
