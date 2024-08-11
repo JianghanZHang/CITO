@@ -6,7 +6,7 @@ import mujoco
 import pinocchio as pin
 
 class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
-    def __init__(self, mj_model, mj_data, state, nu, nq_j, fids, costModel, constraintModel = None):
+    def __init__(self, mj_model, mj_data, state, nu, nq_j, fids, costModel, constraintModel = None, forceRecorder = None):
         """
         Forward Model with contact forces as explicit variables
         Input:
@@ -29,16 +29,15 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
         self.tau = np.zeros(self.state.nv)
         self.mj_model = mj_model
         self.mj_data = mj_data
-        self.mj_model.opt.solver = 0 # Using Newton
-        self.mj_model.opt.timestep = 1e-3
-        self.mj_model.opt.integrator = 0 # Using Semi-implicit Euler
-        self.mj_model.opt.tolerance = 0.
 
     def calc(self, data, x, u=None):
         q, v = x[: self.state.nq], x[-self.state.nv :]
         self.mj_data.qpos = q.copy()
         self.mj_data.qvel = v.copy()
-        self.mj_data.ctrl = u.copy()
+        
+        if u is not None:
+            self.mj_data.ctrl = u.copy()
+
         rmodel, rdata = self.state.pinocchio, data.pinocchio
         fids = self.fids
         pin.framesForwardKinematics(rmodel, rdata, q)
