@@ -100,7 +100,7 @@ def mujoco_forward_diff(mj_model, mj_data, x, u):
     nq = mj_model.nq
     nv = mj_model.nv
     nu = mj_model.nu
-    
+    import pdb; pdb.set_trace() 
     mj_data.qpos[:] = x[:nq]
     mj_data.qvel[:] = x[nq:]
     mj_data.ctrl[:] = u
@@ -124,8 +124,8 @@ def test_DAM(numerical_model, rmodel, mj_model, mj_data):
     
     # Random test state and control input
     x = np.hstack((pin.randomConfiguration(rmodel, -np.pi/2 * np.ones(nq), np.pi/2 * np.ones(nq)), np.random.rand(nv)))
-    key_qpos = mj_model.key_qpos
-    # import pdb; pdb.set_trace() 
+    # key_qpos = mj_model.key_qpos
+    import pdb; pdb.set_trace() 
 
     # x = np.hstack((key_qpos, np.random.rand(1, nv))).reshape((37,))
     u = np.random.rand(numerical_model.nu)
@@ -147,7 +147,6 @@ def test_DAM(numerical_model, rmodel, mj_model, mj_data):
     
     Fx_numerical, Fu_numerical = calcDiff_numdiff(x, u, numerical_model, rmodel)
 
-    
     diff_Fx = Fx_numerical - Fx_analytical
     diff_Fu = Fu_numerical - Fu_analytical
     diff_a = a_numerical - a_analytical
