@@ -5,6 +5,14 @@ import mim_robots
 import pinocchio as pin 
 from robot_descriptions.loaders.pinocchio import load_robot_description
 from robot_descriptions import go2_description
+import numpy as np
+
+go2_init_conf0 = np.array([0.0000, 0.0000, 0.2700 + 0.1225, 
+                0.0000, 0.0000, 0.0000, 1.0000, 
+                0.0000, 0.4000, -0.8000, 
+                0.0000, 0.4000, -0.8000, 
+                0.0000, 0.4000, -0.8000, 
+                0.0000, 0.4000, -0.8000])
 
 def create_solo12_env_free_force():
 
@@ -58,23 +66,40 @@ def create_solo12_env_force_MJ():
     return env
 
 def create_go2_env():
+    import os
+    urdf_path = "robots/go2_robot_sdk/urdf/go2.urdf"
+    # package_dirs = ["robots/go2_robot_sdk/dae"]
+    # package_dirs = [os.path.join(os.getcwd(), "robots/go2_robot_sdk")]
+    package_dirs = ["/home/jianghan/Devel/workspace_autogait/src/auto_gait_generation/robots"]
+    
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"
-    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(filename = go2_description.URDF_PATH, package_dirs = [go2_description.PACKAGE_PATH], 
-                                                     root_joint=pin.JointModelFreeFlyer(),
-                                                     verbose = True)
+    # robot_wrapper = load_robot_description("go2_description")
+    # gmodel, vmodel = robot_wrapper.collision_model, robot_wrapper.visual_model
     # rmodel = pin.buildModelFromUrdf(go2_description.URDF_PATH, pin.JointModelFreeFlyer())
+
+
+    print(f"URDF Path: {urdf_path}")
+    print(f"Package Dirs: {package_dirs}")
+    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, pin.JointModelFreeFlyer(), True)
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
+    q0_stand = np.array(mj_model.key_qpos).reshape(19, )
+    q0_stand[3] = 0.0
+    q0_stand[4] = 0.0
+    q0_stand[5] = 0.0
+    q0_stand[6] = 1.0
     env = {
         "nq" : 19,
         "nv" : 18,
         "rmodel" : rmodel,
+        "gmodel" : gmodel,
+        "vmodel" : vmodel,
         "nu" : 12,
         "njoints" : 12,
         "ncontacts" : 4,
-        "contactFnames" : ["FL", "FR", "RL", "RR"],
+        "contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"],
         "contactFids" : [],
-        "q0" : mj_model.key_qpos,
-        "v0" : mj_model.key_qvel,
+        "q0" : list(go2_init_conf0),
+        "v0" : list(mj_model.key_qvel.reshape(18, )),
     }
     
     env["nf"] = 3 * env["ncontacts"]
@@ -84,10 +109,16 @@ def create_go2_env():
 
     return env
 
+
 def create_go2_env_force_MJ():
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
     mj_data = mujoco.MjData(mj_model)
+    q0_stand = np.array(mj_model.key_qpos).reshape(19, )
+    q0_stand[3] = 0.0
+    q0_stand[4] = 0.0
+    q0_stand[5] = 0.0
+    q0_stand[6] = 1.0
     env = {
         "nq" : 19,
         "nv" : 18,
@@ -98,8 +129,8 @@ def create_go2_env_force_MJ():
         "ncontacts" : 4,
         "contactFnames" : ["FL", "FR", "RL", "RR"],
         "contactFids" : [],
-        "q0" : mj_model.key_qpos,
-        "v0" : mj_model.key_qvel,
+        "q0" : list(go2_init_conf0),
+        "v0" : list(mj_model.key_qvel.reshape(18, )),
     }
 
     env["nf"] = 3 * env["ncontacts"]

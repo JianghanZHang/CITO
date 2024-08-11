@@ -1,8 +1,9 @@
 <mujoco model="go2">
   <compiler angle="radian" meshdir="assets" autolimits="true"/>
 
-  <option gravity='0 0 -9.81' iterations='100' ls_iterations="10"
-            solver='Newton' timestep='0.01' impratio="100">
+  <option gravity='0 0 -9.81' iterations='50' ls_iterations="10"
+            solver='Newton' timestep='0.01' impratio="1" tolerance="1e-6"
+            cone = 'pyramidal'>
         <flag  eulerdamp="disable" />
     </option>
 
