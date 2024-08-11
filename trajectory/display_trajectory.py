@@ -30,8 +30,8 @@ rdata = rmodel.createData()
 dt = 5e-3
 T = 100
 
-robot = "solo12"
-task = "jumping"
+robot = "go2"
+task = "takeoff"
 file = robot + "_" + task
 xs, us = load_arrays(file)
 
