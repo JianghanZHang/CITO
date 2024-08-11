@@ -1,6 +1,7 @@
 import numpy as np
 
-data_path = 'trajectory_data/'
+
+data_path = 'trajectory/trajectory_data/'
 suffix = '.npz'
 def save_arrays(xs, us, filename='data_compressed'):
     """
