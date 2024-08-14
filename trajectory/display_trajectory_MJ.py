@@ -1,7 +1,13 @@
 import numpy as np
 import crocoddyl
 from mim_solvers import SolverSQP, SolverCSQP
-from differential_model_force_free import DifferentialActionModelForceExplicit
+import os
+import sys
+outer_folder_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+# Add the outer folder to the system path
+sys.path.insert(-1, outer_folder_path)
+# from differential_model_force_free import DifferentialActionModelForceExplicit
 import pinocchio as pin
 import meshcat
 import time
@@ -38,7 +44,7 @@ T = 50            #
 ###################
 
 robot = "go2"
-task = "takeoff_MJ"
+task = "takeoff_MJ_CSQP1"
 file = robot + "_" + task
 xs, us = load_arrays(file)
 
@@ -79,6 +85,6 @@ for i in range(len(xs)-1):
         print(f'distance:{rdata.oMf[fid].translation[2]}')
         print(f'complementarity constraint:{rdata.oMf[fid].translation[2] * force_t[3*eff:3*(eff+1)]}')
         # arrows[eff].anchor_as_vector(rdata.oMf[fid].translation, force_t[3*eff:3*(eff+1)].copy())        
-    time.sleep(0.1)
     viz.display(xs[i][:rmodel.nq])
     input()
+    # time.sleep(0.1)
