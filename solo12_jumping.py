@@ -11,6 +11,7 @@ from friction_cone import  ResidualLinearFrictionCone
 from force_derivatives import LocalWorldAlignedForceDerivatives
 from robot_env import create_solo12_env_free_force
 from trajectory_data import save_arrays, load_arrays
+import mim_solvers
 
 # Create the robot
 env = create_solo12_env_free_force()
@@ -163,6 +164,12 @@ running_DAM1 = DifferentialActionModelForceExplicit(state, nu, njoints, env["con
 waypoint_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], waypointCostModel, constraintModelManager)
 terminal_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], terminalCostModel)
 
+
+running_DAM0 = crocoddyl.DifferentialActionModelNumDiff(running_DAM0)
+running_DAM1 = crocoddyl.DifferentialActionModelNumDiff(running_DAM1)
+waypoint_DAM = crocoddyl.DifferentialActionModelNumDiff(waypoint_DAM)
+terminal_DAM = crocoddyl.DifferentialActionModelNumDiff(terminal_DAM)
+
 runningModel0 = crocoddyl.IntegratedActionModelEuler(running_DAM0, dt)
 runningModel1 = crocoddyl.IntegratedActionModelEuler(running_DAM1, dt)
 
@@ -173,6 +180,7 @@ x0 = np.array(q0 + v0)
 problem = crocoddyl.ShootingProblem(x0, [runningModel0] * int(T/2) + [waypointModel] + [runningModel1] * int(T/2-1), terminalModel)
 
 solver = SolverCSQP(problem)
+solver.setCallbacks([mim_solvers.CallbackLogger()])
 solver.use_filter_line_search = False
 solver.verbose = True
 solver.with_callbacks = True

@@ -11,6 +11,7 @@ from friction_cone import  ResidualLinearFrictionCone
 from force_derivatives import LocalWorldAlignedForceDerivatives
 from robot_env import create_solo12_env_free_force
 from trajectory_data import save_arrays, load_arrays
+import mim_solvers
 
 # Create the robot
 env = create_solo12_env_free_force()
@@ -27,7 +28,7 @@ rdata = rmodel.createData()
 
 ###################
 dt = 1e-1         #
-T = 50            #
+T = 5            #
 ###################
 
 q0[2] -= 0.02705 # To establish contacts with the ground.
@@ -65,8 +66,8 @@ runningCostModel.addCost("xReg", xRegCost, 1e-1)
 # Constraints (friction cones + complementarity contraints)
 constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
 
-eps1 = 1e-4
-eps2 = 1e-3
+eps1 = 1e-5
+eps2 = 1e-6
 # Friction cone constraints
 for idx, fid in enumerate(env["contactFids"]):
     FrictionConeResidual = ResidualLinearFrictionCone(state, njoints, ncontacts, nu, fid, idx, mu = 0.9)
@@ -130,27 +131,30 @@ terminalCostModel.addCost("xDes", xDesCost, 5e2)
 running_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], runningCostModel, constraintModelManager)
 terminal_DAM = DifferentialActionModelForceExplicit(state, nu, njoints, env["contactFids"], terminalCostModel)
 
+# running_DAM = crocoddyl.DifferentialActionModelNumDiff(running_DAM)
+# terminal_DAM = crocoddyl.DifferentialActionModelNumDiff(terminal_DAM)
+
 runningModel = crocoddyl.IntegratedActionModelEuler(running_DAM, dt)
 terminalModel = crocoddyl.IntegratedActionModelEuler(terminal_DAM, 0.)
 
-x0 = np.array(q0 + v0)
+x0 = np.array(q0 + v0) 
 problem = crocoddyl.ShootingProblem(x0, [runningModel] * T, terminalModel)
 
 solver = SolverCSQP(problem)
 solver.use_filter_line_search = False
 solver.verbose = True
-solver.with_callbacks = True
+# solver.with_callbacks = True
 solver.termination_tolerance = 1e-3
 solver.max_qp_iters = 1000
 solver.remove_reg = False
-
+solver.setCallbacks([mim_solvers.CallbackVerbose()])
 xs_init = [x0 for i in range(T+1)]
 us_init = problem.quasiStatic([x0 for i in range(T)])
 # import pdb; pdb.set_trace()
 # xs_init, us_init = load_arrays("solo12_takeoff")
 
 # xs_init, us_init = interpolate(xs_init, us_init)
-
+print('Solving...')
 flag = solver.solve(xs_init, us_init, maxiter=1000, isFeasible=False, regInit = 1e-8)
 xs, us = solver.xs, solver.us
 
