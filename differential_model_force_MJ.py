@@ -6,7 +6,7 @@ import mujoco
 import pinocchio as pin
 
 class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
-    def __init__(self, mj_model, mj_data, state, nu, nq_j, fids, costModel, constraintModel = None, forceRecorder = None):
+    def __init__(self, mj_model, mj_data, state, nu, nq_j, fids, costModel, constraintModel = None):
         """
         Forward Model with contact forces as explicit variables
         Input:
@@ -29,7 +29,7 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
         self.tau = np.zeros(self.state.nv)
         self.mj_model = mj_model
         self.mj_data = mj_data
-
+        print(f'INITIALIZE DifferentialActionModelForceMJ with constraints: {self.constraints}')
     def calc(self, data, x, u=None):
         q, v = x[: self.state.nq], x[-self.state.nv :]
         self.mj_data.qpos = q.copy()
@@ -37,6 +37,8 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
         
         if u is not None:
             self.mj_data.ctrl = u.copy()
+        else:
+            self.mj_data.ctrl = np.zeros(self.mj_model.nu)
 
         rmodel, rdata = self.state.pinocchio, data.pinocchio
         fids = self.fids
@@ -52,11 +54,23 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
             self.costs.calc(data.costs, x, u)
         data.cost = data.costs.cost
         if self.constraints:
-            data.constraints.resize(self, data)
+            data.constraints.resize(self, data, True)
             self.constraints.calc(data.constraints, x, u)
             self.g_lb = self.constraints.g_lb
             self.g_ub = self.constraints.g_ub
-
+            data.g = data.constraints.g
+            data.h = data.constraints.h
+            # print(f'Constraints g: {data.constraints.g}')
+            # print(f'Constraints h: {data.constraints.h}')
+            # print(f'g_lb: {self.g_lb}, g_ub: {self.g_ub}')
+            # data.g = self.g
+            # data.h = self.h
+            # import pdb; pdb.set_trace()
+            # print(f'g: {data.constraints.g}')
+            # print(f'h: {data.constraints.h}')
+            # if self.constraints.getConstraintStatus("BasePosContraint"):
+                # import pdb; pdb.set_trace()
+                # print(f'Constraint Violation: {data.g}')
     def calcDiff(self, data, x, u=None):       
         pass
 
@@ -65,9 +79,7 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
         data.pinocchio = pin.Data(self.state.pinocchio)
         data.multibody = crocoddyl.DataCollectorMultibody(data.pinocchio)
         data.costs = self.costs.createData(data.multibody)
-        data.costs.shareMemory(
-            data
-        )  # this allows us to share the memory of cost-terms of action model
+        data.costs.shareMemory(data)  # this allows us to share the memory of cost-terms of action model
         if self.constraints:
             data.constraints = self.constraints.createData(data.multibody)
             data.constraints.shareMemory(data)

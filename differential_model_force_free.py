@@ -87,7 +87,7 @@ class DifferentialActionModelForceExplicit(crocoddyl.DifferentialActionModelAbst
             self.costs.calc(data.costs, x, u)
         data.cost = data.costs.cost
         if self.constraints:
-            data.constraints.resize(self, data)
+            data.constraints.resize(self, data, True)
             self.constraints.calc(data.constraints, x, u)
             self.g_lb = self.constraints.g_lb
             self.g_ub = self.constraints.g_ub

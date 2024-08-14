@@ -7,12 +7,20 @@ from robot_descriptions.loaders.pinocchio import load_robot_description
 from robot_descriptions import go2_description
 import numpy as np
 
-go2_init_conf0 = np.array([0.0000, 0.0000, 0.2700 + 0.1225, 
+go2_init_conf1 = np.array([0.0000, 0.0000, 0.2700 + 0.1225, 
                 0.0000, 0.0000, 0.0000, 1.0000, 
                 0.0000, 0.4000, -0.8000, 
                 0.0000, 0.4000, -0.8000, 
                 0.0000, 0.4000, -0.8000, 
                 0.0000, 0.4000, -0.8000])
+                
+go2_init_conf0 = np.array([0.0000, 0.0000, 0.2700, 
+                0.0000, 0.0000, 0.0000, 1.0000, 
+                0.0000, 0.9000, -1.8000, 
+                0.0000, 0.9000, -1.8000, 
+                0.0000, 0.9000, -1.8000, 
+                0.0000, 0.9000, -1.8000])
+                
 
 def create_solo12_env_free_force():
 
