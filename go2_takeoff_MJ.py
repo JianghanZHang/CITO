@@ -31,7 +31,7 @@ def main():
 
     ###################
     dt = mj_model.opt.timestep         #
-    T = 50            #
+    T = 80            #
     ###################
 
     # q0[2] -= 0.02705 # To establish contacts with the ground.
@@ -63,7 +63,7 @@ def main():
     xResidual = crocoddyl.ResidualModelState(state, xreg, nu)
     xRegCost = crocoddyl.CostModelResidual(state, xRegActivation, xResidual)
 
-    runningCostModel.addCost("uReg", uRegCost, 1e-2)
+    # runningCostModel.addCost("uReg", uRegCost, 1e-2)
     # runningCostModel.addCost("xReg", xRegCost, 1e-2)
     # Constraints (friction cones + complementarity contraints)
     constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
@@ -105,9 +105,9 @@ def main():
     ControlLimit = np.array(4 * [23.7, 23.7, 45.43])
     ControlRedisual = crocoddyl.ResidualModelControl(state, nu)
     ControlLimitConstraint = crocoddyl.ConstraintModelResidual(state, ControlRedisual, -ControlLimit, ControlLimit)
-    constraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
+    # constraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
 
-    P_des = [0.0, 0.0, 0.6]
+    P_des = [0.0, 0.0, 0.7]
     O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
     V_des = [0.0, 0.0, 0.0]
     W_des = [0.0, 0.0, 0.0]
@@ -118,17 +118,17 @@ def main():
                     W_des + 
                     v0[6:])
     xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(2 * [1e1] +  # base x, y position
-                                                                    1 * [1e2] +  # base z position
-                                                                    3 * [1e0] +  # base orientation
-                                                                    12 * [0] +  #joint positions
+                                                                    1 * [1e5] +  # base z position
+                                                                    3 * [1e1] +  # base orientation
+                                                                    12 * [1e-1] +  #joint positions
                                                                     3 * [1e-1] +  # base linear velocity
                                                                     3 * [1e-1] +  # base angular velocity
                                                                     12 * [1e-1]))  # joint velocities
 
     xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(2 * [1e1] +  # base x, y position
-                                                                    1 * [1e3] +  # base z position
+                                                                    1 * [1e4] +  # base z position
                                                                     3 * [1e1] +  # base orientation
-                                                                    12 * [1e1] +  #joint positions
+                                                                    12 * [1e0] +  #joint positions
                                                                     3 * [1e-1] +  # base linear velocity
                                                                     3 * [1e-1] +  # base angular velocity
                                                                     12 * [1e-1]))  # joint velocities
@@ -139,8 +139,8 @@ def main():
     xDesCostRunning = crocoddyl.CostModelResidual(state, xDesActivationRunning, xDesResidual)
     xDesCostTerminal = crocoddyl.CostModelResidual(state, xDesActivationTerminal, xDesResidual)
 
-    runningCostModel.addCost("xDes_running", xDesCostRunning, 1e1)
-    terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 50e1)
+    runningCostModel.addCost("xDes_running", xDesCostRunning, 1e0)
+    terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 1e0)
 
 
     running_DAM = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, fids, runningCostModel, constraintModelManager)
@@ -153,13 +153,13 @@ def main():
     terminalModel = crocoddyl.IntegratedActionModelEuler(terminal_DAM, 0.)
     x0 = np.array(q0 + v0)
 
-    problem = crocoddyl.ShootingProblem(x0, [runningModel] * (T-1), terminalModel)
-    xs_init = [x0 for i in range(T)]
-    us_init = problem.quasiStatic([x0 for i in range(T-1)])
+    problem = crocoddyl.ShootingProblem(x0, [runningModel] * (T), terminalModel)
+    xs_init = [x0 for i in range(T+1)]
+    us_init = problem.quasiStatic([x0 for i in range(T)])
 
     # xs_init, us_init = load_arrays("go2_takeoff_MJ_CSQP1")
 
-    maxIter = 100
+    maxIter = 500
 
     print('Start solving')
 
@@ -196,7 +196,7 @@ def main():
     formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
     save = sys.argv[2]
     if save == "save":
-        save_arrays(xs, us, "go2_takeoff_MJ_" + solver_type +"1")
+        save_arrays(xs, us, "go2_takeoff_MJ_" + solver_type +"01")
     np.set_printoptions(linewidth=210, precision=4, suppress=False, formatter=formatter)
 
     from pinocchio.visualize import MeshcatVisualizer

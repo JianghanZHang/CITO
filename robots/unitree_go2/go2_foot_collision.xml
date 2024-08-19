@@ -1,16 +1,21 @@
 <mujoco model="go2">
+  <!-- <compiler angle="radian" meshdir="assets"/> -->
   <compiler angle="radian" meshdir="assets" autolimits="false"/>
 
-  <option cone="elliptic" impratio="10.0"
-          timestep="0.01" 
-          iterations='1000' ls_iterations="500" solver='Newton' tolerance="1e-10"
-          noslip_iterations="50" noslip_tolerance="1e-8">
-    <!-- <flag  eulerdamp="disable" /> -->
+  <option cone="elliptic" impratio="10.0" 
+          integrator="Euler"
+          timestep="1.0" 
+          iterations='200000' ls_iterations="50" solver='Newton' tolerance="1e-10">
+    <flag   eulerdamp="disable"
+            clampctrl="disable"
+            frictionloss="disable">
+    </flag>
   </option>
   <default>
     <default class="go2">
-      <geom friction="0.6" margin="0.001" condim="1"/>
-      <joint axis="0 1 0" damping="2" armature="0.01" frictionloss="0.2"/>
+      <geom friction="0.6" margin="0.0010" condim="1"/>
+      <!-- <joint axis="0 1 0" damping="2" armature="0.01" frictionloss="0.2"/> -->
+      <joint axis="0 1 0"/>
       <!-- <motor ctrlrange="-23.7 23.7"/> -->
       <motor ctrlrange="-23.7 23.7" ctrllimited="false"/>
       <default class="abduction">
@@ -44,9 +49,9 @@
       <default class="collision">
         <geom group="3"/>
         <default class="foot">
-          <geom size="0.022" pos="-0.002 0 -0.213" priority="1" condim="6"
-           solimp="0.000 1 0.010" solref="-1000 -1"
-            friction="1.0 0.02 0.01"/>
+          <geom size="0.022" pos="-0.002 0 -0.213" priority="1" condim="3"
+           solimp="0.015 1 0.010" solref="-100 -10"
+            friction="1.0 0.02 0.022"/>
         </default>
       </default>
     </default>

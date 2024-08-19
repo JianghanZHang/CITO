@@ -42,8 +42,8 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
 
         rmodel, rdata = self.state.pinocchio, data.pinocchio
         fids = self.fids
-        pin.framesForwardKinematics(rmodel, rdata, q)
-        pin.updateFramePlacements(rmodel, rdata)
+        pin.forwardKinematics(rmodel, rdata, q, v)
+        pin.updateGlobalPlacements(rmodel, rdata)
         # Forward dynamics with mujoco 
         mujoco.mj_forward(self.mj_model, self.mj_data)
         a = self.mj_data.qacc

@@ -40,11 +40,11 @@ mj_data = mj_env["mj_data"]
 
 ###################
 dt = mj_model.opt.timestep         #
-T = 50            #
+T = 20            #
 ###################
 
 robot = "go2"
-task = "takeoff_MJ_CSQP1"
+task = "walking_MJCSQP2"
 file = robot + "_" + task
 xs, us = load_arrays(file)
 
@@ -86,5 +86,5 @@ for i in range(len(xs)-1):
         print(f'complementarity constraint:{rdata.oMf[fid].translation[2] * force_t[3*eff:3*(eff+1)]}')
         # arrows[eff].anchor_as_vector(rdata.oMf[fid].translation, force_t[3*eff:3*(eff+1)].copy())        
     viz.display(xs[i][:rmodel.nq])
-    input()
-    # time.sleep(0.1)
+    # input()
+    time.sleep(0.1)

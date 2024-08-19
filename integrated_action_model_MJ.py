@@ -40,7 +40,6 @@ class DummyDifferentialActionModelMJ(crocoddyl.DifferentialActionModelAbstract):
             self.mj_data.ctrl = u.copy()
 
         rmodel, rdata = self.state.pinocchio, data.pinocchio
-        fids = self.fids
         pin.framesForwardKinematics(rmodel, rdata, q)
         pin.updateFramePlacements(rmodel, rdata)
         # Forward dynamics with mujoco 
@@ -53,7 +52,7 @@ class DummyDifferentialActionModelMJ(crocoddyl.DifferentialActionModelAbstract):
             self.costs.calc(data.costs, x, u)
         data.cost = data.costs.cost
         if self.constraints:
-            data.constraints.resize(self, data)
+            data.constraints.resize(self, data, True)
             self.constraints.calc(data.constraints, x, u)
             self.g_lb = self.constraints.g_lb
             self.g_ub = self.constraints.g_ub
@@ -75,8 +74,8 @@ class DummyDifferentialActionModelMJ(crocoddyl.DifferentialActionModelAbstract):
 
         return data
 
-class IntegratedActionModelForceMJ(crocoddyl.IntegratedActionDataAbstract):
-    def __init__(self, DAM: crocoddyl.DifferentialActionModel, dt: float, with_cost_residuals: bool = True):
+class IntegratedActionModelForceMJ(crocoddyl.IntegratedActionModelAbstract):
+    def __init__(self, DAM: crocoddyl.DifferentialActionModelAbstract, dt: float, with_cost_residuals: bool = True):
         """
         Forward Model with contact forces as explicit variables
         Input:
@@ -85,11 +84,10 @@ class IntegratedActionModelForceMJ(crocoddyl.IntegratedActionDataAbstract):
             costModel : cost model
             constraintModel : constraints 
         """
-        ng = nh = 0
-
         crocoddyl.IntegratedActionModelAbstract.__init__(
             self, DAM, dt, with_cost_residuals
         )
+        self.nu = self.differential.nu
         self.time_step = dt
         self.mj_model = self.differential.mj_model
         self.mj_data = self.differential.mj_data
@@ -100,31 +98,43 @@ class IntegratedActionModelForceMJ(crocoddyl.IntegratedActionDataAbstract):
         self.mj_data.qpos = q.copy()
         self.mj_data.qvel = v.copy()
     
-        rmodel, rdata = self.state.pinocchio, data.pinocchio
-        self.differential.calc(data.differential, x, u)
+        rmodel, rdata = self.state.pinocchio, data.differential.pinocchio
 
         data.r = data.differential.r
         data.g = data.differential.g
         data.h = data.differential.h
+        
+        pin.forwardKinematics(rmodel, rdata, q, v)
+        pin.updateFramePlacements(rmodel, rdata)
+
+        if u is None:
+            self.differential.costs.calc(data.differential.costs, x)
+        else:
+            self.differential.costs.calc(data.differential.costs, x, u)
+        data.cost = data.differential.costs.cost
+        if self.differential.constraints:
+            data.differential.constraints.resize(self, data, True)
+            self.differential.constraints.calc(data.differential.constraints, x, u)
+            self.g_lb = self.differential.constraints.g_lb
+            self.g_ub = self.differential.constraints.g_ub
+
 
         # forward one step with mujoco 
-        mujoco.mj_step1(self.mj_model, self.mj_data)
+        # mujoco.mj_step1(self.mj_model, self.mj_data)
 
         if u is not None:
             self.mj_data.ctrl = u.copy()
-        mujoco.mj_step2(self.mj_model, self.mj_data)
+        # mujoco.mj_step2(self.mj_model, self.mj_data)
+        mujoco.mj_forward(self.mj_model, self.mj_data)
 
-        self.differen
-        if u is None:
-            self.costs.calc(data.costs, x)
-        else:
-            self.costs.calc(data.costs, x, u)
-        data.cost = data.costs.cost
-        if self.differential.constraints:
-            data.constraints.resize(self, data)
-            self.constraints.calc(data.constraints, x, u)
-            self.g_lb = self.constraints.g_lb
-            self.g_ub = self.constraints.g_ub
+        data.differential.xout = self.mj_data.qacc.copy()
+        
+        mujoco.mj_Euler(self.mj_model, self.mj_data)
+
+        q = self.mj_data.qpos.copy()
+        v = self.mj_data.qvel.copy()
+        xnext = np.hstack([q, v])
+        data.xnext = xnext
 
     def calcDiff(self, data, x, u=None):
         q, v = x[: self.state.nq], x[-self.state.nv :]
@@ -135,10 +145,15 @@ class IntegratedActionModelForceMJ(crocoddyl.IntegratedActionDataAbstract):
             self.mj_data.ctrl = u.copy()
         
         A = np.zeros((2*self.state.nv, 2*self.state.nv))
-        B = np.zeros((2*self.state.nv, self.state.nv))
-        mujoco.mjd_transitionFD(self.mj_model, self.mj_data, eps = 1e-6, flag_centered = 1, A = A, B = B, C = None, D = None)
-        data.Fx = A
-        data.Fu = B
+        B = np.zeros((2*self.state.nv, self.nu))
+        # import pdb; pdb.set_trace()
+        # mujoco.mj_forward(self.mj_model, self.mj_data)
+        mujoco.mjd_transitionFD(self.mj_model, self.mj_data, eps = 1e-12, flg_centered = 1, A = A, B = B, C = None, D = None)
+        
+        print(f'contacts: {self.mj_data.contact}')
+        # import pdb; pdb.set_trace()
+        data.Fx = A.copy()
+        data.Fu = B.copy()
     
         if self.with_cost_residuals:
             if u is not None:
@@ -154,7 +169,7 @@ class IntegratedActionModelForceMJ(crocoddyl.IntegratedActionDataAbstract):
                 data.Lx = self.time_step * data.differential.costs.Lx 
                 data.Lxx = self.time_step * data.differential.costs.Lxx
                 
-        if self.differernial.constraints:
+        if self.differential.constraints:
             if u is not None:
                 self.differential.constraints.calcDiff(data.differential.constraints, x, u)
                 data.Hx = self.time_step * data.differential.constraints.Hx
@@ -168,15 +183,17 @@ class IntegratedActionModelForceMJ(crocoddyl.IntegratedActionDataAbstract):
 
     def createData(self):
         data = crocoddyl.IntegratedActionModelAbstract.createData(self)
-        data.pinocchio = pin.Data(self.state.pinocchio)
-        data.multibody = crocoddyl.DataCollectorMultibody(data.pinocchio)
-        data.costs = self.costs.createData(data.multibody)
-        data.costs.shareMemory(
-            data
-        )  # this allows us to share the memory of cost-terms of action model
-        if self.constraints:
-            data.constraints = self.constraints.createData(data.multibody)
-            data.constraints.shareMemory(data)
+        data.differential = self.differential.createData()
+
+        # data.pinocchio = pin.Data(self.state.pinocchio)
+        # data.multibody = crocoddyl.DataCollectorMultibody(data.pinocchio)
+        # data.costs = self.costs.createData(data.multibody)
+        # data.costs.shareMemory(
+        #     data
+        # )  # this allows us to share the memory of cost-terms of action model
+        # if self.constraints:
+        #     data.constraints = self.constraints.createData(data.multibody)
+        #     data.constraints.shareMemory(data)
 
         return data
     

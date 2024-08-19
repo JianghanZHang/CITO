@@ -202,10 +202,10 @@ class ResidualModelComplementarityErrorTangential(crocoddyl.ResidualModelAbstrac
         force = u[self.nq_j+3*idx : self.nq_j+3*(idx+1)]
         force_x, force_y = force[0], force[1]
 
-        pin.framesForwardKinematics(rmodel, rdata, q)
-        pin.updateFramePlacements(rmodel, rdata)
-        
+        # pin.framesForwardKinematics(rmodel, rdata, q)
         pin.forwardKinematics(rmodel, rdata, q, v)
+        pin.updateFramePlacements(rmodel, rdata)
+
         velocity = pin.getFrameVelocity(rmodel, rdata, fid, pin.ReferenceFrame.WORLD).linear[:2]
 
         data.r = np.array([velocity[0]* force_x, velocity[1]*force_x, velocity[0]*force_y, velocity[1]*force_y])
