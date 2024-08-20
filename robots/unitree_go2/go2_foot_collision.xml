@@ -2,20 +2,26 @@
   <!-- <compiler angle="radian" meshdir="assets"/> -->
   <compiler angle="radian" meshdir="assets" autolimits="false"/>
 
-  <option cone="elliptic" impratio="10.0" 
+  <option cone="elliptic" impratio="1.0" 
           integrator="Euler"
-          timestep="1.0" 
-          iterations='200000' ls_iterations="50" solver='Newton' tolerance="1e-10">
+          timestep="0.1" 
+          iterations='1000000' ls_iterations="50" solver='Newton' tolerance="1e-8">
     <flag   eulerdamp="disable"
             clampctrl="disable"
-            frictionloss="disable">
+            warmstart="disable"
+            frictionloss="disable"
+            autoreset="enable"
+            fwdinv="enable"
+            midphase="disable"
+            invdiscrete="enable">
     </flag>
   </option>
   <default>
     <default class="go2">
       <geom friction="0.6" margin="0.0010" condim="1"/>
       <!-- <joint axis="0 1 0" damping="2" armature="0.01" frictionloss="0.2"/> -->
-      <joint axis="0 1 0"/>
+      <joint axis="0 1 0" damping="0" armature="0.0" frictionloss="0.0"/>
+      <!-- <joint axis="0 1 0"/> -->
       <!-- <motor ctrlrange="-23.7 23.7"/> -->
       <motor ctrlrange="-23.7 23.7" ctrllimited="false"/>
       <default class="abduction">
@@ -26,7 +32,6 @@
         <default class="front_hip">
           <!-- <joint range="-1.5708 3.4907"/> -->
           <joint range="-1.5708 3.4907" limited ="false"/>
-
         </default>
         <default class="back_hip">
           <!-- <joint range="-0.5236 4.5379"/> -->
@@ -51,7 +56,7 @@
         <default class="foot">
           <geom size="0.022" pos="-0.002 0 -0.213" priority="1" condim="3"
            solimp="0.015 1 0.010" solref="-100 -10"
-            friction="1.0 0.02 0.022"/>
+            friction="1.0"/>
         </default>
       </default>
     </default>
@@ -86,6 +91,7 @@
       <inertial pos="0.021112 0 -0.005366" quat="-0.000543471 0.713435 -0.00173769 0.700719" mass="6.921"
         diaginertia="0.107027 0.0980771 0.0244531"/>
       <freejoint/>
+      <!-- <joint type="free" stiffness="0" damping="0" frictionloss="0" armature="0"/> -->
       <geom mesh="base_0" material="black" class="visual"/>
       <geom mesh="base_1" material="black" class="visual"/>
       <geom mesh="base_2" material="black" class="visual"/>

@@ -10,7 +10,7 @@
   <option gravity='0 0 -9.81' iterations='10000' ls_iterations="50"
             solver='Newton' timestep='0.01' impratio="0.01" tolerance="1e-8"
             cone ='elliptic' noslip_iterations="10" noslip_tolerance="1e-6">
-        <flag  eulerdamp="disable" />
+        <flag  eulerdamp="enable" />
 
   </option>
   
