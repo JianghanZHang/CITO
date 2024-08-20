@@ -37,8 +37,12 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
         
         if u is not None:
             self.mj_data.ctrl = u.copy()
+            # self.mj_data.actuator_force = u.copy()
+
         else:
             self.mj_data.ctrl = np.zeros(self.mj_model.nu)
+            # self.mj_data.actuator_force = np.zeros(self.mj_model.nu)
+
 
         rmodel, rdata = self.state.pinocchio, data.pinocchio
         fids = self.fids
@@ -71,6 +75,12 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
             # if self.constraints.getConstraintStatus("BasePosContraint"):
                 # import pdb; pdb.set_trace()
                 # print(f'Constraint Violation: {data.g}')
+        # print(f'In DifferentialActionModelForceMJ calc')
+        # print(f'ctrl: \n {self.mj_data.ctrl}')
+        # print(f'actuator_force: \n {self.mj_data.actuator_force}')
+        # print(f'_________________________________________________________')
+
+        # import pdb; pdb.set_trace()
     def calcDiff(self, data, x, u=None):       
         pass
 

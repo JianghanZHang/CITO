@@ -4,6 +4,7 @@ import crocoddyl
 import pinocchio as pin
 import numpy as np
 from differential_model_force_MJ import DifferentialActionModelForceMJ
+from integrated_action_model_MJ import IntegratedActionModelForceMJ
 import mim_solvers
 import meshcat
 from force_derivatives import LocalWorldAlignedForceDerivatives
@@ -63,7 +64,7 @@ def main():
     xResidual = crocoddyl.ResidualModelState(state, xreg, nu)
     xRegCost = crocoddyl.CostModelResidual(state, xRegActivation, xResidual)
 
-    # runningCostModel.addCost("uReg", uRegCost, 1e-2)
+    runningCostModel.addCost("uReg", uRegCost, 1e-2)
     # runningCostModel.addCost("xReg", xRegCost, 1e-2)
     # Constraints (friction cones + complementarity contraints)
     constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
@@ -118,7 +119,7 @@ def main():
                     W_des + 
                     v0[6:])
     xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(2 * [1e1] +  # base x, y position
-                                                                    1 * [1e5] +  # base z position
+                                                                    1 * [1e3] +  # base z position
                                                                     3 * [1e1] +  # base orientation
                                                                     12 * [1e-1] +  #joint positions
                                                                     3 * [1e-1] +  # base linear velocity
@@ -126,7 +127,7 @@ def main():
                                                                     12 * [1e-1]))  # joint velocities
 
     xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(2 * [1e1] +  # base x, y position
-                                                                    1 * [1e4] +  # base z position
+                                                                    1 * [1e3] +  # base z position
                                                                     3 * [1e1] +  # base orientation
                                                                     12 * [1e0] +  #joint positions
                                                                     3 * [1e-1] +  # base linear velocity
@@ -140,17 +141,20 @@ def main():
     xDesCostTerminal = crocoddyl.CostModelResidual(state, xDesActivationTerminal, xDesResidual)
 
     runningCostModel.addCost("xDes_running", xDesCostRunning, 1e0)
-    terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 1e0)
+    terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 1e3)
 
 
     running_DAM = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, fids, runningCostModel, constraintModelManager)
     terminal_DAM = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, fids, terminalCostModel)
     
-    running_DAM = crocoddyl.DifferentialActionModelNumDiff(running_DAM)
-    terminal_DAM = crocoddyl.DifferentialActionModelNumDiff(terminal_DAM)
+    runningModel = IntegratedActionModelForceMJ(running_DAM, dt, True)
+    terminalModel = IntegratedActionModelForceMJ(terminal_DAM, 0., True)
+    # running_DAM = crocoddyl.DifferentialActionModelNumDiff(running_DAM)
+    # terminal_DAM = crocoddyl.DifferentialActionModelNumDiff(terminal_DAM)
 
-    runningModel = crocoddyl.IntegratedActionModelEuler(running_DAM, dt)
-    terminalModel = crocoddyl.IntegratedActionModelEuler(terminal_DAM, 0.)
+    # runningModel = crocoddyl.IntegratedActionModelEuler(running_DAM, dt)
+    # terminalModel = crocoddyl.IntegratedActionModelEuler(terminal_DAM, 0.)
+
     x0 = np.array(q0 + v0)
 
     problem = crocoddyl.ShootingProblem(x0, [runningModel] * (T), terminalModel)
