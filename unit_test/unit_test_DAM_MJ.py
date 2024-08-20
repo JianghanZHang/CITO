@@ -29,6 +29,8 @@ mj_data = env["mj_data"]
 
 dt = mj_model.opt.timestep
 
+ControlLimit = np.array(4 * [23.7, 23.7, 45.43])
+
 def numdiffSE3toEuclidian(f, x0, rmodel, h=1e-6):
     f0 = f(x0).copy()
     Fx = []
@@ -45,7 +47,7 @@ def numdiffSE3toEuclidian(f, x0, rmodel, h=1e-6):
     Fx = np.array(Fx).T
     return Fx
 
-def calcDiff_numdiff(x, u, model, rmodel, h=1e-6):
+def calcDiff_numdiff(x, u, model, rmodel, h=1e-8):
     # Create a fresh data collector for the nominal calculation
     data = model.createData()
     
@@ -88,7 +90,7 @@ def mujoco_forward(mj_model, mj_data, q, v, u):
     nu = mj_model.nu
     A = np.zeros((2*nv, 2*nv))
     B = np.zeros((2*nv, nu))
-    mujoco.mjd_transitionFD(mj_model, mj_data, eps = 1e-6, flag_centered = 1, A = A, B = B, C = None, D = None)
+    mujoco.mjd_transitionFD(mj_model, mj_data, eps = 1e-8, flag_centered = 0, A = A, B = B, C = None, D = None)
     return mj_data.qacc, A, B
 
 def mujoco_forward_diff(mj_model, mj_data, x, u):
@@ -100,12 +102,11 @@ def mujoco_forward_diff(mj_model, mj_data, x, u):
     nq = mj_model.nq
     nv = mj_model.nv
     nu = mj_model.nu
-    import pdb; pdb.set_trace() 
+    # import pdb; pdb.set_trace() 
     mj_data.qpos[:] = x[:nq]
     mj_data.qvel[:] = x[nq:]
     mj_data.ctrl[:] = u
     mujoco.mj_forward(mj_model, mj_data)
-    
     A = np.zeros((2*nv, 2*nv))
     B = np.zeros((2*nv, nu))
     mujoco.mjd_transitionFD(mj_model, mj_data, eps = 1e-8, flg_centered = 1, A = A, B = B, C = None, D = None)
@@ -113,6 +114,8 @@ def mujoco_forward_diff(mj_model, mj_data, x, u):
     da_dv = (A[nv:, nv:] - np.eye(nv))/ dt
     da_du = B[nv:, :] / dt
     da_dx = np.hstack((da_dq, da_dv))
+
+    print(mj_data.contact)
 
     return mj_data.qacc, da_dx, da_du
 
@@ -123,12 +126,20 @@ def test_DAM(numerical_model, rmodel, mj_model, mj_data):
 
     
     # Random test state and control input
-    x = np.hstack((pin.randomConfiguration(rmodel, -np.pi/2 * np.ones(nq), np.pi/2 * np.ones(nq)), np.random.rand(nv)))
+    # x = np.hstack((pin.randomConfiguration(rmodel, -np.pi/2 * np.ones(nq), np.pi/2 * np.ones(nq)), np.random.rand(nv)))
     # key_qpos = mj_model.key_qpos
-    import pdb; pdb.set_trace() 
-
     # x = np.hstack((key_qpos, np.random.rand(1, nv))).reshape((37,))
-    u = np.random.rand(numerical_model.nu)
+    # u = np.random.rand(numerical_model.nu)
+
+    # x = np.hstack((env["q0"], env["v0"]))   
+    # u = np.random.rand(numerical_model.nu) 
+    # u = u * ControlLimit
+
+    x = np.hstack((env["q0"], env["v0"]))   
+    # u = np.random.rand(analytical_model.nu) 
+    u = np.ones(numerical_model.nu)    
+    u = u * ControlLimit
+
     # u = np.zeros_like(u)
     print(f'Test state: {x}')
     print(f'Test control: {u}')
@@ -162,10 +173,13 @@ def test_DAM(numerical_model, rmodel, mj_model, mj_data):
 
         print(f'Fx difference: \n {diff_Fx}')
         print(f'Fx diff norm:\n {np.linalg.norm(diff_Fx)}')
-        
+        print(f'Fx numerical: \n {Fx_numerical}')
+        print(f'Fx analytical: \n {Fx_analytical}')
+
         print(f'Fu difference:\n {diff_Fu}')
         print(f'Fu diff norm:\n {np.linalg.norm(diff_Fu)}')
-
+        print(f'Fu numerical:\n {Fu_numerical}')
+        print(f'Fu analytical:\n {Fu_analytical}')
 
     # assert np.allclose(diff_Fx, np.zeros_like(diff_Fx), atol=1e-3), f"Fx mismatch: \nAnalytical:\n{Fx_analytical}\nNumerical:\n{Fx_numerical}"
     # assert np.allclose(diff_Fu, np.zeros_like(diff_Fu), atol=1e-3), f"Fu mismatch: \nAnalytical:\n{Fu_analytical}\nNumerical:\n{Fu_numerical}"
@@ -174,7 +188,7 @@ def test_DAM(numerical_model, rmodel, mj_model, mj_data):
 
 formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
     
-np.set_printoptions(linewidth=210, precision=5, suppress=False, formatter=formatter)
+np.set_printoptions(linewidth=300, precision=5, suppress=False, formatter=formatter)
 
 # Example usage with the DifferentialActionModelForceExplicit
 state = crocoddyl.StateMultibody(rmodel)
@@ -207,9 +221,9 @@ constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
 #     constraintModelManager.addConstraint("ComplementarityConstraintTangential_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
 
 print("Testing DifferentialActionModelForceMJ")
-DAM_no_calc_diff = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, contactFids, cost_model)
+DAM_numerical = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, contactFids, cost_model)
                                                  
-DAM_numerical = crocoddyl.DifferentialActionModelNumDiff(DAM_no_calc_diff, True)
+# DAM_numerical = crocoddyl.DifferentialActionModelNumDiff(DAM_no_calc_diff, True)
 test_DAM(DAM_numerical, rmodel, mj_model, mj_data)
 
 '''

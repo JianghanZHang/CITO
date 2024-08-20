@@ -13,7 +13,7 @@ from differential_model_force_MJ import DifferentialActionModelForceMJ
 from integrated_action_model_MJ import IntegratedActionModelForceMJ #, DummyDifferentialActionModelMJ
 from robot_env import create_go2_env_force_MJ, create_go2_env
 
-formatter = {'float_kind': lambda x: "{:.4f}".format(x)} 
+formatter = {'float_kind': lambda x: "{:.6f}".format(x)} 
 np.set_printoptions(threshold=np.inf, linewidth=300, precision=5, suppress=False, formatter=formatter)
 
 abduction_lb = -1.0472; abduction_ub = 1.0472; front_hip_lb = -1.5708; front_hip_ub = 3.4807; knee_lb = -2.7227; knee_ub = -0.83776; back_hip_lb = -1.5708; back_hip_ub = 4.5379
@@ -59,8 +59,12 @@ def test_IAM(analytical_model: crocoddyl.IntegratedActionModelAbstract, numerica
     # Random test state and control input
     # x = np.hstack((pin.randomConfiguration(rmodel, -np.pi/2 * np.ones(nq), np.pi/2 * np.ones(nq)), np.random.rand(nv)))
     x = np.hstack((env["q0"], env["v0"]))   
-    u = np.random.rand(analytical_model.nu) * ControlLimit
+    # u = np.random.rand(analytical_model.nu) 
+    u = np.ones(analytical_model.nu)    
+    u = u * ControlLimit * .5
     
+    # u = np.ones_like(u)   
+    # import pdb; pdb.set_trace()  
     # Compute analytical derivatives
     analytical_model.calc(analytical_data, x, u)
     analytical_model.calcDiff(analytical_data, x, u)
@@ -87,14 +91,16 @@ def test_IAM(analytical_model: crocoddyl.IntegratedActionModelAbstract, numerica
 
     # print(f'Fu numerical:\n {Fu_numerical}')
     # print(f'Fu analytical:\n {Fu_analytical}')
+    print(f'X: \n {x}')
     
     print(f'Acceleration difference:\n {diff_Acceleration}')
+    print(f'Acceleration numerical:\n {Acceleration_numerical}')
+    # print(f'Acceleration analytical:\n {Acceleration_analytical}')
     print(f'Acceleration diff norm:\n {np.linalg.norm(diff_Acceleration)}')
     
     print(f'Fu difference:\n {diff_Fu}')
     print(f'Fu diff norm:\n {np.linalg.norm(diff_Fu)}')
     
-    print(f'X: \n {x}')
     print(f'dq_t+1/dq_t difference: \n {diff_Fx[:nq, :nq]}' )
     print(f'dq_t+1/dq_t difference norm: \n {np.linalg.norm(diff_Fx[:nq, :nq])} \n' )
 
@@ -103,6 +109,9 @@ def test_IAM(analytical_model: crocoddyl.IntegratedActionModelAbstract, numerica
 
     print(f'dv_t+1/dq_t difference: \n {diff_Fx[nq:, :nq]}' )
     print(f'dv_t+1/dq_t difference norm: \n {np.linalg.norm(diff_Fx[nq:, :nq])} \n' )
+    print(f'dv_t+1/dq_t numerical:\n {Fx_numerical[nq:, :nq]}')
+    print(f'dv_t+1/dq_t analytical:\n {Fx_analytical[nq:, :nq]}')
+
 
     print(f'dv_t+1/dv_t difference: \n {diff_Fx[nq:, nq:]}' )
     print(f'dv_t+1/dv_t difference norm: \n {np.linalg.norm(diff_Fx[nq:, nq:])} \n' )
@@ -120,7 +129,7 @@ def test_IAM(analytical_model: crocoddyl.IntegratedActionModelAbstract, numerica
 # Example usage with the DifferentialActionModelForceExplicit
 state = crocoddyl.StateMultibody(rmodel)
 
-cost_model = crocoddyl.CostModelSum(state, nu)
+costModel = crocoddyl.CostModelSum(state, nu)
 
 constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
 
@@ -134,8 +143,35 @@ ControlRedisual = crocoddyl.ResidualModelControl(state, nu)
 ControlLimitConstraint = crocoddyl.ConstraintModelResidual(state, ControlRedisual, -ControlLimit, ControlLimit)
 constraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
 
-print("Testing DifferentialActionModelForceExplicit")
-DAM = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, contactFids, cost_model, constraintModelManager)
+P_des = [0.0, 0.0, 0.7]
+O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
+V_des = [0.0, 0.0, 0.0]
+W_des = [0.0, 0.0, 0.0]
+x_des = np.array(P_des + 
+                [O_des[0], O_des[1], O_des[2], O_des[3]] + 
+                q0[7:] +
+                V_des + 
+                W_des + 
+                v0[6:])
+xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(2 * [1e3] +  # base x, y position
+                                                                1 * [1e3] +  # base z position
+                                                                3 * [1e3] +  # base orientation
+                                                                12 * [1e3] +  #joint positions
+                                                                3 * [1e3] +  # base linear velocity
+                                                                3 * [1e3] +  # base angular velocity
+                                                                12 * [1e3]))  # joint velocities
+
+xDesResidual = crocoddyl.ResidualModelState(state, x_des, nu)
+xDesCostRunning = crocoddyl.CostModelResidual(state, xDesActivationRunning, xDesResidual)
+costModel.addCost("xDesCostRunning", xDesCostRunning, 1e3)
+
+
+uResidual = crocoddyl.ResidualModelControl(state, nu)
+uRegActivation = crocoddyl.ActivationModelWeightedQuad(np.array(12 * [1.0]))
+uRegCost = crocoddyl.CostModelResidual(state, uRegActivation, uResidual)
+costModel.addCost("uRegCost", uRegCost, 1e2)
+
+DAM = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, contactFids, costModel, constraintModelManager)
 IAM_analytical = IntegratedActionModelForceMJ(DAM, dt, True)
 IAM_numerical = crocoddyl.IntegratedActionModelEuler(crocoddyl.DifferentialActionModelNumDiff(DAM, True), dt)
 test_IAM(IAM_analytical, IAM_numerical, rmodel)

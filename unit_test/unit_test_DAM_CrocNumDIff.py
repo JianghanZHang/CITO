@@ -26,7 +26,7 @@ def test_DAM(analytical_model: crocoddyl.DifferentialActionModelAbstract, numeri
     u = np.random.rand(analytical_model.nu)
     
     # Compute analytical derivatives
-    analytical_model.calcDiff(analytical_data, x, u)
+    analytical_model.calc(analytical_data, x, u)
     analytical_model.calcDiff(analytical_data, x, u)
     Fx_analytical = analytical_data.Fx
     Fu_analytical = analytical_data.Fu
