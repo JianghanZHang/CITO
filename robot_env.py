@@ -90,11 +90,7 @@ def create_go2_env():
     print(f"Package Dirs: {package_dirs}")
     rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, pin.JointModelFreeFlyer(), True)
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
-    q0_stand = np.array(mj_model.key_qpos).reshape(19, )
-    q0_stand[3] = 0.0
-    q0_stand[4] = 0.0
-    q0_stand[5] = 0.0
-    q0_stand[6] = 1.0
+
     env = {
         "nq" : 19,
         "nv" : 18,
@@ -122,11 +118,7 @@ def create_go2_env_force_MJ():
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
     mj_data = mujoco.MjData(mj_model)
-    q0_stand = np.array(mj_model.key_qpos).reshape(19, )
-    q0_stand[3] = 0.0
-    q0_stand[4] = 0.0
-    q0_stand[5] = 0.0
-    q0_stand[6] = 1.0
+
     env = {
         "nq" : 19,
         "nv" : 18,

@@ -5,6 +5,7 @@ import pinocchio as pin
 import numpy as np
 from differential_model_force_MJ import DifferentialActionModelForceMJ
 from integrated_action_model_MJ import IntegratedActionModelForceMJ
+from CallbackLogger_force import CallbackLogger
 import mim_solvers
 import meshcat
 from force_derivatives import LocalWorldAlignedForceDerivatives
@@ -45,7 +46,7 @@ def main():
     terminalCostModel = crocoddyl.CostModelSum(state, nu)
 
     uResidual = crocoddyl.ResidualModelControl(state, nu)
-    uRegActivation = crocoddyl.ActivationModelWeightedQuad(np.array(12 * [1.0]))
+    uRegActivation = crocoddyl.ActivationModelWeightedQuad(np.array(4 * [0.5, 0.5, 1.0])) 
     uRegCost = crocoddyl.CostModelResidual(state, uRegActivation, uResidual)
 
     xRegActivation = crocoddyl.ActivationModelWeightedQuad(np.array(3 * [0.0]+
@@ -64,11 +65,11 @@ def main():
     xResidual = crocoddyl.ResidualModelState(state, xreg, nu)
     xRegCost = crocoddyl.CostModelResidual(state, xRegActivation, xResidual)
 
-    runningCostModel.addCost("uReg", uRegCost, 1e-2)
+    runningCostModel.addCost("uReg", uRegCost, 1e-1)
     # runningCostModel.addCost("xReg", xRegCost, 1e-2)
     # Constraints (friction cones + complementarity contraints)
-    runningConstraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
-    terminalConstraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
+    constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
+
     abduction_lb = -1.0472
     abduction_ub = 1.0472
 
@@ -100,18 +101,17 @@ def main():
 
     StateResidual = crocoddyl.ResidualModelState(state, np.zeros(37), nu)
     StateLimitConstraint = crocoddyl.ConstraintModelResidual(state, StateResidual, StateLimit_lb, StateLimit_ub)
-    runningConstraintModelManager.addConstraint("StateLimitConstraint", StateLimitConstraint)
-    # terminalConstraintModelManager.addConstraint("StateLimitConstraint", StateLimitConstraint)
+    constraintModelManager.addConstraint("StateLimitConstraint", StateLimitConstraint)
 
-    # # # Control limits
+    # # Control limits
     ControlLimit = np.array(4 * [23.7, 23.7, 45.43])
     ControlRedisual = crocoddyl.ResidualModelControl(state, nu)
     ControlLimitConstraint = crocoddyl.ConstraintModelResidual(state, ControlRedisual, -ControlLimit, ControlLimit)
-    runningConstraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
+    constraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
 
-    P_des = [0.0, 0.0, 0.7]
+    P_des = [1.0, 0.0, 0.280]
     O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
-    V_des = [0.0, 0.0, 0.0]
+    V_des = [2.0, 0.0, 0.0]
     W_des = [0.0, 0.0, 0.0]
     x_des = np.array(P_des + 
                     [O_des[0], O_des[1], O_des[2], O_des[3]] + 
@@ -119,20 +119,20 @@ def main():
                     V_des + 
                     W_des + 
                     v0[6:])
-    xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(2 * [1e2] +  # base x, y position
-                                                                    1 * [1e3] +  # base z position
+    xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(1 * [1e1] +  # base x, y position
+                                                                    2 * [1e0] +  # base z position
                                                                     3 * [1e0] +  # base orientation
-                                                                    12 * [1e-1] +  #joint positions
-                                                                    3 * [1e-1] +  # base linear velocity
-                                                                    3 * [1e-1] +  # base angular velocity
-                                                                    12 * [1e-1]))  # joint velocities
+                                                                    12 * [0] +  #joint positions
+                                                                    3 * [1e0] +  # base linear velocity
+                                                                    3 * [1e0] +  # base angular velocity
+                                                                    12 * [1e-2]))  # joint velocities
 
-    xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(2 * [1e2] +  # base x, y position
-                                                                    1 * [1e3] +  # base z position
+    xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(1 * [1e1] +  # base x, y position
+                                                                    2 * [1e0] +  # base z position
                                                                     3 * [1e0] +  # base orientation
                                                                     12 * [1e0] +  #joint positions
-                                                                    3 * [1e-1] +  # base linear velocity
-                                                                    3 * [1e-1] +  # base angular velocity
+                                                                    3 * [0] +  # base linear velocity
+                                                                    3 * [1e0] +  # base angular velocity
                                                                     12 * [1e-1]))  # joint velocities
 
 
@@ -141,28 +141,28 @@ def main():
     xDesCostRunning = crocoddyl.CostModelResidual(state, xDesActivationRunning, xDesResidual)
     xDesCostTerminal = crocoddyl.CostModelResidual(state, xDesActivationTerminal, xDesResidual)
 
-    runningCostModel.addCost("xDes_running", xDesCostRunning, 1e0)
-    terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 1e1)
+    runningCostModel.addCost("xDes_running", xDesCostRunning, 1e2)
+    terminalCostModel.addCost("xDes_terminal", xDesCostTerminal,  1e1)
 
-    running_DAM = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, fids, runningCostModel, runningConstraintModelManager)
+
+    running_DAM = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, fids, runningCostModel, constraintModelManager)
     terminal_DAM = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, fids, terminalCostModel)
-    
-    # runningModel = IntegratedActionModelForceMJ(running_DAM, dt, True)
-    # terminalModel = IntegratedActionModelForceMJ(terminal_DAM, 0., True)
-
     
     # running_DAM = crocoddyl.DifferentialActionModelNumDiff(running_DAM)
     # terminal_DAM = crocoddyl.DifferentialActionModelNumDiff(terminal_DAM)
-    
+
     # runningModel = crocoddyl.IntegratedActionModelEuler(running_DAM, dt)
     # terminalModel = crocoddyl.IntegratedActionModelEuler(terminal_DAM, 0.)
 
-    x0 = np.array(q0 + v0)
-
-    # problem = crocoddyl.ShootingProblem(x0, [runningModel] * (T), terminalModel)
+    runningModel = IntegratedActionModelForceMJ(running_DAM, dt, True)
     terminalModel = IntegratedActionModelForceMJ(terminal_DAM, 0., True)
 
-    runningModels = [IntegratedActionModelForceMJ(running_DAM, dt, True) for _ in range(T)] 
+    runningModels = [IntegratedActionModelForceMJ(running_DAM, dt, True) for _ in range(T)]
+    for runningModel in runningModels:
+        runningModel.x_lb = StateLimit_lb
+        runningModel.x_ub = StateLimit_ub
+        runningModel.u_lb = -ControlLimit  
+        runningModel.u_ub = ControlLimit 
     x0 = np.array(q0 + v0)
 
     # problem = crocoddyl.ShootingProblem(x0, [runningModel] * (T), terminalModel)
@@ -170,9 +170,8 @@ def main():
     xs_init = [x0 for i in range(T+1)]
     us_init = problem.quasiStatic([x0 for i in range(T)])
 
-    # xs_init, us_init = load_arrays("go2_takeoff_MJ_FDDP")
-    # import pdb; pdb.set_trace()
-    
+    # xs_init, us_init = load_arrays("go2_walking_MJ_CSQP1")
+
    
     maxIter = 500
 
@@ -216,7 +215,7 @@ def main():
     crocoddyl.plotOCSolution(xs, us)
 
     forces = np.array([runningModel.forces[:, :3] for runningModel in problem.runningModels])
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
 
     formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
     save = sys.argv[2]
@@ -239,6 +238,7 @@ def main():
     viz.display_frames = True
     arrows = []
     fids = fids
+    import time
     # import pdb; pdb.set_trace
     for i in range(len(fids)):
         arrows.append(Arrow(viz.viewer, "force" + str(i), length_scale=0.01))

@@ -4,13 +4,13 @@
 
   <option cone="elliptic" impratio="1.0" 
           integrator="Euler"
-          timestep="0.1" 
-          iterations='1000000' ls_iterations="50" solver='Newton' tolerance="1e-8">
-    <flag   eulerdamp="disable"
+          timestep="0.010" 
+          iterations='1000' ls_iterations="50" solver='PGS' tolerance="1e-8">
+    <flag   eulerdamp="enable"
             clampctrl="disable"
             warmstart="disable"
             frictionloss="disable"
-            autoreset="enable"
+            autoreset="disable"
             fwdinv="enable"
             midphase="disable"
             invdiscrete="enable">
@@ -20,7 +20,7 @@
     <default class="go2">
       <geom friction="0.6" margin="0.0010" condim="1"/>
       <!-- <joint axis="0 1 0" damping="2" armature="0.01" frictionloss="0.2"/> -->
-      <joint axis="0 1 0" damping="0" armature="0.0" frictionloss="0.0"/>
+      <joint axis="0 1 0" damping="0" armature="0.1" frictionloss="0.0"/>
       <!-- <joint axis="0 1 0"/> -->
       <!-- <motor ctrlrange="-23.7 23.7"/> -->
       <motor ctrlrange="-23.7 23.7" ctrllimited="false"/>
@@ -55,7 +55,7 @@
         <geom group="3"/>
         <default class="foot">
           <geom size="0.022" pos="-0.002 0 -0.213" priority="1" condim="3"
-           solimp="0.015 1 0.010" solref="-100 -10"
+           solimp="0.95 1 0.022" solref="-5000 -1"
             friction="1.0"/>
         </default>
       </default>
