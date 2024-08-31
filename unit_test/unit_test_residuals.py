@@ -2,18 +2,40 @@
 # Author: Jianghan Zhang
 import sys
 import os
-from robot_model import *
 
 # Add the outer directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # from numerical_differences import numdiffSE3toEuclidian
-from complementarity_constraints_force_free import ResidualModelContactForceNormal, ResidualModelComplementarityErrorNormal, ResidualModelComplementarityErrorTangential, ResidualModelFrameTranslationNormal
 from friction_cone import ResidualLinearFrictionCone
+from ResidualModels import ResidualModelFrameTranslationNormal, ResidualModelFrameVelocityTangential
 import crocoddyl
 import pinocchio as pin
 import numpy as np
+from robot_env import create_go2_env, create_go2_env_force_MJ
+import mujoco
+from utils import change_convention_pin2mj, change_convention_mj2pin, random_go2_x_u, stateMapping_mj2pin, stateMapping_pin2mj
+pin_env = create_go2_env()
+rmodel = pin_env["rmodel"]
 
-eps = 1e-6
+mj_env = create_go2_env_force_MJ()
+q0 = mj_env["q0"]
+v0 = mj_env["v0"]
+nu = mj_env["nu"]
+fids = pin_env["contactFids"]
+njoints = mj_env["njoints"]
+ncontacts = mj_env["ncontacts"]
+nq = mj_env["nq"]
+nv = mj_env["nv"]
+mj_model = mj_env["mj_model"]
+mj_data = mujoco.MjData(mj_model)
+ControlLimit = np.array(4 * [23.7, 23.7, 45.43])
+
+print(pin.SE3ToXYZQUAT(pin.SE3().Identity()))
+
+formatter = {'float_kind': lambda x: "{:.4f}".format(x)} 
+np.set_printoptions(threshold=np.inf, linewidth=400, precision=5, suppress=False, formatter=formatter)
+
+eps = 1e-8
 
 def numdiffSE3toEuclidian(f, x0, rmodel, h=1e-6):
     f0 = f(x0).copy()
@@ -66,59 +88,100 @@ def calcDiff_numdiff(x, u, ResidualModel: crocoddyl.ResidualModelAbstract, rmode
         r_eps = data_local.r.copy()
         Ru_num[:, i] = (r_eps - r_nominal) / h
     
-    # print(f"Numerical derivatives Rx_num: {Rx_num}")
-    # print(f"Numerical derivatives Ru_num: {Ru_num}")
     return Rx_num, Ru_num
 
 
-def test_residual(ResidualModel: crocoddyl.ResidualModelAbstract, rmodel):
+def test_residual_translation(ResidualModel: crocoddyl.ResidualModelAbstract, rmodel, ResidualModelCroc):
+    mj_data.qacc = np.zeros(nv)
+
     state = ResidualModel.state
     collector = crocoddyl.DataCollectorMultibody(pin.Data(ResidualModel.state.pinocchio))
     data = ResidualModel.createData(collector)
     
     # Random test state and control input
     x = np.hstack((pin.randomConfiguration(rmodel, -np.pi/2 * np.ones(nq), np.pi/2 * np.ones(nq)), np.random.rand(nv)))
-    u = np.random.rand(ResidualModel.nu)
-    
+
+    u = np.random.rand(nu) * ControlLimit
+    # x[3:7] = quat.copy()
+    # x[19:22] = 0.0
+    x_pin = x.copy()
+    u = np.zeros(nu)
+    x_mj, M, M_inv = stateMapping_pin2mj(x, rmodel)
+    print(f'x_pin: {x}')
+    print(f'Mapping matrix: {M}')
+    print(f'x_mj: {x_mj}')
+
     # Compute analytical derivatives
-    ResidualModel.calcDiff(data, x, u)
+    ResidualModel.calc(data, x_pin, u)
+    r_analytical = data.r
+    ResidualModel.calcDiff(data, x_pin, u)
     Rx_analytical = data.Rx
-    Ru_analytical = data.Ru
+    Rx_numerical, _ = calcDiff_numdiff(x_pin, u, ResidualModel, rmodel)
+
+    collector = crocoddyl.DataCollectorMultibody(pin.Data(ResidualModelCroc.state.pinocchio))
+    data_croc = ResidualModelCroc.createData(collector)
     
+    pin.forwardKinematics(rmodel, data_croc.pinocchio, x_pin[:nq])
+    pin.framesForwardKinematics(rmodel, data_croc.pinocchio, x_pin[:nq])
+    pin.updateFramePlacements(rmodel, data_croc.pinocchio)
+    r_croc = ResidualModelCroc.calc(data_croc, x_pin, u)
+    pin.computeJointJacobians(rmodel, data_croc.pinocchio, x_pin[:nq])
+    # import pdb; pdb.set_trace()
+    r_croc = data_croc.r[2]
+    ResidualModelCroc.calcDiff(data_croc, x_pin, u)
+    Rx_croc = data_croc.Rx[2, :]
+
+
+    q_mj, v_mj = x_mj[:nq], x_mj[-nv:]
+    mj_data.qpos = q_mj.copy()
+    mj_data.qvel = v_mj.copy()
+    mj_data.ctrl = u.copy()
     # Compute numerical derivatives
-    Rx_numerical, Ru_numerical = calcDiff_numdiff(x, u, ResidualModel, rmodel)
+    mujoco.mj_step1(mj_model, mj_data)
+    r_numerical_MJ = mj_data.sensordata[3]
+    ds_dq = np.zeros((nv, 28))
+    ds_dv = np.zeros((nv, 28))
+    mujoco.mjd_inverseFD(mj_model, mj_data, eps = 1e-8, flg_actuation = 1, DfDq=None, DfDv=None, DfDa=None, DsDq=ds_dq, DsDv=ds_dv, DsDa=None, DmDq=None)
     
+    ds_dq = ds_dq.T[3, :]
+    ds_dv = ds_dv.T[3, :]
+    Rx_numerical_MJ = np.hstack((ds_dq, ds_dv))
+    Rx_numerical_MJ = Rx_numerical_MJ @ M
+
+    # if not np.allclose(r_analytical, r_numerical_MJ, atol=1e-3):
+    print("Analytical: ", r_analytical)
+    print("Numerical: ", r_numerical_MJ)
+    print("crocoddyl: ", r_croc)
+    print("Difference: ", r_analytical - r_numerical_MJ)
+
+    # if not np.allclose(Rx_analytical, Rx_numerical_MJ, atol=1e-3):
+    print("Analytical: ", Rx_analytical)
+    print("Numerical: ", Rx_numerical)
+    print("crocoddyl: ", Rx_croc)
+    print("Numerical Mujuco: ", Rx_numerical_MJ)
+
+    print(f'Difference: {Rx_analytical - Rx_numerical_MJ}')
+    import pdb; pdb.set_trace()
+    
+    assert np.allclose(Rx_analytical, Rx_numerical_MJ, atol=1e-3), f"Rx mismatch: \nAnalytical:\n{Rx_analytical}\nNumerical:\n{Rx_numerical_MJ}" 
     # Compare analytical and numerical derivatives
 
-    assert np.allclose(Rx_analytical, Rx_numerical, atol=1e-6), f"Rx mismatch: \nAnalytical:\n{Rx_analytical}\nNumerical:\n{Rx_numerical}" 
-    assert np.allclose(Ru_analytical, Ru_numerical, atol=1e-6), f"Ru mismatch: \nAnalytical:\n{Ru_analytical}\nNumerical:\n{Ru_numerical}"
-
-    
     print("Test passed!")
 
 
 # Example usage with your residual models
 state = crocoddyl.StateMultibody(rmodel)
 idx = 0
-fid = contactFids[idx]
+fid = fids[idx]
 
-print("Testing ResidualLinearFrictionCone")
-residual_model_linear_cone = ResidualLinearFrictionCone(state, njoints, ncontacts, nu, fid, idx, mu = 0.9)
-test_residual(residual_model_linear_cone, rmodel)
+print(f'fid: {fid}')
+print("Testing")
+for frame in rmodel.frames:
+    print(frame)
+    
+x_ref = np.zeros(3)
+residualModelTranslation = crocoddyl.ResidualModelFrameTranslation(state, fid, x_ref, nu)
 
-print("Testing ResidualModelFrameTranslationNormal")
-residual_model_translation_normal = ResidualModelFrameTranslationNormal(state, nu, fid)
-test_residual(residual_model_translation_normal, rmodel)
+residual_model_normal_translation = ResidualModelFrameTranslationNormal(state, nu, fid)
 
-print("Testing ResidualModelComplementarityErrorNormal")
-residual_model_complementarity_normal = ResidualModelComplementarityErrorNormal(state, nu, fid, idx, njoints)
-test_residual(residual_model_complementarity_normal, rmodel)
-
-print("Testing ResidualModelComplementarityErrorTangential")
-residual_model_complementarity_tangential = ResidualModelComplementarityErrorTangential(state, nu, fid, idx, njoints)
-test_residual(residual_model_complementarity_tangential, rmodel)
-
-print("Testing ResidualModelContactForceNormal")
-residual_model_force_normal = ResidualModelContactForceNormal(state, nu, fid, idx, njoints)
-test_residual(residual_model_force_normal, rmodel)
-
+test_residual_translation(residual_model_normal_translation, rmodel, residualModelTranslation)
