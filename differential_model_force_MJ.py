@@ -6,7 +6,7 @@ import mujoco
 import pinocchio as pin
 
 class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
-    def __init__(self, mj_model, mj_data, state, nu, nq_j, fids, costModel, constraintModel = None):
+    def __init__(self, mj_model, state, nu, nq_j, fids, costModel, constraintModel):
         """
         Forward Model with contact forces as explicit variables
         Input:
@@ -28,8 +28,8 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
         self.nq_j = nq_j
         self.tau = np.zeros(self.state.nv)
         self.mj_model = mj_model
-        self.mj_data = mj_data
-        print(f'INITIALIZE DifferentialActionModelForceMJ with constraints: {self.constraints}')
+        self.mj_data = mujoco.MjData(mj_model)
+        # print(f'INITIALIZE DifferentialActionModelForceMJ with constraints: {self.constraints}')
     def calc(self, data, x, u=None):
         q, v = x[: self.state.nq], x[-self.state.nv :]
         self.mj_data.qpos = q.copy()
@@ -42,7 +42,6 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
         else:
             self.mj_data.ctrl = np.zeros(self.mj_model.nu)
             # self.mj_data.actuator_force = np.zeros(self.mj_model.nu)
-
 
         rmodel, rdata = self.state.pinocchio, data.pinocchio
         fids = self.fids
@@ -80,7 +79,6 @@ class DifferentialActionModelForceMJ(crocoddyl.DifferentialActionModelAbstract):
         # print(f'actuator_force: \n {self.mj_data.actuator_force}')
         # print(f'_________________________________________________________')
 
-        # import pdb; pdb.set_trace()
     def calcDiff(self, data, x, u=None):       
         pass
 

@@ -4,7 +4,7 @@ import crocoddyl
 import pinocchio as pin
 import numpy as np
 from differential_model_force_MJ import DifferentialActionModelForceMJ
-from integrated_action_model_MJ import IntegratedActionModelForceMJ
+from integrated_action_model_MJ_copy import IntegratedActionModelForceMJ
 import mim_solvers
 import meshcat
 from force_derivatives import LocalWorldAlignedForceDerivatives

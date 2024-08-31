@@ -20,4 +20,45 @@
     <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
   </worldbody>
+
+  <contact>
+    <pair geom1="floor" geom2="FL" friction="1.0" condim="3"
+      solimp="0.999 1.0 0.001 0.5 2" 
+      solref="-500 -50"
+      solreffriction="-0.1 -0"/>
+
+    <pair geom1="floor" geom2="FR" friction="1.0" condim="3"
+      solimp="0.999 1.0 0.001 0.5 2" 
+      solref="-500 -50"
+      solreffriction="-0.1 -0.0"/>
+      
+    <pair geom1="floor" geom2="RL" friction="1.0" condim="3"
+      solimp="0.999 1.0 0.001 0.5 2" 
+      solref="-500 -50"
+      solreffriction="-0.1 -0"/>
+      
+    <pair geom1="floor" geom2="RR" friction="1.0" condim="3"
+      solimp="0.999 1.0 0.001 0.5 2" 
+      solref="-500 -50"
+      solreffriction="-0.1 -0"/>
+  </contact>
+
+  <sensor>
+    <touch name="FL_touch" site="FL_force_site"/>
+    <framepos name="FL_pos" objtype="site" objname="FL_posvel_site" reftype="geom" refname="floor"/>
+    <framelinvel name="FL_linvel" objtype="site" objname="FL_posvel_site" reftype="geom" refname="floor"/>
+    
+    <touch name="FR_touch" site="FR_force_site"/>
+    <framepos name="FR_pos" objtype="site" objname="FR_posvel_site" reftype="geom" refname="floor"/>
+    <framelinvel name="FR_linvel" objtype="site" objname="FR_posvel_site" reftype="geom" refname="floor"/>
+    
+    <touch name="RL_touch" site="RL_force_site"/>
+    <framepos name="RL_pos" objtype="site" objname="RL_posvel_site" reftype="geom" refname="floor"/>
+    <framelinvel name="RL_linvel" objtype="site" objname="RL_posvel_site" reftype="geom" refname="floor"/>
+
+    <touch name="RR_touch" site="RR_force_site"/>
+    <framepos name="RR_pos" objtype="site" objname="RR_posvel_site" reftype="geom" refname="floor"/>
+    <framelinvel name="RR_linvel" objtype="site" objname="RR_posvel_site" reftype="geom" refname="floor"/>
+  </sensor>
+
 </mujoco>

@@ -226,11 +226,6 @@ Stephen Brawner (brawner@gmail.com)
       link="FL_hip" />
     <axis
       xyz="1 0 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="FL_thigh">
@@ -281,11 +276,6 @@ Stephen Brawner (brawner@gmail.com)
       link="FL_thigh" />
     <axis
       xyz="0 1 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="FL_calf">
@@ -336,11 +326,6 @@ Stephen Brawner (brawner@gmail.com)
       link="FL_calf" />
     <axis
       xyz="0 1 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="FL_calflower">
@@ -485,11 +470,6 @@ Stephen Brawner (brawner@gmail.com)
       link="FR_hip" />
     <axis
       xyz="1 0 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="FR_thigh">
@@ -540,11 +520,6 @@ Stephen Brawner (brawner@gmail.com)
       link="FR_thigh" />
     <axis
       xyz="0 1 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="FR_calf">
@@ -595,11 +570,6 @@ Stephen Brawner (brawner@gmail.com)
       link="FR_calf" />
     <axis
       xyz="0 1 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="FR_calflower">
@@ -744,11 +714,6 @@ Stephen Brawner (brawner@gmail.com)
       link="RL_hip" />
     <axis
       xyz="1 0 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="RL_thigh">
@@ -799,11 +764,6 @@ Stephen Brawner (brawner@gmail.com)
       link="RL_thigh" />
     <axis
       xyz="0 1 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="RL_calf">
@@ -854,11 +814,6 @@ Stephen Brawner (brawner@gmail.com)
       link="RL_calf" />
     <axis
       xyz="0 1 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="RL_calflower">
@@ -1003,11 +958,6 @@ Stephen Brawner (brawner@gmail.com)
       link="RR_hip" />
     <axis
       xyz="1 0 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="RR_thigh">
@@ -1058,11 +1008,6 @@ Stephen Brawner (brawner@gmail.com)
       link="RR_thigh" />
     <axis
       xyz="0 1 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="RR_calf">
@@ -1113,11 +1058,6 @@ Stephen Brawner (brawner@gmail.com)
       link="RR_calf" />
     <axis
       xyz="0 1 0" />
-    <limit
-      lower="-10"
-      upper="10"
-      effort="1000"
-      velocity="1000" />
   </joint>
   <link
     name="RR_calflower">

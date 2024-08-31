@@ -6,7 +6,7 @@ import pinocchio as pin
 from robot_descriptions.loaders.pinocchio import load_robot_description
 from robot_descriptions import go2_description
 import numpy as np
-
+ROOT_JOINT_INDEX = 1
 go2_init_conf1 = np.array([0.0000, 0.0000, 0.2700 + 0.1225, 
                 0.0000, 0.0000, 0.0000, 1.0000, 
                 0.0000, 0.4000, -0.8000, 
@@ -14,12 +14,19 @@ go2_init_conf1 = np.array([0.0000, 0.0000, 0.2700 + 0.1225,
                 0.0000, 0.4000, -0.8000, 
                 0.0000, 0.4000, -0.8000])
                 
-go2_init_conf0 = np.array([0.0000, 0.0000, 0.2800, 
+go2_init_conf0 = np.array([0.0000, 0.0000, 0.2900, 
                 0.0000, 0.0000, 0.0000, 1.0000, 
                 0.0000, 0.9000, -1.8000, 
                 0.0000, 0.9000, -1.8000, 
                 0.0000, 0.9000, -1.8000, 
                 0.0000, 0.9000, -1.8000])
+
+go2_v0 = np.array([0.0000, 0.0000, 0.0000, 
+                0.0000, 0.0000, 0.0000, 
+                0.0000, 0.0000, 0.0000, 
+                0.0000, 0.0000, 0.0000, 
+                0.0000, 0.0000, 0.0000, 
+                0.0000, 0.0000, 0.0000])
                 
 
 def create_solo12_env_free_force():
@@ -88,7 +95,7 @@ def create_go2_env():
 
     print(f"URDF Path: {urdf_path}")
     print(f"Package Dirs: {package_dirs}")
-    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, pin.JointModelFreeFlyer(), True)
+    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, root_joint= pin.JointModelFreeFlyer(), verbose=True)
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
 
     env = {
@@ -103,7 +110,7 @@ def create_go2_env():
         "contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"],
         "contactFids" : [],
         "q0" : list(go2_init_conf0),
-        "v0" : list(mj_model.key_qvel.reshape(18, )),
+        "v0" : list(go2_v0),
     }
     
     env["nf"] = 3 * env["ncontacts"]
@@ -117,20 +124,20 @@ def create_go2_env():
 def create_go2_env_force_MJ():
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
-    mj_data = mujoco.MjData(mj_model)
+    # mj_data = mujoco.MjData(mj_model)
 
     env = {
         "nq" : 19,
         "nv" : 18,
         "mj_model" : mj_model,
-        "mj_data" : mj_data,
+        # "mj_data" : mj_data,
         "nu" : 12,
         "njoints" : 12,
         "ncontacts" : 4,
         "contactFnames" : ["FL", "FR", "RL", "RR"],
         "contactFids" : [],
         "q0" : list(go2_init_conf0),
-        "v0" : list(mj_model.key_qvel.reshape(18, )),
+        "v0" : list(go2_v0),
     }
 
     env["nf"] = 3 * env["ncontacts"]
@@ -139,3 +146,4 @@ def create_go2_env_force_MJ():
         env["contactFids"].append(mj_model.geom(name=frameName).id)
 
     return env
+
