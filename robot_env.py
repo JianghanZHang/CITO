@@ -7,6 +7,9 @@ from robot_descriptions.loaders.pinocchio import load_robot_description
 from robot_descriptions import go2_description
 import numpy as np
 ROOT_JOINT_INDEX = 1
+GO2_FOOT_RADIUS = 0.0230
+# GO2_FOOT_RADIUS = 0.0
+
 go2_init_conf1 = np.array([0.0000, 0.0000, 0.2700 + 0.1225, 
                 0.0000, 0.0000, 0.0000, 1.0000, 
                 0.0000, 0.4000, -0.8000, 
@@ -14,7 +17,7 @@ go2_init_conf1 = np.array([0.0000, 0.0000, 0.2700 + 0.1225,
                 0.0000, 0.4000, -0.8000, 
                 0.0000, 0.4000, -0.8000])
                 
-go2_init_conf0 = np.array([0.0000, 0.0000, 0.2900, 
+go2_init_conf0 = np.array([0.0000, 0.0000, 0.2980, 
                 0.0000, 0.0000, 0.0000, 1.0000, 
                 0.0000, 0.9000, -1.8000, 
                 0.0000, 0.9000, -1.8000, 

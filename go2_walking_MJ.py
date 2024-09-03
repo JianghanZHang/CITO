@@ -12,8 +12,9 @@ from force_derivatives import LocalWorldAlignedForceDerivatives
 from trajectory_data import save_arrays, load_arrays
 from utils import Arrow
 from utils import xyzw2wxyz, wxyz2xyzw
-from ResidualModels import ResidualModelFootClearance
+from ResidualModels import ResidualModelFootClearance, ResidualModelFootSlipping
 import sys
+from robot_env import GO2_FOOT_RADIUS
 def main():
     solver_type = sys.argv[1]
 
@@ -34,7 +35,7 @@ def main():
 
     ###################
     dt = mj_model.opt.timestep         #
-    T = 20            #
+    T = 40            #
     ###################
 
     # q0[2] -= 0.02705 # To establish contacts with the ground.
@@ -67,10 +68,11 @@ def main():
     xResidual = crocoddyl.ResidualModelState(state, xreg, nu)
     xRegCost = crocoddyl.CostModelResidual(state, xRegActivation, xResidual)
 
-    runningCostModel.addCost("uReg", uRegCost, 1e-3)
     # runningCostModel.addCost("xReg", xRegCost, 1e-2)
     # Constraints (friction cones + complementarity contraints)
     constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
+    constraintModelManager0 = crocoddyl.ConstraintModelManager(state, nu)
+    
 
     abduction_lb = -1.0472
     abduction_ub = 1.0472
@@ -103,24 +105,40 @@ def main():
 
     StateResidual = crocoddyl.ResidualModelState(state, np.zeros(37), nu)
     StateLimitConstraint = crocoddyl.ConstraintModelResidual(state, StateResidual, StateLimit_lb, StateLimit_ub)
-    # constraintModelManager.addConstraint("StateLimitConstraint", StateLimitConstraint)
+    # constraintModelManager.addConstraint("StateLimitConstraint",su StateLimitConstraint)
 
     # # Control limits
     ControlLimit = np.array(4 * [23.7, 23.7, 45.43])
     ControlRedisual = crocoddyl.ResidualModelControl(state, nu)
     ControlLimitConstraint = crocoddyl.ConstraintModelResidual(state, ControlRedisual, -ControlLimit, ControlLimit)
     constraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
+    constraintModelManager0.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
 
+    if solver_type == "CSQP":
+        relaxation = 1e-6
+        for idx, fid in enumerate(fids):
+            footSlippingResidual = ResidualModelFootSlipping(state, nu, fid)
+            footSlippingConstraint = crocoddyl.ConstraintModelResidual(state, footSlippingResidual, np.array([-relaxation]), np.array([np.inf]))
+            constraintModelManager.addConstraint(f"footSlipping_{idx}", footSlippingConstraint)
+        w = 0
+
+    elif solver_type == "FDDP":
+        w = 1e1
+    
     for idx, fid in enumerate(fids):
-        footClearanceResidual = ResidualModelFootClearance(state, nu, fid, sigmoid_steepness=-10)
+        footClearanceResidual = ResidualModelFootClearance(state, nu, fid, sigmoid_steepness=-3)
         footClearanceActivation = crocoddyl.ActivationModelSmooth1Norm(nr=1, eps=1e-12)
         footClearanceCost = crocoddyl.CostModelResidual(state, footClearanceActivation, footClearanceResidual)
-        runningCostModel.addCost(f"footClearance_{idx}", footClearanceCost, 1e1)
+        runningCostModel.addCost(f"footClearance_{idx}", footClearanceCost, w)
+        terminalCostModel.addCost(f"footClearance_{idx}", footClearanceCost, dt * w)
 
-    P_des = [0.35, 0.0, 0.2800]
+    Px_des = 0.5
+    Vx_des = 1.0
+
+    P_des = [Px_des, 0.0, 0.2800]
     O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
 
-    V_des = [0.7, 0.0, 0.0]
+    V_des = [Vx_des, 0.0, 0.0]
     W_des = [0.0, 0.0, 0.0]
     x_des = np.array(P_des + 
                     [O_des[0], O_des[1], O_des[2], O_des[3]] + 
@@ -140,23 +158,24 @@ def main():
                                                                     12 * [1e-1]))  # joint velocities
 
     xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(
-                                                                    1 * [1e2] +  # base x position
-                                                                    1 * [1e2] +  # base y position
-                                                                    1 * [1e2] +  # base z position
-                                                                    3 * [1e0] +  # base orientation
-                                                                    12 * [1e1] +  #joint positions
+                                                                    1 * [1e3] +  # base x position
+                                                                    1 * [1e3] +  # base y position
+                                                                    1 * [1e3] +  # base z position
+                                                                    3 * [1e1] +  # base orientation
+                                                                    12 * [1e0] +  #joint positions
                                                                     3 * [0] +  # base linear velocity
                                                                     3 * [1e0] +  # base angular velocity
                                                                     12 * [1e-1]))  # joint velocities
 
 
+    runningCostModel.addCost("uReg", uRegCost, 1e-3)
 
     xDesResidual = crocoddyl.ResidualModelState(state, x_des, nu)
     xDesCostRunning = crocoddyl.CostModelResidual(state, xDesActivationRunning, xDesResidual)
     xDesCostTerminal = crocoddyl.CostModelResidual(state, xDesActivationTerminal, xDesResidual)
 
-    runningCostModel.addCost("xDes_running", xDesCostRunning, 1e2)
-    terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 1e2)
+    runningCostModel.addCost("xDes_running", xDesCostRunning, 1e1)
+    terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 1e1)
 
 
     terminal_DAM = DifferentialActionModelForceMJ(mj_model, state, nu, njoints, fids, terminalCostModel, None)
@@ -165,6 +184,8 @@ def main():
     runningModels = [IntegratedActionModelForceMJ
                      (DifferentialActionModelForceMJ(mj_model, state, nu, njoints, fids, runningCostModel, constraintModelManager), dt, True) 
                     for _ in range(T)]
+    
+    runningModels[0] = IntegratedActionModelForceMJ(DifferentialActionModelForceMJ(mj_model, state, nu, njoints, fids, runningCostModel, constraintModelManager0), dt, False)
     
     terminalModel = IntegratedActionModelForceMJ(terminal_DAM, 0., True)
 
@@ -176,26 +197,46 @@ def main():
         runningModel.u_ub = ControlLimit
 
     x0 = np.array(q0 + v0)
-
+    x0[2] = 0.28800
     problem = crocoddyl.ShootingProblem(x0, runningModels, terminalModel)
-    xs_init = [x0 for i in range(T+1)]
+
+    base_x_start = x0[0].copy()
+    base_x_end = Px_des
+    num_steps = T + 1 
+    base_x_values = np.linspace(base_x_start, base_x_end, num_steps)
+
+    # Initialize xs_init with the interpolated X position
+    xs_init = [np.copy(x0) for _ in range(num_steps)]
+    if solver_type == "CSQP":
+        for i in range(1, num_steps):
+            xs_init[i][2] = 0.28800 
+            xs_init[i][0] = base_x_values[i] 
+            # xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
+    
+    elif solver_type == "FDDP":
+        for i in range(1, num_steps):
+            xs_init[i][2] = 0.29800
+            xs_init[i][0] = base_x_values[i] 
+            # xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
+
     us_init = [np.zeros(nu) for i in range(T)]
     # xs_init, us_init = load_arrays("go2_walking_MJ_CSQP1")
-   
+    print(f'xs_init[0]: {xs_init[0]}')
+    print(f'xs_init[-1]: {xs_init[-1]}')
     maxIter = 100
 
     print('Start solving')
 
     if solver_type == "CSQP":
         solver = mim_solvers.SolverCSQP(problem)
-        solver.mu_constriant = 10.
+        solver.mu_constriant = 10000.
         solver.mu_dynamic = 10.
         solver.setCallbacks([mim_solvers.CallbackVerbose(), mim_solvers.CallbackLogger()])
-        solver.use_filter_line_search = False
+        solver.use_filter_line_search = True
         solver.verbose = True
         solver.termination_tolerance = 1e-3
         solver.remove_reg = False
-        solver.max_qp_iters = 1000
+        solver.max_qp_iters = 2500
         flag = solver.solve(xs_init, us_init, maxiter=maxIter, isFeasible=False)
 
     elif solver_type == "FDDP":
@@ -278,36 +319,20 @@ def main():
             print(f'foot id:{eff}')
             print(f'forces: {forces[i][eff]}')
             # print(f'contact forces:{force_t[3*eff:3*(eff+1)]}')
-            print(f'distance:{rdata.oMf[fid].translation[2]}')
+            print(f'distance:{rdata.oMf[fid].translation[2] - GO2_FOOT_RADIUS}')
 
-            foot_clearance_cost_0 = runningData.differential.costs.costs["footClearance_0"].cost
-            foot_clearance_weight_0 = runningModel.differential.costs.costs["footClearance_0"].weight
-            
-            foot_clearance_cost_1 = runningData.differential.costs.costs["footClearance_1"].cost
-            foot_clearance_weight_1 = runningModel.differential.costs.costs["footClearance_1"].weight
+            name = "footClearance_" + str(eff)
 
-            foot_clearance_cost_2 = runningData.differential.costs.costs["footClearance_2"].cost
-            foot_clearance_weight_2 = runningModel.differential.costs.costs["footClearance_2"].weight
 
-            foot_clearance_cost_3 = runningData.differential.costs.costs["footClearance_3"].cost
-            foot_clearance_weight_3 = runningModel.differential.costs.costs["footClearance_3"].weight
+            foot_clearance_cost = runningData.differential.costs.costs[name].cost
+            foot_clearance_weight = runningModel.differential.costs.costs[name].weight
 
-            xdes_running_cost = runningData.differential.costs.costs["xDes_running"].cost
-            xdes_running_weight = runningModel.differential.costs.costs["xDes_running"].weight
+            print(f'foot clearance cost: {foot_clearance_cost * foot_clearance_weight}\n')
 
             ureg_cost = runningData.differential.costs.costs["uReg"].cost
             ureg_weight = runningModel.differential.costs.costs["uReg"].weight
 
-        print(f'********************************Running node: {i}********************************\n')
-        print(f'foot_clearance_cost_0: {foot_clearance_cost_0 * foot_clearance_weight_0}\n')
-        print(f'foot_clearance_cost_1: {foot_clearance_cost_1 * foot_clearance_weight_1}\n')
-        print(f'foot_clearance_cost_2: {foot_clearance_cost_2 * foot_clearance_weight_2}\n')
-        print(f'foot_clearance_cost_3: {foot_clearance_cost_3 * foot_clearance_weight_3}\n')
-        print(f'foot_clearance_cost sum: {foot_clearance_cost_0 * foot_clearance_weight_0+
-                                        foot_clearance_cost_1 * foot_clearance_weight_1+
-                                        foot_clearance_cost_2 * foot_clearance_weight_2+
-                                        foot_clearance_cost_3 * foot_clearance_weight_3}')
-        print(f'\nxdes_running_cost: {xdes_running_cost * xdes_running_weight} ')
+
         print(f'\nureg_cost: {ureg_cost * ureg_weight} ')
 
         print(f'__________________________________________')

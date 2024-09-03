@@ -2,11 +2,15 @@
   <!-- <compiler angle="radian" meshdir="assets"/> -->
   <compiler angle="radian" meshdir="assets" autolimits="false"/>
 
-  <!-- <option cone="elliptic" impratio="100"  -->
+
+
+  <!-- <option cone="elliptic" impratio="1"  -->
   <option cone="pyramidal" impratio="1.0" 
           integrator="Euler"
-          timestep="0.025" 
-          iterations="10000" ls_iterations="50" solver='Newton' tolerance="1e-8">
+          timestep="0.0125" 
+          iterations="10000" ls_iterations="50" solver='Newton' tolerance="1e-8"
+          mpr_iterations="100" mpr_tolerance="1e-8"
+          sdf_iterations="1000" sdf_initpoints="100">
           <!-- noslip_iterations="1000" noslip_tolerance="1e-6"> -->
     <flag   eulerdamp="enable"
             clampctrl="disable"
@@ -29,7 +33,7 @@
     </default>
 
     <default class="go2">
-      <geom friction="0.6" margin="0.001" condim="1"/>
+      <geom friction="0.6" margin="0.000" condim="1"/>
       <!-- <joint axis="0 1 0" damping="2" armature="0.01" frictionloss="0.2"/> -->
       <joint axis="0 1 0" damping="2.0" armature="0.01" frictionloss="0.2"/>
       <!-- <joint axis="0 1 0"/> -->
@@ -66,13 +70,9 @@
         <geom group="3"/>
         <default class="foot">
           <geom size="0.022" pos="-0.002 0 -0.213" priority="1"  
-           contype="0" conaffinity="0" friction="1.5"/>
-           <!-- solimp="0.99 1.0 0.01" condim="3" -->
-           <!-- solref="-250 -2"   -->
-            <!-- friction="0.999999"/> -->
-           <!-- solref[1] * solimp[2] = 2 -->
-           <!-- contype="0" conaffinity="0" -->
-           <!-- solreffriction="-1000 -1" -->
+           contype="0" conaffinity="0" friction="1.0"/>
+          <!-- <geom size="0.000001" pos="-0.002 0 -0.235" priority="1"   -->
+           <!-- contype="0" conaffinity="0" friction="1.0"/> -->
         </default>
       </default>
     </default>
@@ -137,8 +137,8 @@
             <joint name="FL_calf_joint" class="knee"/>
             <geom mesh="calf_0" material="gray" class="visual"/>
             <geom mesh="calf_1" material="black" class="visual"/>
-            <geom size="0.012 0.06" pos="0.008 0 -0.06" quat="0.994493 0 -0.104807 0" type="cylinder" class="collision"/>
-            <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0" type="cylinder" class="collision"/>
+            <geom size="0.012 0.06" pos="0.008 0 -0.06" quat="0.994493 0 -0.104807 0" type="cylinder" class="visual_geo"/>
+            <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0" type="cylinder" class="visual_geo"/>
             <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black"/>
             <geom name="FL" class="foot"/>
 
@@ -168,8 +168,8 @@
             <joint name="FR_calf_joint" class="knee"/>
             <geom mesh="calf_mirror_0" material="gray" class="visual"/>
             <geom mesh="calf_mirror_1" material="black" class="visual"/>
-            <geom size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" class="collision"/>
-            <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0" type="cylinder" class="collision"/>
+            <geom size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" class="visual_geo"/>
+            <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0" type="cylinder" class="visual_geo"/>
             <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black"/>
             <geom name="FR" class="foot"/>
 
@@ -199,8 +199,8 @@
             <joint name="RL_calf_joint" class="knee"/>
             <geom mesh="calf_0" material="gray" class="visual"/>
             <geom mesh="calf_1" material="black" class="visual"/>
-            <geom size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" class="collision"/>
-            <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0" type="cylinder" class="collision"/>
+            <geom size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" class="visual_geo"/>
+            <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0" type="cylinder" class="visual_geo"/>
             <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black"/>
             <geom name="RL" class="foot"/>
 
@@ -230,8 +230,8 @@
             <joint name="RR_calf_joint" class="knee"/>
             <geom mesh="calf_mirror_0" material="gray" class="visual"/>
             <geom mesh="calf_mirror_1" material="black" class="visual"/>
-            <geom size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" class="collision"/>
-            <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0" type="cylinder" class="collision"/>
+            <geom size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0" type="cylinder" class="visual_geo"/>
+            <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0" type="cylinder" class="visual_geo"/>
             <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black"/>
             <geom name="RR" class="foot"/>
 

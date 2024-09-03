@@ -22,24 +22,24 @@
   </worldbody>
 
   <contact>
-    <pair geom1="floor" geom2="FL" friction="1.0" condim="3"
-      solimp="0.999 1.0 0.001 0.5 2" 
-      solref="-500 -50"
+    <pair geom1="floor" geom2="FL" friction="1.0" condim="6"
+      solimp="0.0 1.0 0.001 0.5 1" 
+      solref="-1000 -100"
       solreffriction="-0.1 -0"/>
 
-    <pair geom1="floor" geom2="FR" friction="1.0" condim="3"
-      solimp="0.999 1.0 0.001 0.5 2" 
-      solref="-500 -50"
+    <pair geom1="floor" geom2="FR" friction="1.0" condim="6"
+      solimp="0.0 1.0 0.001 0.5 1" 
+      solref="-1000 -100"
       solreffriction="-0.1 -0.0"/>
       
-    <pair geom1="floor" geom2="RL" friction="1.0" condim="3"
-      solimp="0.999 1.0 0.001 0.5 2" 
-      solref="-500 -50"
+    <pair geom1="floor" geom2="RL" friction="1.0" condim="6"
+      solimp="0.0 1.0 0.001 0.5 1" 
+      solref="-1000 -100"
       solreffriction="-0.1 -0"/>
       
-    <pair geom1="floor" geom2="RR" friction="1.0" condim="3"
-      solimp="0.999 1.0 0.001 0.5 2" 
-      solref="-500 -50"
+    <pair geom1="floor" geom2="RR" friction="1.0" condim="6"
+      solimp="0.0 1.0 0.001 0.5 1" 
+      solref="-1000 -100"
       solreffriction="-0.1 -0"/>
   </contact>
 
