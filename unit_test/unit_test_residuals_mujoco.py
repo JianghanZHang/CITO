@@ -14,6 +14,8 @@ from robot_env import create_go2_env, create_go2_env_force_MJ
 import mujoco
 from utils import change_convention_pin2mj, change_convention_mj2pin, stateMapping_mj2pin, stateMapping_pin2mj
 from numerical_difference import stateMappingDerivative_pin2mj_numDiff, stateMappingDerivative_mj2pin_numDiff
+from ResidualModels import ResidualModelFrameVelocityTangentialNumDiff
+from ResidualModels import ResidualModelFootClearance, ResidualModelFootClearanceNumDiff
 pin_env = create_go2_env()
 rmodel = pin_env["rmodel"]
 
@@ -197,6 +199,7 @@ def test_residual_velocity(ResidualModel: crocoddyl.ResidualModelAbstract, Resid
 
     collector = crocoddyl.DataCollectorMultibody(pin.Data(ResidualModelCroc.state.pinocchio))
     data_croc = ResidualModelCroc.createData(collector)
+
     pin.forwardKinematics(rmodel, data_croc.pinocchio, x_pin[:nq], x_pin[nq:])
     pin.updateFramePlacements(rmodel, data_croc.pinocchio)
     r_croc = ResidualModelCroc.calc(data_croc, x_pin, u)
@@ -244,6 +247,61 @@ def test_residual_velocity(ResidualModel: crocoddyl.ResidualModelAbstract, Resid
 
     print("Test passed!")
 
+
+def test_residual_footClearance(ResidualModel: crocoddyl.ResidualModelAbstract, ResidualModelCroc, rmodel):
+
+    state = ResidualModel.state
+    collector = crocoddyl.DataCollectorMultibody(pin.Data(ResidualModel.state.pinocchio))
+    data = ResidualModel.createData(collector)
+    
+    # Random test state and control input
+    x = np.hstack((pin.randomConfiguration(rmodel, -np.pi/2 * np.ones(nq), np.pi/2 * np.ones(nq)), np.random.rand(nv)))
+    x[2] = -1.
+    quat = np.array([0, 0, 0, 1])
+    quat = quat / np.linalg.norm(quat)
+    x[3:7] = quat
+    x[19:22] = 0.0
+    u = np.random.rand(nu) * ControlLimit
+    
+    x_pin = x.copy()
+    print(f'x_pin: {x}')
+    
+    # Compute analytical derivatives
+    ResidualModel.calc(data, x_pin, u)
+    r_analytical = data.r
+    ResidualModel.calcDiff(data, x_pin, u)
+    Rx_analytical = data.Rx
+
+    Rx_numerical, _ = calcDiff_numdiff(x_pin, u, ResidualModel, rmodel)
+
+    collector = crocoddyl.DataCollectorMultibody(pin.Data(ResidualModelCroc.state.pinocchio))
+    data_croc = ResidualModelCroc.createData(collector)
+
+    pin.forwardKinematics(rmodel, data_croc.pinocchio, x_pin[:nq], x_pin[nq:])
+    pin.updateFramePlacements(rmodel, data_croc.pinocchio)
+    r_croc = ResidualModelCroc.calc(data_croc, x_pin, u)
+    r_croc = data_croc.r
+    ResidualModelCroc.calcDiff(data_croc, x_pin, u)
+    Rx_croc = data_croc.Rx
+
+    # if not np.allclose(r_analytical, r_numerical_MJ, atol=1e-3):
+    print("Analytical: ", r_analytical)
+    print("Croco: ", r_croc)
+
+    # if not np.allclose(Rx_analytical, Rx_numerical_MJ, atol=1e-3):
+    print("Analytical: \n", Rx_analytical)
+    print("croccodyl NumDiff: \n", Rx_croc)
+    print("Python Numerical: \n", Rx_numerical)
+
+    print(f'Difference: \n{Rx_numerical - Rx_croc}')
+    # import pdb; pdb.set_trace()
+    
+    assert np.allclose(Rx_croc, Rx_numerical, atol=1e-3), f"Rx mismatch: \nPython NumDiff:\n{Rx_numerical}\nMujoco NumDiff:\n{Rx_numerical_MJ}" 
+    # Compare analytical and numerical derivatives
+
+    print("Test passed!")
+
+
 def main(name):
     # Example usage with your residual models
     state = crocoddyl.StateMultibody(rmodel)
@@ -262,9 +320,15 @@ def main(name):
 
     elif name == "velocity":
         V_ref = pin.Motion(np.zeros(6))
-        residualModelVelocity = crocoddyl.ResidualModelFrameVelocity(state, fid, V_ref, pin.ReferenceFrame.LOCAL_WORLD_ALIGNED)
+        residual_model_tangential_velocity_numDiff = ResidualModelFrameVelocityTangentialNumDiff(state, nu, fid)
+        # residualModelVelocity = crocoddyl.ResidualModelFrameVelocity(state, fid, V_ref, pin.ReferenceFrame.LOCAL_WORLD_ALIGNED)
         residual_model_tangential_velocity = ResidualModelFrameVelocityTangential(state, nu, fid)
-        test_residual_velocity(residual_model_tangential_velocity, residualModelVelocity, rmodel, mj_model)
+        test_residual_velocity(residual_model_tangential_velocity, residual_model_tangential_velocity_numDiff, rmodel, mj_model)
+
+    elif name == "footClearance":
+        residualModelFootClearance = ResidualModelFootClearance(state, nu, fid, sigmoid_steepness=-10)
+        residualModelFootClearanceNumDiff = ResidualModelFootClearanceNumDiff(state, nu, fid, sigmoid_steepness=-10)
+        test_residual_footClearance(residualModelFootClearance, residualModelFootClearanceNumDiff, rmodel)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process an input string.")

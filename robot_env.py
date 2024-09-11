@@ -86,20 +86,14 @@ def create_solo12_env_force_MJ():
 def create_go2_env():
     import os
     urdf_path = "robots/go2_robot_sdk/urdf/go2.urdf"
-    # package_dirs = ["robots/go2_robot_sdk/dae"]
-    # package_dirs = [os.path.join(os.getcwd(), "robots/go2_robot_sdk")]
     package_dirs = ["/home/jianghan/Devel/workspace_autogait/src/auto_gait_generation/robots"]
     
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"
-    # robot_wrapper = load_robot_description("go2_description")
-    # gmodel, vmodel = robot_wrapper.collision_model, robot_wrapper.visual_model
-    # rmodel = pin.buildModelFromUrdf(go2_description.URDF_PATH, pin.JointModelFreeFlyer())
 
 
     print(f"URDF Path: {urdf_path}")
     print(f"Package Dirs: {package_dirs}")
     rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, root_joint= pin.JointModelFreeFlyer(), verbose=True)
-    mj_model = mujoco.MjModel.from_xml_path(xml_path)
 
     env = {
         "nq" : 19,
@@ -112,6 +106,11 @@ def create_go2_env():
         "ncontacts" : 4,
         "contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"],
         "contactFids" : [],
+        "jointFnames" : ["FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+                         "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+                         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
+                         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"],
+        "jointFids" : [],
         "q0" : list(go2_init_conf0),
         "v0" : list(go2_v0),
     }
@@ -121,19 +120,20 @@ def create_go2_env():
     for idx, frameName in enumerate(env["contactFnames"]):
         env["contactFids"].append(env["rmodel"].getFrameId(frameName))
 
+    for idx, frameName in enumerate(env["jointFnames"]):
+        env["jointFids"].append(env["rmodel"].getFrameId(frameName))
+        
     return env
 
 
 def create_go2_env_force_MJ():
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
-    # mj_data = mujoco.MjData(mj_model)
 
     env = {
         "nq" : 19,
         "nv" : 18,
         "mj_model" : mj_model,
-        # "mj_data" : mj_data,
         "nu" : 12,
         "njoints" : 12,
         "ncontacts" : 4,
