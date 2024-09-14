@@ -1,0 +1,64 @@
+<mujoco model="go2 scene">
+  <include file="go2_simulation.xml"/>
+
+  <statistic center="0 0 0.1" extent="0.8"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-130" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+  </worldbody>
+
+  <!-- <contact>
+    <pair geom1="floor" geom2="FL" friction="1.0" condim="6"
+      solimp="0.0 1.0 0.011 0.5 2" 
+      solref="-200 -100"
+      solreffriction="-0.1 -0"/>
+
+    <pair geom1="floor" geom2="FR" friction="1.0" condim="6"
+      solimp="0.0 1.0 0.011 0.5 2" 
+      solref="-200 -100"
+      solreffriction="-0.1 -0.0"/>
+      
+    <pair geom1="floor" geom2="RL" friction="1.0" condim="6"
+      solimp="0.0 1.0 0.011 0.5 2" 
+      solref="-200 -100"
+      solreffriction="-0.1 -0"/>
+      
+    <pair geom1="floor" geom2="RR" friction="1.0" condim="6"
+      solimp="0.0 1.0 0.011 0.5 2" 
+      solref="-200 -100"
+      solreffriction="-0.1 -0"/>
+  </contact> -->
+
+  <sensor>
+    <touch name="FL_touch" site="FL_force_site"/>
+    <framepos name="FL_pos" objtype="site" objname="FL_posvel_site" reftype="geom" refname="floor"/>
+    <framelinvel name="FL_linvel" objtype="site" objname="FL_posvel_site" reftype="geom" refname="floor"/>
+    
+    <touch name="FR_touch" site="FR_force_site"/>
+    <framepos name="FR_pos" objtype="site" objname="FR_posvel_site" reftype="geom" refname="floor"/>
+    <framelinvel name="FR_linvel" objtype="site" objname="FR_posvel_site" reftype="geom" refname="floor"/>
+    
+    <touch name="RL_touch" site="RL_force_site"/>
+    <framepos name="RL_pos" objtype="site" objname="RL_posvel_site" reftype="geom" refname="floor"/>
+    <framelinvel name="RL_linvel" objtype="site" objname="RL_posvel_site" reftype="geom" refname="floor"/>
+
+    <touch name="RR_touch" site="RR_force_site"/>
+    <framepos name="RR_pos" objtype="site" objname="RR_posvel_site" reftype="geom" refname="floor"/>
+    <framelinvel name="RR_linvel" objtype="site" objname="RR_posvel_site" reftype="geom" refname="floor"/>
+  </sensor>
+
+</mujoco>

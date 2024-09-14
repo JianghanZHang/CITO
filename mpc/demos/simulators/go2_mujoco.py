@@ -71,7 +71,7 @@ class Go2Sim:
 
         self.q0 = self.initial_q
 
-        self.pos0 = np.array([0., 0., 0.2980])
+        self.pos0 = np.array([0., 0., 0.2800])
         self.rot0 = np.array([1., 0., 0., 0.])
         self.reset()
         mujoco.mj_step(self.model, self.data)
@@ -128,6 +128,9 @@ class Go2Sim:
     def getPose(self):
         return self.data.qpos[:3], self.data.qpos[3:7]
 
+    def getState(self):
+        return self.data.qpos, self.data.qvel
+    
     def getIMU(self):
         return {
             'accel': np.array(self.data.sensordata[0:3]),

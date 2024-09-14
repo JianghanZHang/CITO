@@ -102,8 +102,8 @@ def main():
                 + 18 * [-np.inf])
     
 
-    StateResidual = crocoddyl.ResidualModelState(state, np.zeros(37), nu)
-    StateLimitConstraint = crocoddyl.ConstraintModelResidual(state, StateResidual, StateLimit_lb, StateLimit_ub)
+    # StateResidual = crocoddyl.ResidualModelState(state, np.zeros(37), nu)
+    # StateLimitConstraint = crocoddyl.ConstraintModelResidual(state, StateResidual, StateLimit_lb, StateLimit_ub)
     # constraintModelManager.addConstraint("StateLimitConstraint",su StateLimitConstraint)
 
     # # Control limits
@@ -124,8 +124,8 @@ def main():
         #     constraintModelManager.addConstraint(f"footSlipping_{idx}", footSlippingConstraint)
         w = 10
 
-    # elif solver_type == "FDDP" or solver_type == "DDP":
-        # w = 1
+    elif solver_type == "FDDP" or solver_type == "DDP":
+        w = 10
     
     for idx, fid in enumerate(fids):
 
@@ -142,7 +142,7 @@ def main():
     groundCollisionBounds = crocoddyl.ActivationBounds(lb, ub)
     groundCollisionActivation = crocoddyl.ActivationModelQuadraticBarrier(groundCollisionBounds)
 
-    w = 0.0
+    w = 0
     for idx, jid in enumerate(jids):
 
         groundCollisionResidual = ResidualModelFrameTranslationNormal(state, nu, jid)
@@ -153,7 +153,7 @@ def main():
     Px_des = 0.5
     Vx_des = 1.0
 
-    P_des = [Px_des, 0.0, 0.2700]
+    P_des = [Px_des, 0.0, 0.2750]
     O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
 
     V_des = [Vx_des, 0.0, 0.0]
@@ -165,27 +165,46 @@ def main():
                     W_des + 
                     v0[6:])
     
+    # xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(
+    #                                                                 1 * [1e2] +  # base x position
+    #                                                                 1 * [1e2] +  # base y position
+    #                                                                 1 * [1e2] +  # base z position
+    #                                                                 3 * [1e0] +  # base orientation
+    #                                                                 4 * [1e-3, 1e-2, 1e-3] +  #joint positions
+    #                                                                 3 * [1e0] +  # base linear velocity
+    #                                                                 3 * [1e0] +  # base angular velocity
+    #                                                                 12 * [1e-1]))  # joint velocities
+
+    # xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(
+    #                                                                 1 * [1e3] +  # base x position
+    #                                                                 1 * [1e3] +  # base y position
+    #                                                                 1 * [1e3] +  # base z position
+    #                                                                 3 * [5e0] +  # base orientation
+    #                                                                 4 * [1e-1, 1e0, 1e-1] +  #joint positions
+    #                                                                 3 * [1e0] +  # base linear velocity
+    #                                                                 3 * [1e0] +  # base angular velocity
+    #                                                                 12 * [1e-1]))  # joint velocities
+    
     xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(
                                                                     1 * [1e2] +  # base x position
                                                                     1 * [1e2] +  # base y position
-                                                                    1 * [1e2] +  # base z position
-                                                                    3 * [1e0] +  # base orientation
-                                                                    12 * [0] +  #joint positions
+                                                                    1 * [5e2] +  # base z position
+                                                                    3 * [2e0] +  # base orientation
+                                                                    4 * [1e-1, 1e-1, 1e-2] +  #joint positions
                                                                     3 * [1e0] +  # base linear velocity
                                                                     3 * [1e0] +  # base angular velocity
-                                                                    12 * [1e-2]))  # joint velocities
+                                                                    12 * [1e-1]))  # joint velocities
 
     xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(
                                                                     1 * [1e3] +  # base x position
                                                                     1 * [1e3] +  # base y position
-                                                                    1 * [1e3] +  # base z position
-                                                                    3 * [1e1] +  # base orientation
-                                                                    12 * [5e0] +  #joint positions
-                                                                    3 * [0] +  # base linear velocity
+                                                                    1 * [2e3] +  # base z position
+                                                                    3 * [2e0] +  # base orientation
+                                                                    4 * [1e0, 1e0, 1e-1] +  #joint positions
+                                                                    3 * [1e0] +  # base linear velocity
                                                                     3 * [1e0] +  # base angular velocity
                                                                     12 * [1e-1]))  # joint velocities
 
- 
     runningCostModel.addCost("uReg", uRegCost, 1e-3)
 
     xDesResidual = crocoddyl.ResidualModelState(state, x_des, nu)
@@ -217,44 +236,42 @@ def main():
     x0 = np.array(q0 + v0)
     problem = crocoddyl.ShootingProblem(x0, runningModels, terminalModel)
 
-    base_x_start = x0[0].copy()
-    base_x_end = Px_des
     num_steps = T + 1 
-    base_x_values = np.linspace(base_x_start, base_x_end, num_steps)
 
-    # Initialize xs_init with the interpolated X position
+    # # Initialize xs_init with the interpolated X position
     xs_init = [np.copy(x0) for _ in range(num_steps)]
-    if solver_type == "CSQP":
-        # pass
-        for i in range(1, num_steps):
-            xs_init[i][2] = 0.2500
-            # xs_init[i][0] = base_x_values[i] 
-            # xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
+    # base_x_start = x0[0].copy()
+    # base_x_end = Px_des
+    # base_x_values = np.linspace(base_x_start, base_x_end, num_steps)
+    # if solver_type == "CSQP":
+    #     # pass
+    #     for i in range(1, num_steps):
+    #         xs_init[i][2] = 0.2800
+    #         # xs_init[i][0] = base_x_values[i] 
+    #         # xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
     
-    elif solver_type == "FDDP":
-        for i in range(1, num_steps):
-            xs_init[i][2] = 0.3000
-            xs_init[i][0] = base_x_values[i] 
-            xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
+    # elif solver_type == "FDDP":
+    #     for i in range(1, num_steps):
+    #         xs_init[i][2] = 0.2800
+    #         # xs_init[i][0] = base_x_values[i] 
+    #         # xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
 
-    elif solver_type == "DDP":
-        for i in range(1, num_steps):
-            xs_init[i][2] = 0.3000
-            xs_init[i][0] = base_x_values[i] 
-            xs_init[i][nq] = Vx_des
+    # elif solver_type == "DDP":
+    #     for i in range(1, num_steps):
+    #         xs_init[i][2] = 0.2800
             
     us_init = [np.zeros(nu) for i in range(T)]
     # xs_init, us_init = load_arrays("go2_walking_MJ_CSQP1")
     print(f'xs_init[0]: {xs_init[0]}')
     print(f'xs_init[-1]: {xs_init[-1]}')
-    maxIter = 200
+    maxIter = 100
 
     print('Start solving')
 
     if solver_type == "CSQP":
         solver = mim_solvers.SolverCSQP(problem)
-        solver.mu_constriant = 20.
-        solver.mu_dynamic = 100.
+        solver.mu_constriant = 10.
+        solver.mu_dynamic = 10.
         solver.setCallbacks([mim_solvers.CallbackVerbose(), mim_solvers.CallbackLogger()])
         solver.use_filter_line_search = False
         solver.verbose = True
@@ -325,7 +342,6 @@ def main():
     viz.display_frames = True
     arrows = []
     fids = fids
-    import time
 
     input("Press to display")
     for i in range(len(fids)):
@@ -337,6 +353,7 @@ def main():
         force_t = us[i][njoints:]
         x_t = xs[i]
         print(f"\n********************Time:{i*dt}********************\n")
+        print(f'Controls:{us[i][:njoints]}')
         print(f'Base position:{x_t[:3]}')
         print(f'Contacts:\n {contacts[i]}')
         for eff, fid in enumerate(fids):

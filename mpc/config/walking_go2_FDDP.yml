@@ -1,0 +1,147 @@
+# Circle tracking task with end-effector constraints
+
+
+# MPC & sim parameters
+ctrl_freq: 100         # Control frequency
+RICCATI: False 
+njoints: 12
+
+# OCP 
+dt: 0.0125                                             # OCP integration step 
+N_h: 40                                              # Horizon length in nodes
+maxiter: 40                                           # Max number of iterations 
+solver_termination_tolerance: 0.0001              # Tolerance on KKT residual 
+q0: [0.0000, 0.0000, 0.2800, 
+     0.0000, 0.0000, 0.0000, 1.0000, 
+     0.0000, 0.9000, -1.8000, 
+     0.0000, 0.9000, -1.8000, 
+     0.0000, 0.9000, -1.8000, 
+     0.0000, 0.9000, -1.8000]
+
+v0: [0.0, 0.0, 0.0, 
+      0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0]
+
+T_total: 2.0
+
+# CSSQP solver parameters
+SOLVER: 'FDDP'
+with_callbacks: False
+use_filter_line_search: False
+filter_size: 10
+warm_start: True
+max_qp_iter: 5000    #125 
+qp_termination_tol_abs: 0.001
+qp_termination_tol_rel: 0.001
+warm_start_y: False 
+reset_rho: False
+
+# Constraints terms
+# to select from the list : 'stateBox', 'ctrlBox', 'translationBox', 'None'
+WHICH_CONSTRAINTS: ['ctrlBox']
+
+ctrlLimit: [23.7, 23.7, 45.43,
+            23.7, 23.7, 45.43,
+            23.7, 23.7, 45.43,
+            23.7, 23.7, 45.43]
+
+# Cost function terms
+# to select from the list : 'stateReg', 'ctrlReg', 'ctrlRegGrav', 'stateLim', 'ctrlLim'
+#                           'force', 'friction', 'translation', 'velocity', 'placement'
+WHICH_COSTS: ['stateReg', 'ctrlReg', 'footClearance'] 
+
+
+footClearanceWeight: 10.0
+footClearanceWeightTerminal: 10.0
+footClearanceSigmoidSteepness: -30.0
+
+# Cost function weights and activations
+ # 'stateReg' : state regularization  
+
+# SOME GOOD PARAMETERS
+#     xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(
+#                                                                     1 * [1e2] +  # base x position
+#                                                                     1 * [1e2] +  # base y position
+#                                                                     1 * [1e2] +  # base z position
+#                                                                     3 * [2e0] +  # base orientation
+#                                                                     4 * [1e-1, 1e-1, 1e-2] +  #joint positions
+#                                                                     3 * [1e0] +  # base linear velocity
+#                                                                     3 * [1e0] +  # base angular velocity
+#                                                                     12 * [1e-1]))  # joint velocities
+
+#     xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(
+#                                                                     1 * [1e3] +  # base x position
+#                                                                     1 * [1e3] +  # base y position
+#                                                                     1 * [1e3] +  # base z position
+#                                                                     3 * [5e0] +  # base orientation
+#                                                                     4 * [1e0, 1e0, 1e-1] +  #joint positions
+#                                                                     3 * [1e0] +  # base linear velocity
+#                                                                     3 * [1e0] +  # base angular velocity
+#                                                                     12 * [1e-1]))  # joint velocities
+
+
+#     xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(
+#                                                                     1 * [1e2] +  # base x position
+#                                                                     1 * [1e2] +  # base y position
+#                                                                     1 * [2e2] +  # base z position
+#                                                                     3 * [2e0] +  # base orientation
+#                                                                     4 * [1e-1, 1e-1, 1e-2] +  #joint positions
+#                                                                     3 * [1e0] +  # base linear velocity
+#                                                                     3 * [1e0] +  # base angular velocity
+#                                                                     12 * [1e-1]))  # joint velocities
+
+#     xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(np.array(
+#                                                                     1 * [1e3] +  # base x position
+#                                                                     1 * [1e3] +  # base y position
+#                                                                     1 * [2e3] +  # base z position
+#                                                                     3 * [5e0] +  # base orientation
+#                                                                     4 * [1e0, 1e0, 1e-1] +  #joint positions
+#                                                                     3 * [1e0] +  # base linear velocity
+#                                                                     3 * [1e0] +  # base angular velocity
+#                                                                     12 * [1e-1]))  # joint velocities
+
+stateRegWeights: [100, 100, 200,
+                  2.0, 2.0, 2.0,
+                  0.1, 0.1, 0.01, 0.1, 0.1, 0.01, 0.1, 0.1, 0.01, 0.1, 0.1, 0.01,
+                  1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0,
+                  0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+stateRegWeightsTerminal: [1000.0, 1000.0, 2000.0,
+                        2.0, 2.0, 2.0,
+                        10, 10, 1, 10, 10, 1, 10, 10, 1, 10, 10, 1,
+                        1.0, 1.0, 1.0,
+                        1.0, 1.0, 1.0, 
+                        0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+stateRegWeight: 10.0
+stateRegWeightTerminal: 10.0
+
+stateRegRef: [0.5, 0.0000, 0.2750, 
+              0.0000, 0.0000, 0.0000, 1.0000, 
+              0.0000, 0.9000, -1.8000, 
+              0.0000, 0.9000, -1.8000, 
+              0.0000, 0.9000, -1.8000, 
+              0.0000, 0.9000, -1.8000,
+              1.0000, 0.0000, 0.0000,
+              0.0000, 0.0000, 0.0000,
+              0.0000, 0.0000, 0.0000,
+              0.0000, 0.0000, 0.0000,
+              0.0000, 0.0000, 0.0000,
+              0.0000, 0.0000, 0.0000]
+
+
+ # 'ctrlReg', 'ctrlRegGrav' : torque regularization 
+ctrlRegWeights: [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]
+ctrlRegWeight: 0.001
+
+# armature
+armature: [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+
+contactFrameNames: ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]
+
+Kp: [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
+Kd: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+
