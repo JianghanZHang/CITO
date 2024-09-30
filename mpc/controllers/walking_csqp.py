@@ -21,7 +21,6 @@ from utils import stateMapping_mj2pin, stateMapping_pin2mj
 from croco_mpc_utils.utils import CustomLogger, GLOBAL_LOG_LEVEL, GLOBAL_LOG_FORMAT
 logger = CustomLogger(__name__, GLOBAL_LOG_LEVEL, GLOBAL_LOG_FORMAT).logger
 
-
 # @profile
 def solveOCP(q, v, solver, max_sqp_iter, max_qp_iter, target_reach):
     t = time.time()
@@ -37,21 +36,21 @@ def solveOCP(q, v, solver, max_sqp_iter, max_qp_iter, target_reach):
     for k in range( solver.problem.T ):
         solver.problem.runningModels[k].differential.costs.costs["xDes_running"].active = True
         solver.problem.runningModels[k].differential.costs.costs["xDes_running"].cost.residual.reference = target_reach[k]
-        solver.problem.runningModels[k].differential.costs.costs["xDes_running"].weight = 10. 
         
     solver.problem.terminalModel.differential.costs.costs["xDes_terminal"].active = True
     solver.problem.terminalModel.differential.costs.costs["xDes_terminal"].cost.residual.reference = target_reach[-1]
-    solver.problem.terminalModel.differential.costs.costs["xDes_terminal"].weight = 10.
+
+    solver.mu_dynamic = 1e2
 
     solver.max_qp_iters = max_qp_iter
 
     solver.solve(xs_init, us_init, max_sqp_iter, False)
     solve_time = time.time() - t
 
-    return  solver.us[0], solver.xs[1], None, solve_time - t, solver.iter, solver.cost, solver.constraint_norm, solver.gap_norm, solver.qp_iters, solver.KKT
+    return  solver.us[0], solver.xs[1], None, solve_time - t, solver.iter, solver.cost#, solver.constraint_norm, solver.gap_norm, solver.qp_iters, solver.KKT
 
 def create_walking_ocp(pin_model, mj_model, config):
-    rmodel = pin_model
+    rmodel = pin_model.copy()
 
     fids = []
     frameNames = config['contactFrameNames']
@@ -62,7 +61,8 @@ def create_walking_ocp(pin_model, mj_model, config):
     q0 = config['q0']
     v0 = config['v0']
     x0 = np.concatenate([q0, v0])
-    dt = config['dt']
+    # dt = config['dt']
+    dt = mj_model.opt.timestep
     T = config['N_h']
 
     # Handling constraints
@@ -87,8 +87,7 @@ def create_walking_ocp(pin_model, mj_model, config):
         ctrlRegWeights = np.asarray(config['ctrlRegWeights'])
 
     if "footClearance" in config['WHICH_COSTS']:
-        # footClearanceWeight = config['footClearanceWeight']
-        footClearanceWeight = 0.0
+        footClearanceWeight = config['footClearanceWeight']
         footClearanceWeightTerminal = config['footClearanceWeightTerminal']
         footClearanceSigmoidSteepness = np.asarray(config['footClearanceSigmoidSteepness'])
 
@@ -108,11 +107,9 @@ def create_walking_ocp(pin_model, mj_model, config):
     # Constraints (friction cones + complementarity contraints)
     constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
 
-    # # Control limits
     ControlRedisual = crocoddyl.ResidualModelControl(state, nu)
     ControlLimitConstraint = crocoddyl.ConstraintModelResidual(state, ControlRedisual, -ctrlLimit, ctrlLimit)
     constraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
-
 
     for idx, fid in enumerate(fids):
         footClearanceResidual = ResidualModelFootClearanceNumDiff(state, nu, fid, sigmoid_steepness=-footClearanceSigmoidSteepness)
@@ -126,7 +123,6 @@ def create_walking_ocp(pin_model, mj_model, config):
 
     xDesActivationTerminal = crocoddyl.ActivationModelWeightedQuad(stateRegWeightsTerminal)
 
-    # import pdb; pdb.set_trace()
     xDesResidual = crocoddyl.ResidualModelState(state, stateRegRef, nu)
     xDesCostRunning = crocoddyl.CostModelResidual(state, xDesActivationRunning, xDesResidual)
     xDesCostTerminal = crocoddyl.CostModelResidual(state, xDesActivationTerminal, xDesResidual)
@@ -145,7 +141,7 @@ def create_walking_ocp(pin_model, mj_model, config):
     
     terminalModel = IntegratedActionModelForceMJ(terminal_DAM, 0., True)
 
-    
+    # # Control limits    
     for runningModel in runningModels:
         if "stateBox" in config['WHICH_CONSTRAINTS']:
             runningModel.x_lb = stateLimit_lb
@@ -157,6 +153,7 @@ def create_walking_ocp(pin_model, mj_model, config):
 
     x0 = np.array(q0 + v0)
     problem = crocoddyl.ShootingProblem(x0, runningModels, terminalModel)
+
     return problem
 
 class Go2WalkingCSQP:
@@ -204,37 +201,26 @@ class Go2WalkingCSQP:
         self.x0 = np.concatenate([self.q0, self.v0])
         
         self.Nh = int(self.config['N_h'])
-        self.dt_ocp  = self.config['dt']
+        # self.dt_ocp  = self.config['dt']
+        self.dt_ocp = self.mj_model.opt.timestep
         self.dt_ctrl = 1./self.config['ctrl_freq']
         self.OCP_TO_CTRL_RATIO = int(self.dt_ocp/self.dt_ctrl)
         self.u0 = np.zeros(12)
         # Create OCP         
         problem = create_walking_ocp(self.robot.model, self.mj_model, self.config)
-        # Initialize the solver
-        if(config['SOLVER'] == 'proxqp'):
-            logger.warning("Using the ProxQP solver.")
-            self.solver = mim_solvers.SolverProxQP(problem)
-        elif(config['SOLVER'] == 'CSQP'):
-            logger.warning("Using the CSSQP solver.")            
-            self.solver = mim_solvers.SolverCSQP(problem)
 
-            
-        self.solver.with_callbacks         = self.config['with_callbacks']
-        self.solver.use_filter_line_search = self.config['use_filter_line_search']
-        self.solver.filter_size            = self.config['filter_size']
-        self.solver.warm_start             = self.config['warm_start']
-        self.solver.termination_tolerance  = self.config['solver_termination_tolerance']
-        self.solver.max_qp_iters           = self.config['max_qp_iter']
-        self.solver.eps_abs                = self.config['qp_termination_tol_abs']
-        self.solver.eps_rel                = self.config['qp_termination_tol_rel']
-        self.solver.warm_start_y           = self.config['warm_start_y']
-        self.solver.reset_rho              = self.config['reset_rho']  
-        self.solver.regMax                 = 1e6
-        self.solver.reg_max                = 1e6
-        self.solver.mu_dynamic             = self.config['mu_dynamic']
-        self.solver.mu_constraint          = self.config['mu_constraint']
+        # Initialize the solver
+        if(config['SOLVER'] == 'CSQP'):
+            logger.warning("Using the FDDP solver.")
+            self.solver = mim_solvers.SolverCSQP(problem)
+      
 
         # Allocate MPC data
+        self.solver.use_filter_line_search = self.config['use_filter_line_search']
+        self.solver.mu_dynamic = self.config['mu_dynamic']
+        self.solver.mu_constraint = self.config['mu_constraint']
+        self.solver.remove_reg = self.config['remove_reg']
+        
         # self.K = self.solver.K[0]
         self.x_des = self.solver.xs[0]
         self.tau_ff = self.solver.us[0]
@@ -265,15 +251,10 @@ class Go2WalkingCSQP:
         self.solver.us = [self.u0 for i in range(self.config['N_h'])]
 
     def warmUp(self):
-        self.max_sqp_iter = 50
-        self.max_qp_iter  = 10000   
-        # self.u0 = pin_utils.get_u_grav(self.q0, self.robot.model, np.zeros(self.robot.model.nq))
+        self.max_sqp_iter = 400
         xs_init = [np.copy(self.x0) for _ in range(self.config['N_h']+1)]
         
-        
-        for i in range(1, self.config['N_h']+1):
-            xs_init[i][2] = 0.2700
-        
+                
         self.solver.xs = xs_init.copy()
 
         self.solver.us = [self.u0 for i in range(self.config['N_h'])]
@@ -286,15 +267,22 @@ class Go2WalkingCSQP:
         current_position = current_state[:3]
         desired_position = current_position + self.v_des[:3] * (self.Nh * self.dt_ocp)
         desired_position[1] = 0.0
-        desired_position[2] = 0.2700
+        desired_position[2] = 0.2800
         self.q_des[:3] = desired_position
         desired_state = np.concatenate([self.q_des, self.v_des])
 
         self.target_states[:] = desired_state
+        
+        xs_init = list(self.solver.xs[1:]) + [self.solver.xs[-1]]
+        for i in range(1, self.config['N_h']):
+            xs_init[i][2] = 0.2800
+        
+        self.solver.xs = xs_init.copy()
 
         print(f'Current state:\n {current_state}')
-        print(f'Desired state:\n {desired_state}')
-        self.tau_ff, self.x_next, self.K, self.t_child, self.ddp_iter, self.cost, self.constraint_norm, self.gap_norm, self.qp_iters, self.KKT = solveOCP(self.joint_positions, 
+        print(f'Desired state:\n {self.target_states[-1]}')
+
+        self.tau_ff, self.x_next, self.K, self.t_child, self.ddp_iter, self.cost = solveOCP(self.joint_positions, 
                                                                                           self.joint_velocities, 
                                                                                           self.solver, 
                                                                                           self.max_sqp_iter, 
@@ -331,17 +319,18 @@ class Go2WalkingCSQP:
         current_position = current_state[:3]
         desired_position = current_position + self.v_des[:3] * (self.Nh * self.dt_ocp)
         desired_position[1] = 0.0
-        desired_position[2] = 0.2700
+        desired_position[2] = 0.2800
         self.q_des[:3] = desired_position
         desired_state = np.concatenate([self.q_des, self.v_des])
 
         self.target_states[:] = desired_state
-        # print(f'Current state:\n {current_state}')
-        # print(f'Desired state:\n {desired_state}')    
+        print(f'Current state:\n {current_state}')
+        print(f'Desired state:\n {self.target_states[-1]}')
+
         # # # # # # #  
         # Solve OCP #
         # # # # # # # 
-        self.tau_ff, self.x_des, self.K, self.t_child, self.ddp_iter, self.cost, self.constraint_norm, self.gap_norm, self.qp_iters, self.KKT = solveOCP(q, 
+        self.tau_ff, self.x_des, self.K, self.t_child, self.ddp_iter, self.cost = solveOCP(q, 
                                                                                           v, 
                                                                                           self.solver, 
                                                                                           self.max_sqp_iter, 
@@ -354,11 +343,11 @@ class Go2WalkingCSQP:
         self.tau = self.tau_ff.copy()
 
         # Compute gravity
-        self.tau_gravity = pin.rnea(self.robot.model, self.robot.data, self.joint_positions, np.zeros(self.nv), np.zeros(self.nv))
+        # self.tau_gravity = pin.rnea(self.robot.model, self.robot.data, self.joint_positions, np.zeros(self.nv), np.zeros(self.nv))
 
-        if(self.RUN_SIM == False):
-            self.tau -= self.tau_gravity
+        # if(self.RUN_SIM == False):
+            # self.tau -= self.tau_gravity
 
-        pin.framesForwardKinematics(self.robot.model, self.robot.data, q)
+        # pin.framesForwardKinematics(self.robot.model, self.robot.data, q)
 
         return self.tau_ff.copy(), self.x_des.copy(), self.cost

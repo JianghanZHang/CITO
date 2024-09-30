@@ -3,6 +3,7 @@ import crocoddyl
 from mim_solvers import SolverSQP, SolverCSQP
 import os
 import sys
+import subprocess
 outer_folder_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 # Add the outer folder to the system path
@@ -13,12 +14,13 @@ import meshcat
 import time
 from utils import Arrow
 from complementarity_constraints_force_free import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
-from friction_cone import  ResidualLinearFrictionCone
+from friction_cone import ResidualLinearFrictionCone
 from force_derivatives import LocalWorldAlignedForceDerivatives
 from robot_env import create_go2_env_force_MJ, create_go2_env
-from trajectory_data import load_arrays
+from utils import load_arrays
+import imageio
 formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
-    
+
 np.set_printoptions(linewidth=210, precision=5, suppress=False, formatter=formatter)
 
 # Create the robot
@@ -36,18 +38,20 @@ ncontacts = mj_env["ncontacts"]
 nq = mj_env["nq"]
 nv = mj_env["nv"]
 mj_model = mj_env["mj_model"]
-mj_data = mj_env["mj_data"]
+# mj_data = mj_env["mj_data"]
 
 ###################
-dt = mj_model.opt.timestep         #
-T = 20            #
+# dt = mj_model.opt.timestep         #
+dt = 0.001
+T = 1000            #
 ###################
 
 robot = "go2"
-task = "walking_MJCSQP2"
+task = "takeoff_MJ_CSQP"
 file = robot + "_" + task
 xs, us = load_arrays(file)
-
+fps = int(1/dt) 
+fps = int(fps/2)
 
 np.set_printoptions(linewidth=210, precision=4, suppress=False, formatter=formatter)
 
@@ -67,8 +71,18 @@ viz.display_frames = True
 arrows = []
 fids = fids
 
+PLOT_DIRECTORY = "visualizations/plots/ocp/"
+VIDEO_DIRECTORY = "visualizations/videos/ocp/"
+IMAGE_DIRECTORY = "visualizations/frames/"  # Directory to store individual frames
+if not os.path.exists(IMAGE_DIRECTORY):
+    os.makedirs(IMAGE_DIRECTORY)
+# with_clearance = "no_clearance_"
+with_clearance = "with_clearance_"
+TASK = "walking_"
+
 input("Press if the visualizer is ready")
 
+# Store frames as images
 for i in range(len(xs)-1):
     force_t = us[i][njoints:]
     x_t = xs[i]
@@ -79,12 +93,21 @@ for i in range(len(xs)-1):
         pin.framesForwardKinematics(rmodel, rdata, q)
         pin.computeAllTerms(rmodel, rdata, q, v)
         pin.updateFramePlacements(rmodel, rdata)
-        # cntForce, _, _ = LocalWorldAlignedForceDerivatives(force_t[3*eff:3*(eff+1)], x_t, fids[eff], rmodel, rdata)
-        print(f'foot id:{eff}')
-        # print(f'contact forces:{force_t[3*eff:3*(eff+1)]}')
-        print(f'distance:{rdata.oMf[fid].translation[2]}')
-        print(f'complementarity constraint:{rdata.oMf[fid].translation[2] * force_t[3*eff:3*(eff+1)]}')
-        # arrows[eff].anchor_as_vector(rdata.oMf[fid].translation, force_t[3*eff:3*(eff+1)].copy())        
+
+    # Capture frames for video
     viz.display(xs[i][:rmodel.nq])
-    # input()
-    time.sleep(0.1)
+    frame = np.asarray(viz.viewer.get_image())  # Modify this line to capture frames properly in the right format
+    imageio.imwrite(os.path.join(IMAGE_DIRECTORY, f'frame_{i:04d}.png'), frame)
+
+    viz.setCameraTarget(np.array([x_t[0]+0.1, 0.0, 0.0]))
+    viz.setCameraPosition(np.array([0.5, -1.0, 0.3]))
+
+# Call FFmpeg manually to convert the images into a video with the probesize option
+output_file = VIDEO_DIRECTORY + TASK + with_clearance + "CSQP" + "_1ms.mp4"
+subprocess.call([
+    'ffmpeg', '-y', '-probesize', '50M', '-framerate', str(fps),
+    '-i', os.path.join(IMAGE_DIRECTORY, 'frame_%04d.png'),
+    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', output_file
+])
+
+print(f"Video saved to {output_file}")

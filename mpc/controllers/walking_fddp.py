@@ -21,7 +21,6 @@ from utils import stateMapping_mj2pin, stateMapping_pin2mj
 from croco_mpc_utils.utils import CustomLogger, GLOBAL_LOG_LEVEL, GLOBAL_LOG_FORMAT
 logger = CustomLogger(__name__, GLOBAL_LOG_LEVEL, GLOBAL_LOG_FORMAT).logger
 
-
 # @profile
 def solveOCP(q, v, solver, max_sqp_iter, max_qp_iter, target_reach):
     t = time.time()
@@ -29,6 +28,7 @@ def solveOCP(q, v, solver, max_sqp_iter, max_qp_iter, target_reach):
     x = np.concatenate([q, v])
     solver.problem.x0 = x
     
+    # initial guess
     xs_init = list(solver.xs[1:]) + [solver.xs[-1]]
     xs_init[0] = x
     us_init = list(solver.us[1:]) + [solver.us[-1]] 
@@ -37,11 +37,9 @@ def solveOCP(q, v, solver, max_sqp_iter, max_qp_iter, target_reach):
     for k in range( solver.problem.T ):
         solver.problem.runningModels[k].differential.costs.costs["xDes_running"].active = True
         solver.problem.runningModels[k].differential.costs.costs["xDes_running"].cost.residual.reference = target_reach[k]
-        solver.problem.runningModels[k].differential.costs.costs["xDes_running"].weight = 10. 
         
     solver.problem.terminalModel.differential.costs.costs["xDes_terminal"].active = True
     solver.problem.terminalModel.differential.costs.costs["xDes_terminal"].cost.residual.reference = target_reach[-1]
-    solver.problem.terminalModel.differential.costs.costs["xDes_terminal"].weight = 10.
 
     print(f'xDes[-1]:\n{target_reach[-1]}')
     solver.max_qp_iters = max_qp_iter
@@ -63,7 +61,8 @@ def create_walking_ocp(pin_model, mj_model, config):
     q0 = config['q0']
     v0 = config['v0']
     x0 = np.concatenate([q0, v0])
-    dt = config['dt']
+    # dt = config['dt']
+    dt = mj_model.opt.timestep
     T = config['N_h']
 
     # Handling constraints
@@ -88,8 +87,8 @@ def create_walking_ocp(pin_model, mj_model, config):
         ctrlRegWeights = np.asarray(config['ctrlRegWeights'])
 
     if "footClearance" in config['WHICH_COSTS']:
-        # footClearanceWeight = config['footClearanceWeight']
-        footClearanceWeight = 0.0
+        footClearanceWeight = config['footClearanceWeight']
+        # footClearanceWeight = 0.0
         footClearanceWeightTerminal = config['footClearanceWeightTerminal']
         footClearanceSigmoidSteepness = np.asarray(config['footClearanceSigmoidSteepness'])
 
@@ -201,7 +200,8 @@ class Go2WalkingFDDP:
         self.x0 = np.concatenate([self.q0, self.v0])
         
         self.Nh = int(self.config['N_h'])
-        self.dt_ocp  = self.config['dt']
+        # self.dt_ocp  = self.config['dt']
+        self.dt_ocp = self.mj_model.opt.timestep
         self.dt_ctrl = 1./self.config['ctrl_freq']
         self.OCP_TO_CTRL_RATIO = int(self.dt_ocp/self.dt_ctrl)
         self.u0 = np.zeros(12)
@@ -212,6 +212,8 @@ class Go2WalkingFDDP:
         if(config['SOLVER'] == 'FDDP'):
             logger.warning("Using the FDDP solver.")
             self.solver = crocoddyl.SolverBoxFDDP(problem)
+        else:
+            Exception("Solver not implemented yet.")
       
 
         # Allocate MPC data
@@ -245,8 +247,7 @@ class Go2WalkingFDDP:
         self.solver.us = [self.u0 for i in range(self.config['N_h'])]
 
     def warmUp(self):
-        self.max_sqp_iter = 100
-        self.max_qp_iter  = 10000   
+        self.max_sqp_iter = 400
         # self.u0 = pin_utils.get_u_grav(self.q0, self.robot.model, np.zeros(self.robot.model.nq))
         xs_init = [np.copy(self.x0) for _ in range(self.config['N_h']+1)]
         
@@ -259,27 +260,18 @@ class Go2WalkingFDDP:
         q = self.joint_positions
         v = self.joint_velocities
 
-        # current_state = np.concatenate([q, v])
-        # current_position = current_state[:3]
-        # desired_position = current_position
-        # desired_position[1] = 0.0
-        # desired_position[2] = 0.2800
-        # self.q_des[:3] = desired_position
+        xs_init = list(self.solver.xs[1:]) + [self.solver.xs[-1]]
+        for i in range(1, self.config['N_h']):
+            xs_init[i][2] = 0.2800
+        
+        self.solver.xs = xs_init.copy()
 
-        # base_x_start = current_position[0].copy()
-        # base_x_end = base_x_start + 0.5
-        # num_steps = self.Nh + 1 
-        # base_x_values = np.linspace(base_x_start, base_x_end, num_steps)
-
-        # for i in range(num_steps):
-        #     self.target_states[i] = np.concatenate([self.q_des, self.v_des])
-        #     self.target_states[i][0] = base_x_values[i] 
 
         current_state = np.concatenate([q, v])
         current_position = current_state[:3]
         desired_position = current_position + self.v_des[:3] * (self.Nh * self.dt_ocp)
         desired_position[1] = 0.0
-        desired_position[2] = 0.2750
+        desired_position[2] = 0.2800
         self.q_des[:3] = desired_position
         desired_state = np.concatenate([self.q_des, self.v_des])
 
@@ -326,28 +318,11 @@ class Go2WalkingFDDP:
         current_position = current_state[:3]
         desired_position = current_position + self.v_des[:3] * (self.Nh * self.dt_ocp)
         desired_position[1] = 0.0
-        desired_position[2] = 0.2850
+        desired_position[2] = 0.2800
         self.q_des[:3] = desired_position
         desired_state = np.concatenate([self.q_des, self.v_des])
 
         self.target_states[:] = desired_state
-
-        # current_state = np.concatenate([q, v])
-        # current_position = current_state[:3]
-        # desired_position = current_position
-        # desired_position[1] = 0.0
-        # desired_position[2] = 0.2800
-        # self.q_des[:3] = desired_position
-
-        # base_x_start = current_position[0].copy()
-        # base_x_end = base_x_start + 0.5
-        # num_steps = self.Nh + 1 
-        # base_x_values = np.linspace(base_x_start, base_x_end, num_steps)
-
-        # for i in range(num_steps):
-        #     self.target_states[i] = np.concatenate([self.q_des, self.v_des])
-        #     self.target_states[i][0] = base_x_values[i] 
-
 
         # print(f'Current state:\n {current_state}')
         # print(f'Desired state:\n {desired_state}')    

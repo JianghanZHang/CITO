@@ -20,64 +20,64 @@
     <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
   </worldbody>
-<!-- 
-  <contact>
+
+  <!-- <contact>
     <pair geom1="floor" geom2="FL" friction="1.0" condim="6"
-      solimp="0.00 1.0 0.022 0.5 1"/>
+      solimp="0.015 1.0 0.022 0.5 2"
+      solref="0.01 1"/>
 
     <pair geom1="floor" geom2="FR" friction="1.0" condim="6"
-      solimp="0.00 1.0 0.022 0.5 1"/>
-      
+      solimp="0.015 1.0 0.022 0.5 2"
+      solref="0.01 1"/>
+
     <pair geom1="floor" geom2="RL" friction="1.0" condim="6"
-      solimp="0.00 1.0 0.022 0.5 1" />
+      solimp="0.015 1.0 0.022 0.5 2" 
+      solref="0.01 1"/>
       
     <pair geom1="floor" geom2="RR" friction="1.0" condim="6"
-      solimp="0.00 1.0 0.022 0.5 1"/>
+      solimp="0.015 1.0 0.022 0.5 2"
+      solref="0.01 1"/>
   </contact>  -->
 
-    <!-- <contact>
-    <pair geom1="floor" geom2="FL" friction="1.0" condim="6"
-      solimp="0.00 1.0 0.011 0.5 2" 
-      solref="-200 -100"
-      solreffriction="-1 -1"/>
-
-    <pair geom1="floor" geom2="FR" friction="1.0" condim="6"
-      solimp="0.0 1.0 0.011 0.5 2"  
-      solref="-200 -100"
-      solreffriction="-1 -1"/>
-      
-    <pair geom1="floor" geom2="RL" friction="1.0" condim="6"
-      solimp="0.0 1.0 0.011 0.5 2"  
-      solref="-200 -100"
-      solreffriction="-1 -1"/>
-      
-    <pair geom1="floor" geom2="RR" friction="1.0" condim="6"
-      solimp="0.0 1.0 0.011 0.5 2"   
-      solref="-200 -100"
-      solreffriction="-1 -1"/>
-  </contact>  -->
-
-    <contact>
+  <!-- <contact>
     <pair geom1="floor" geom2="FL" friction="1.0" condim="6"
       solimp="0.00 1.0 0.022 0.5 2" 
       solref="-100 -100"
-      solreffriction="-0.1 -0"/>
+      solreffriction="-1 -1"/>
 
     <pair geom1="floor" geom2="FR" friction="1.0" condim="6"
       solimp="0.0 1.0 0.022 0.5 2"  
       solref="-100 -100"
-      solreffriction="-0.1 -0.0"/>
+      solreffriction="-1 -1"/>
       
     <pair geom1="floor" geom2="RL" friction="1.0" condim="6"
       solimp="0.0 1.0 0.022 0.5 2"  
       solref="-100 -100"
-      solreffriction="-0.1 -0"/>
+      solreffriction="-1 -1"/>
       
     <pair geom1="floor" geom2="RR" friction="1.0" condim="6"
       solimp="0.0 1.0 0.022 0.5 2"   
       solref="-100 -100"
-      solreffriction="-0.1 -0"/>
-  </contact> 
+      solreffriction="-1 -1"/>
+  </contact>  -->
+
+    <!-- <contact>
+    <pair geom1="floor" geom2="FL" friction="1.0" condim="6"
+      solimp="0.00 1.0 0.022 0.5 1" 
+      solref="-10000 -50"/>
+
+    <pair geom1="floor" geom2="FR" friction="1.0" condim="6"
+      solimp="0.00 1.0 0.022 0.5 1"  
+      solref="-10000 -50"/>
+      
+    <pair geom1="floor" geom2="RL" friction="1.0" condim="6"
+      solimp="0.00 1.0 0.022 0.5 1"  
+      solref="-10000 -50"/>
+      
+    <pair geom1="floor" geom2="RR" friction="1.0" condim="6"
+      solimp="0.00 1.0 0.022 0.5 1"   
+      solref="-10000 -50"/> 
+    </contact>  -->
 
 
   <sensor>

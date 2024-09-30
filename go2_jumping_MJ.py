@@ -148,16 +148,9 @@ def main():
     terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 1e2)
 
 
-    # running_DAM = DifferentialActionModelForceMJ(mj_model, state, nu, njoints, fids, runningCostModel, constraintModelManager)
     terminal_DAM = DifferentialActionModelForceMJ(mj_model, state, nu, njoints, fids, terminalCostModel)
     
-    # running_DAM = crocoddyl.DifferentialActionModelNumDiff(running_DAM)
-    # terminal_DAM = crocoddyl.DifferentialActionModelNumDiff(terminal_DAM)
 
-    # runningModel = crocoddyl.IntegratedActionModelEuler(running_DAM, dt)
-    # terminalModel = crocoddyl.IntegratedActionModelEuler(terminal_DAM, 0.)
-
-    # runningModel = IntegratedActionModelForceMJ(running_DAM, dt, True)
     terminalModel = IntegratedActionModelForceMJ(terminal_DAM, 0., True)
 
     runningModels = [IntegratedActionModelForceMJ

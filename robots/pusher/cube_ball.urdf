@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="cube_ball" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <link name="world"/>
+
+  <!-- Define the floating "cube" body -->
+  <link name="cube">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.05"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Free-floating joint for the cube -->
+  <joint name="cube_base_joint" type="floating">
+    <parent link="world"/>
+    <child link="cube"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Intermediate link for prismatic x and y joints -->
+  <link name="intermediate_x"/>
+
+  <!-- Prismatic joint for the intermediate_x (x-axis) -->
+  <joint name="joint_x" type="prismatic">
+    <parent link="world"/>
+    <child link="intermediate_x"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.0" upper="1.0" effort="10" velocity="0.5"/>
+  </joint>
+
+  <!-- Define the "ball" body -->
+  <link name="ball">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Prismatic joint for the ball (y-axis) -->
+  <joint name="joint_y" type="prismatic">
+    <parent link="world"/>
+    <child link="ball"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.0" upper="1.0" effort="10" velocity="0.5"/>
+  </joint>
+
+    <joint name="joint_x_ball_pin" type="fixed">
+    <parent link="intermediate_x"/>
+    <child link="ball"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

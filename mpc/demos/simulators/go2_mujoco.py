@@ -32,20 +32,38 @@ class Go2Sim:
         self.dt = dt
         _render_dt = 1 / 60
         self.render_ds_ratio = max(1, _render_dt // dt)
-
+        self.frames = []
         if render:
             self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
             self.render = True
             self.viewer.cam.distance = 3.0
             self.viewer.cam.azimuth = 90
             self.viewer.cam.elevation = -45
-            self.viewer.cam.lookat[:] = np.array([0.0, -0.25, 0.824])
+            self.viewer.cam.lookat[:] = np.array([0.0, 0.0, 0.0])
         else:
             self.render = False
 
+        self.options = mujoco.MjvOption()
+        mujoco.mjv_defaultOption(self.options)
+        self.options.flags[mujoco.mjtVisFlag.mjVIS_CONTACTPOINT] = True
+        self.options.flags[mujoco.mjtVisFlag.mjVIS_CONTACTFORCE] = True
+
+        # self.viewer.cam.distance = 3.0
+        # self.viewer.cam.azimuth = 90
+        # self.viewer.cam.elevation = -45
+        # self.viewer.cam.lookat[:] = np.array([0.0, -0.25, 0.824])
+
+        self.cam = mujoco.MjvCamera()
+        self.cam.azimuth = 90
+        self.cam.distance = 3.0
+        self.cam.elevation = -45
+        # self.cam.lookat = np.array([0.0, 0.0, 0.0])
+        self.cam.lookat[:] = np.array([0.0, -0.25, 0.824])
+
+
         self.model.opt.gravity[2] = -9.81
         self.model.opt.timestep = dt
-        self.renderer = None
+        self.renderer = mujoco.Renderer(self.model, height=1080, width=1920)
         self.render = render
         self.step_counter = 0
 
@@ -71,7 +89,7 @@ class Go2Sim:
 
         self.q0 = self.initial_q
 
-        self.pos0 = np.array([0., 0., 0.2800])
+        self.pos0 = np.array([0., 0., 0.2900])
         self.rot0 = np.array([1., 0., 0., 0.])
         self.reset()
         mujoco.mj_step(self.model, self.data)
@@ -97,7 +115,7 @@ class Go2Sim:
             [self.pos0.squeeze(), self.rot0.squeeze(), self.q0.squeeze()]
         )
         self.data.qpos = self.q_nominal
-        self.data.qvel = np.zeros(18)
+        self.data.qvel = np.array([1.0] + 17 * [0.0])
         self.ex_sum=0
         self.ey_sum=0
         self.e_omega_sum=0
@@ -110,6 +128,7 @@ class Go2Sim:
         mujoco.mj_step(self.model, self.data)
         if self.render:
             self.viewer.sync()
+        
 
     def sitDownReset(self):
         self.q0 = self.sitting_q
@@ -161,6 +180,11 @@ class Go2Sim:
         # Render every render_ds_ratio steps (60Hz GUI update)
         if self.render and (self.step_counter % self.render_ds_ratio) == 0:
             self.viewer.sync()
+        else:
+            self.cam.lookat = self.data.qpos[:3]
+            self.renderer.update_scene(self.data, self.cam, self.options)
+            pixels = self.renderer.render()
+            self.frames.append(pixels)
 
     def stepHighlevel(self, vx, vy, omega_z, body_z_offset=0, step_height = 0.08, kp=[2, 0.5, 0.5], ki=[0.02, 0.01, 0.01]):
         policy_info = {}
