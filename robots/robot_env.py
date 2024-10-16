@@ -83,7 +83,8 @@ go2_v0 = np.array([0.0000, 0.0000, 0.0000,
 
 def create_go2_env():
     urdf_path = "robots/go2_robot_sdk/urdf/go2.urdf"
-    package_dirs = ["/home/jianghan/Devel/workspace_autogait/src/auto_gait_generation/robots"]
+    package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    package_dirs = [package_dir]
 
     print(f"URDF Path: {urdf_path}")
     print(f"Package Dirs: {package_dirs}")

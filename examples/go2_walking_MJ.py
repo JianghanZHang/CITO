@@ -22,6 +22,7 @@ from utils import xyzw2wxyz, wxyz2xyzw, add_noise_to_state
 from python.ResidualModels import ResidualModelFootClearanceNumDiff, ResidualModelFootSlippingNumDiff, ResidualModelFootClearance, ResidualModelFootSlipping
 import sys
 from robots.robot_env import GO2_FOOT_RADIUS
+
 def main():
     solver_type = sys.argv[1]
 
@@ -40,39 +41,26 @@ def main():
     nv = mj_env["nv"]
     mj_model = mj_env["mj_model"]
 
-    ####################################
-    dt = 0.002                          #
-    mj_model.opt.timestep = dt         #
-    T = 500                            #            
-    T_total = dt * T                   #
-    ####################################
+    ################# OCP params ################
+    dt = 0.01                                 
+    mj_model.opt.timestep = dt                
+    T = 100                                               
+    T_total = dt * T                          
 
-    # q0[2] -= 0.02705 # To establish contacts with the ground.
     print(f'x0:{q0 + v0}')
+    ################# Initialize crocoddyl models ################
     state = crocoddyl.StateMultibody(rmodel)
-    actuation = crocoddyl.ActuationModelFloatingBase(state)
-
-
     runningCostModel = crocoddyl.CostModelSum(state, nu)
     terminalCostModel = crocoddyl.CostModelSum(state, nu)
+    constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)    
 
-    uResidual = crocoddyl.ResidualModelControl(state, nu)
-    uRegActivation = crocoddyl.ActivationModelWeightedQuad(np.array(4 * [1.0, 1.0, 1.0])) 
-    uRegCost = crocoddyl.CostModelResidual(state, uRegActivation, uResidual)
-
-    constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
-    # constraintModelManager0 = crocoddyl.ConstraintModelManager(state, nu)
-    
-
+    ################ State limits ################
     abduction_lb = -1.0472
     abduction_ub = 1.0472
-
     front_hip_lb = -1.5708
     front_hip_ub = 3.4807
-
     knee_lb = -2.7227
     knee_ub = -0.83776
-
     back_hip_lb = -1.5708
     back_hip_ub = 4.5379
 
@@ -91,30 +79,25 @@ def main():
                 abduction_lb, back_hip_lb, knee_lb, 
                 abduction_lb, back_hip_lb, knee_lb]
                 + 18 * [-np.inf])
-    
 
-    # StateResidual = crocoddyl.ResidualModelState(state, np.zeros(37), nu)
-    # StateLimitConstraint = crocoddyl.ConstraintModelResidual(state, StateResidual, StateLimit_lb, StateLimit_ub)
-    # constraintModelManager.addConstraint("StateLimitConstraint",su StateLimitConstraint)
-
-    # # Control limits
+    ################ Control limits ################
     ControlLimit = np.array(4 * [23.7, 23.7, 45.43])
     ControlRedisual = crocoddyl.ResidualModelControl(state, nu)
     ControlLimitConstraint = crocoddyl.ConstraintModelResidual(state, ControlRedisual, -ControlLimit, ControlLimit)
     constraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
-    
+
+    ################ Foot Clearance Cost ################
     w = 1.0
 
     for idx, fid in enumerate(fids):
 
-        # footClearanceResidual = ResidualModelFootClearance(state, nu, fid, sigmoid_steepness=-90) #TODO: Fix this
         sigmoid_steepness = -30
         footClearanceResidual = ResidualModelFootClearanceNumDiff(state, nu, fid, sigmoid_steepness=sigmoid_steepness)
         footClearanceActivation = crocoddyl.ActivationModelSmooth1Norm(nr=1, eps=1e-12)
         footClearanceCost = crocoddyl.CostModelResidual(state, footClearanceActivation, footClearanceResidual)
         runningCostModel.addCost(f"footClearance_{idx}", footClearanceCost, w)
         terminalCostModel.addCost(f"footClearance_{idx}", footClearanceCost, w)
-   
+    ################ State Cost ######################
     Px_des = 1.0
     Vx_des = Px_des / T_total
 
@@ -123,9 +106,6 @@ def main():
 
     V_des = [Vx_des, 0.0, 0.0]
     W_des = [0.0, 0.0, 0.0]
-
-    # O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, np.pi))
-    # W_des = [0.0, 0.0, 2 * np.pi]
 
     x_des = np.array(P_des + 
                     [O_des[0], O_des[1], O_des[2], O_des[3]] + 
@@ -155,7 +135,6 @@ def main():
                                                                         4 * [5e-4, 5e-4, 5e-4]))  # joint velocities
 
 
-    runningCostModel.addCost("uReg", uRegCost, 5e-4)
 
     xDesResidual = crocoddyl.ResidualModelState(state, x_des, nu)
     xDesCostRunning = crocoddyl.CostModelResidual(state, xDesActivationRunning, xDesResidual)
@@ -164,18 +143,21 @@ def main():
     runningCostModel.addCost("xDes_running", xDesCostRunning, 1)
     terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, 1)
 
+    ################## Control Regularization Cost##################
+    uResidual = crocoddyl.ResidualModelControl(state, nu)
+    uRegActivation = crocoddyl.ActivationModelWeightedQuad(np.array(12 * [1.0]))
+    uRegCost = crocoddyl.CostModelResidual(state, uRegActivation, uResidual)
+    runningCostModel.addCost("uReg", uRegCost, 1e-2)
 
-    terminal_DAM = DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, terminalCostModel, None)
-    
-
+    ################### Initialize running and terminal models ################
     runningModels = [IntegratedActionModelForceMJ
                      (DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, runningCostModel, constraintModelManager), dt, True) 
                     for _ in range(T)]
     
     
-    terminalModel = IntegratedActionModelForceMJ(terminal_DAM, 0., True)
+    terminalModel = IntegratedActionModelForceMJ(DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, terminalCostModel, None), 0., True)
 
-    
+    # Added for FDDP solver
     for runningModel in runningModels:
         runningModel.x_lb = StateLimit_lb
         runningModel.x_ub = StateLimit_ub
@@ -187,12 +169,13 @@ def main():
 
     num_steps = T + 1 
 
-    # # Initialize xs_init with the interpolated X position
+    ################### Initialize xs_init using interpolated trajs with noises to warmstart the solver ###################
     xs_init = [np.copy(x0) for _ in range(num_steps)]
     base_x_start = x0[0].copy()
     base_x_end = Px_des
     base_x_values = np.linspace(base_x_start, base_x_end, num_steps)
     us_init = [np.zeros(nu) for i in range(T)]
+
     # xs_init, us_init = load_arrays("go2_walking_MJ_CSQP")
     # xs_init, us_init = extend_trajectory(xs_init, us_init, 10)
 
@@ -209,19 +192,12 @@ def main():
             xs_init[i][0] = base_x_values[i] 
             xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
             xs_init[i] = add_noise_to_state(rmodel, xs_init[i], scale=0.02).copy()
+    else:
+        exit("Invalid solver type")
 
-
-    elif solver_type == "DDP":
-        for i in range(1, num_steps):
-            xs_init[i][2] = 0.2800
-            
-    
-    print(f'xs_init[0]: {xs_init[0]}')
-    print(f'xs_init[-1]: {xs_init[-1]}')
     maxIter = 400
-
+    ################### Set solver params and solve ###################
     print('Start solving')
-
     if solver_type == "CSQP":
         solver = mim_solvers.SolverCSQP(problem)
         solver.mu_constraint = 100.
@@ -236,19 +212,6 @@ def main():
 
     elif solver_type == "FDDP":
         solver = crocoddyl.SolverBoxFDDP(problem)
-        # solver = crocoddyl.SolverFDDP(problem)
-        solver.setCallbacks([crocoddyl.CallbackVerbose(), crocoddyl.CallbackLogger()])
-        flag = solver.solve(xs_init, us_init, maxIter, False)
-
-    elif solver_type == "DDP":
-        solver = crocoddyl.SolverBoxDDP(problem)
-
-        # solver = crocoddyl.SolverDDP(problem)
-        solver.setCallbacks([crocoddyl.CallbackVerbose(), crocoddyl.CallbackLogger()])
-        flag = solver.solve(xs_init, us_init, maxIter, False)
-        
-    elif solver_type == "IPOPT":
-        solver = crocoddyl.SolverIpopt(problem)
         solver.setCallbacks([crocoddyl.CallbackVerbose(), crocoddyl.CallbackLogger()])
         flag = solver.solve(xs_init, us_init, maxIter, False)
 
@@ -258,12 +221,12 @@ def main():
     xs, us = solver.xs, solver.us
     log = solver.getCallbacks()[-1]
     print(f'Solved: {flag}')
+
+    #Extract data from the solver for visualizations
     runningDatas = problem.runningDatas
     runningModels = problem.runningModels
     terminalData = problem.terminalData
     terminalModel = problem.terminalModel
-
-    
 
     print(f'Final state: \n {xs[-1]}')
     if solver_type == "CSQP":
@@ -276,8 +239,6 @@ def main():
 
     forces = np.array([runningModel.forces[:, :3] for runningModel in problem.runningModels])
     contacts = [runningModel.contacts for runningModel in problem.runningModels]
-    mj_datas = [runningModel.mj_data for runningModel in problem.runningModels]
-
     formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
     np.set_printoptions(linewidth=210, precision=4, suppress=False, formatter=formatter)
 
@@ -286,12 +247,9 @@ def main():
 
     import imageio
     frames = []
-    fps = int(1/dt) 
-    fps = int(fps/2)
+    fps = int(0.5/dt) 
 
-    import zmq
-    import time
-    
+    import zmq    
     try:
         viewer = meshcat.Visualizer(zmq_url="tcp://127.0.0.1:6000")
     except zmq.ZMQError as e:
@@ -307,10 +265,8 @@ def main():
     PLOT_DIRECTORY = "visualizations/plots/ocp/"
     VIDEO_DIRECTORY = "visualizations/videos/ocp/"
     IMAGE_DIRECTORY = "visualizations/frames/"  # Directory to store individual frames
-    # with_clearance = "no_clearance_"
     with_clearance = "with_clearance_"
     TASK = "walking_"
-    # TASK = "running_"
     foots_velocities = []
     import os
     import subprocess
@@ -357,11 +313,6 @@ def main():
             arrows[eff].anchor_as_vector(rdata.oMf[fid].translation, force_eff)    
 
         foots_velocities.append(foots_velocity)
-        
-        viz.setCameraTarget(np.array([x_t[0]+0.1, 0.0, 0.0]))
-    
-
-        viz.setCameraPosition(np.array([0.5, -1.0, 0.3]))
 
         viz.display(xs[i][:rmodel.nq])
         frame = np.asarray(viz.viewer.get_image())  # Modify this line to capture frames properly in the right format
@@ -373,24 +324,24 @@ def main():
     
     print(f'Final cost: {terminalData.differential.costs.costs["xDes_terminal"].cost * terminalModel.differential.costs.costs["xDes_terminal"].weight}')
     
-    # plot_normal_forces(forces, fids, dt, output_file=PLOT_DIRECTORY + TASK +with_clearance + "normal_forces_" + solver_type + ".pdf")
+    plot_normal_forces(forces, fids, dt, output_file=PLOT_DIRECTORY + TASK +with_clearance + "normal_forces_" + solver_type + ".pdf")
 
-    # positions = [x[:3] for x in xs]  # Extract the first three elements (positions) from each array in xs
-    # orientations = [x[3:7] for x in xs]  # Extract elements 3 to 6 (quaternions) from each array in xs
-    # plot_base_poses(positions, orientations, dt, output_file= PLOT_DIRECTORY+ TASK + with_clearance+ "base_pose_" + solver_type + ".pdf")
+    positions = [x[:3] for x in xs]  # Extract the first three elements (positions) from each array in xs
+    orientations = [x[3:7] for x in xs]  # Extract elements 3 to 6 (quaternions) from each array in xs
+    plot_base_poses(positions, orientations, dt, output_file= PLOT_DIRECTORY+ TASK + with_clearance+ "base_pose_" + solver_type + ".pdf")
 
-    # plot_sliding(foots_velocities, forces, fids, dt, output_file= PLOT_DIRECTORY+ TASK+with_clearance+"sliding_" + solver_type + ".pdf")
+    plot_sliding(foots_velocities, forces, fids, dt, output_file= PLOT_DIRECTORY+ TASK+with_clearance+"sliding_" + solver_type + ".pdf")
 
-    # # Call FFmpeg manually to convert the images into a video with the probesize option
-    # output_file = VIDEO_DIRECTORY + TASK + with_clearance + "CSQP" + "_1ms.mp4"
-    # subprocess.call([
-    #     'ffmpeg', '-y', '-probesize', '50M', '-framerate', str(fps),
-    #     '-i', os.path.join(IMAGE_DIRECTORY, 'frame_%04d.png'),
-    #     '-c:v', 'libx264', '-pix_fmt', 'yuv420p', output_file
-    # ])
+    # Call FFmpeg manually to convert the images into a video with the probesize option
+    output_file = VIDEO_DIRECTORY + TASK + with_clearance + "CSQP" + "_1ms.mp4"
+    subprocess.call([
+        'ffmpeg', '-y', '-probesize', '50M', '-framerate', str(fps),
+        '-i', os.path.join(IMAGE_DIRECTORY, 'frame_%04d.png'),
+        '-c:v', 'libx264', '-pix_fmt', 'yuv420p', output_file
+    ])
 
-    # print(f"Video saved to {output_file}")
-    #
+    print(f"Video saved to {output_file}")
+    
     save = input("Save trajectory? (y/n)")
     if save == "y":
         save_arrays(xs, us, "precomputed_trajectory_" + solver_type)
