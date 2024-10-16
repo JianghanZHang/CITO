@@ -14,11 +14,8 @@
 
 3. Install necessary dependencies:
     ```bash
-    conda install pinocchio crocoddyl matplotlib imageio meshcat-python -c conda-forge
+    conda install pinocchio crocoddyl matplotlib imageio mim-solvers meshcat-python=0.3.0 -c conda-forge
     ```
-
-4. Build and install `mim_solver-devel`:
-    - Clone and install the development branch from the repository: [mim_solvers (devel)](https://github.com/machines-in-motion/mim_solvers/tree/devel)
 
 5. Install MuJoCo (not available in Conda):
     ```bash
