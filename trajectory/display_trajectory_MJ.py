@@ -1,3 +1,10 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../python/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../robots/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'python/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'robots/')))
 import numpy as np
 import crocoddyl
 from mim_solvers import SolverSQP, SolverCSQP
@@ -16,7 +23,7 @@ from utils import Arrow
 from complementarity_constraints_force_free import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
 from friction_cone import ResidualLinearFrictionCone
 from force_derivatives import LocalWorldAlignedForceDerivatives
-from robot_env import create_go2_env_force_MJ, create_go2_env
+from robots.robot_env import create_go2_env_force_MJ, create_go2_env
 from utils import load_arrays
 import imageio
 formatter = {'float_kind': lambda x: "{:.4f}".format(x)}

@@ -2,7 +2,7 @@
 import crocoddyl
 import numpy as np
 import pinocchio as pin
-from robot_env import GO2_FOOT_RADIUS
+from robots.robot_env import GO2_FOOT_RADIUS
     
 class ResidualModelFrameTranslationNormal(crocoddyl.ResidualModelAbstract):
 
@@ -27,7 +27,6 @@ class ResidualModelFrameTranslationNormal(crocoddyl.ResidualModelAbstract):
         data.r = Dist        
    
     def calcDiff(self, data, x, u=None):
-        # self.calc(data, x, u)
         
         nq, nv = self.state.nq, self.state.nv
         q, v = x[:nq], x[-nv:]

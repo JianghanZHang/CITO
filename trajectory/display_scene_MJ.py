@@ -17,7 +17,7 @@ from utils import Arrow
 from complementarity_constraints_force_free import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
 from friction_cone import  ResidualLinearFrictionCone
 from force_derivatives import LocalWorldAlignedForceDerivatives
-from robot_env import create_go2_env_force_MJ, create_go2_env
+from robots.robot_env import create_go2_env_force_MJ, create_go2_env
 from trajectory_data import load_arrays
 formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
     
