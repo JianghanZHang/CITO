@@ -21,28 +21,6 @@
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
   </worldbody>
 
-  <!-- <contact>
-    <pair geom1="floor" geom2="FL" friction="1.0" condim="6"
-      solimp="0.0 1.0 0.011 0.5 2" 
-      solref="-200 -100"
-      solreffriction="-0.1 -0"/>
-
-    <pair geom1="floor" geom2="FR" friction="1.0" condim="6"
-      solimp="0.0 1.0 0.011 0.5 2" 
-      solref="-200 -100"
-      solreffriction="-0.1 -0.0"/>
-      
-    <pair geom1="floor" geom2="RL" friction="1.0" condim="6"
-      solimp="0.0 1.0 0.011 0.5 2" 
-      solref="-200 -100"
-      solreffriction="-0.1 -0"/>
-      
-    <pair geom1="floor" geom2="RR" friction="1.0" condim="6"
-      solimp="0.0 1.0 0.011 0.5 2" 
-      solref="-200 -100"
-      solreffriction="-0.1 -0"/>
-  </contact> -->
-
   <sensor>
     <touch name="FL_touch" site="FL_force_site"/>
     <framepos name="FL_pos" objtype="site" objname="FL_posvel_site" reftype="geom" refname="floor"/>

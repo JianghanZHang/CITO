@@ -1,12 +1,12 @@
 <mujoco model="go2">
   <!-- <compiler angle="radian" meshdir="assets"/> -->
-  <compiler angle="radian" meshdir="assets" autolimits="true"/>
+  <compiler angle="radian" meshdir="assets" autolimits="false"/>
 
-  <!-- <option cone="pyramidal" impratio="1.0"  -->
+  <!-- <option cone="pyramidal" impratio="100.0"  -->
   <option cone="elliptic" impratio="100.0" 
           integrator="Euler"
-          iterations="10000" ls_iterations="20" solver='Newton' tolerance="1e-6"
-          mpr_iterations="1000" mpr_tolerance="1e-6"
+          iterations="200" ls_iterations="50" solver='Newton' tolerance="1e-6"
+          ccd_iterations="1000" ccd_tolerance="1e-6"
           sdf_iterations="1000" sdf_initpoints="100">
 
     <flag   eulerdamp="enable"
@@ -19,6 +19,7 @@
             multiccd="enable"   
             invdiscrete="disable">
     </flag>
+
   </option>
   <default>
     <default class="force_sensor_site">
@@ -30,22 +31,22 @@
     </default>
     <default class="go2">
       <geom friction="0.6" margin="0.000" condim="1"/>
-      <joint axis="0 1 0" damping="2" armature="0.01" frictionloss="0.2"/>
-      <motor ctrlrange="-23.7 23.7"/>
+      <joint axis="0 1 0" damping="2.0" armature="0.01" frictionloss="0.2"/>
+      <motor ctrlrange="-23.7 23.7" ctrllimited = "false"/>
       <default class="abduction">
-        <joint axis="1 0 0" range="-1.0472 1.0472"/>
+        <joint axis="1 0 0" range="-1.0472 1.0472" limited = "false"/>
       </default>
       <default class="hip">
         <default class="front_hip">
-          <joint range="-1.5708 3.4907"/>
+          <joint range="-1.5708 3.4907" limited = "false"/>
         </default>
         <default class="back_hip">
-          <joint range="-0.5236 4.5379"/>
+          <joint range="-0.5236 4.5379" limited = "false"/>
         </default>
       </default>
       <default class="knee">
-        <joint range="-2.7227 -0.83776"/>
-        <motor ctrlrange="-45.43 45.43"/>
+        <joint range="-2.7227 -0.83776" limited = "false"/>
+        <motor ctrlrange="-45.43 45.43" ctrllimited = "false"/>
       </default>
       <default class="visual">
         <geom type="mesh" contype="0" conaffinity="0" group="2"/>
@@ -56,8 +57,8 @@
       <default class="collision">
         <geom group="3"/>
         <default class="foot">
-          <geom size="0.022" pos="-0.002 0 -0.213" priority="1" condim="6"
-            friction="1.0"/>
+          <geom size="0.020" pos="-0.002 0 -0.213" priority="1" condim="6"
+            friction="1.0" solimp="0.015 1.0 0.02"/>
         </default>
       </default>
     </default>

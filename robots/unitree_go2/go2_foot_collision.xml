@@ -2,11 +2,11 @@
   <!-- <compiler angle="radian" meshdir="assets"/> -->
   <compiler angle="radian" meshdir="assets" autolimits="false"/>
 
+  <!-- <option cone="elliptic" impratio="100.0"  --> 
   <option cone="pyramidal" impratio="1.0" 
           integrator="Euler"
-          timestep="0.001" 
-          iterations="10000" ls_iterations="20" solver='Newton' tolerance="1e-6"
-          mpr_iterations="1000" mpr_tolerance="1e-6"
+          iterations="500" ls_iterations="50" solver='Newton' tolerance="1e-6"
+          ccd_iterations="1000" ccd_tolerance="1e-6"
           sdf_iterations="1000" sdf_initpoints="100">
 
     <flag   eulerdamp="enable"
