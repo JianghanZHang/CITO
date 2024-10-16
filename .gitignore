@@ -1,0 +1,29 @@
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+*vscode*
+
+# Ignore text files
+*MUJOCO*.txt
+
+
+# Ignore PDF files
+*.pdf
+
+
+# Ignore MP4 video files
+*.mp4
+*.png
+*.jpg
+*.jpeg
+
+# Ignore other common cache or temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+
+# Ignore visualization or output folders (optional, depending on your project needs)
+visualizations/
