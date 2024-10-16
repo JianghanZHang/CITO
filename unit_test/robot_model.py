@@ -11,7 +11,7 @@ import meshcat
 import time
 from utils import Arrow
 from complementarity_constraints_force_free import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
-from robot_env import create_solo12_env_free_force
+from robots.robot_env import create_solo12_env_free_force
 
 # Create the robot
 env = create_solo12_env_free_force()

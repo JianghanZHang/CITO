@@ -7,11 +7,11 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # from numerical_differences import numdiffSE3toEuclidian
 from friction_cone import ResidualLinearFrictionCone
-from ResidualModels import ResidualModelFrameTranslationNormal, ResidualModelFrameVelocityTangential
+from python.ResidualModels import ResidualModelFrameTranslationNormal, ResidualModelFrameVelocityTangential
 import crocoddyl
 import pinocchio as pin
 import numpy as np
-from robot_env import create_go2_env, create_go2_env_force_MJ
+from robots.robot_env import create_go2_env, create_go2_env_force_MJ
 import mujoco
 from utils import change_convention_pin2mj, change_convention_mj2pin, random_go2_x_u, stateMapping_mj2pin, stateMapping_pin2mj
 pin_env = create_go2_env()

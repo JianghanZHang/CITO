@@ -1,11 +1,10 @@
+## Author : Avadesh Meduri
 ## This files contains the forces and their derivatives when applied in particular frames. 
 
-import torch
-from torch.autograd import Function
 import numpy as np
 import pinocchio as pin
 
-def FrameTranslationForce(Fb, aPb):
+def FrameTranslationForceDerivatives(Fb, aPb):
     """
     This function transfers a force applied at frame B to Frame A. 
     Frame A & B are assumed to have the same orientation but have a position offset    
@@ -26,7 +25,7 @@ def FrameTranslationForce(Fb, aPb):
                          [Fy, -Fx, 0.0]]) # derivatives of Fa/aPb
     return np.array(Fa), JFb, JaPb
 
-def LocalWorldAlignedForce(Flw, x, fid, rmodel, rdata):
+def LocalWorldAlignedForceDerivatives(Flw, x, fid, rmodel, rdata):
     """
     This function rotates a force in the local world aligned frame to the contact frame (local frame)
     Input:
@@ -57,56 +56,29 @@ def LocalWorldAlignedForce(Flw, x, fid, rmodel, rdata):
 
     return np.array(fc.linear), dfc_df, dfc_dx
 
+def ForceDerivatives(Flw, x, fid, rmodel, rdata):
+    """
+    This function computes the force and derivatives in the local world aligned frame
+    Input:
+        Flw : force in the local world aligned frame
+        x : state of the system (q,v)
+        fid : frame id of the local frame
+        rmodel : pinocchio model
+        rdata : pinocchio data
+    """
+    assert len(Flw)
+    nq, nv = rmodel.nq, rmodel.nv
 
-class TorchFrameTranslationForce(Function):
-
-    @staticmethod
-    def forward(ctx, Fb, aPb):
-        Fb = Fb.detach().numpy()
-        aPb = aPb.detach().numpy()
-        Fa, JFb, JaPb = FrameTranslationForce(Fb, aPb)
-
-        ctx.JFb = torch.tensor(JFb)
-        ctx.JaPb = torch.tensor(JaPb)
-
-        return torch.tensor(Fa)
+    q, v = x[:nq], x[nq:nq+nv]
     
-    @staticmethod
-    def backward(ctx, grad):
-        
-        JFb, JaPb = ctx.JFb, ctx.JaPb
+    pin.framesForwardKinematics(rmodel, rdata, q)
+    pin.computeAllTerms(rmodel, rdata, q, v)
+    pin.updateFramePlacements(rmodel, rdata)
 
-        dl_dFb = JFb.T @ grad    
-        dl_dPb = JaPb.T @ grad
-        
-        return dl_dFb, dl_dPb
+    flw = pin.Force(Flw.copy(), np.zeros(3))
 
+    # derivatives
+    dflw_dx = np.zeros((3, 2*nv))
 
-class TorchLocalWorldAlignedForce(Function):
+    return np.array(flw.linear), dflw_dx
 
-    @staticmethod
-    def forward(ctx, Flw, x, fid, rmodel, rdata):
-        Flw = Flw.detach().numpy()
-        x = x.detach().numpy()
-        Fc, dfc_df, dfc_dx = LocalWorldAlignedForce(Flw, x, fid, rmodel, rdata)
-
-        ctx.dfc_df = torch.tensor(dfc_df)
-        ctx.dfc_dx = torch.tensor(dfc_dx)
-        ctx.nq, ctx.nv = rmodel.nq, rmodel.nv
-
-
-        return torch.tensor(Fc)
-    
-    @staticmethod
-    def backward(ctx, grad):
-        
-        dfc_df, dfc_dx = ctx.dfc_df, ctx.dfc_dx
-        nq, nv = ctx.nq, ctx.nv
-
-        dl_df = dfc_df.T @ grad #dloss / df   
-        dl_dx = dfc_dx.T @ grad #d loss / dx
-        if nq != nv:
-            dl_dx = torch.cat([dl_dx[:nv],  torch.zeros(nq - nv), dl_dx[nv:]])
-
-
-        return dl_df, dl_dx, None, None, None

@@ -1,0 +1,7 @@
+# Rollout the precomputed trajectory
+
+dt_ocp : 0.01
+dt_ctrl: 0.01
+T_total: 1
+Kp: 0
+Kd: 0

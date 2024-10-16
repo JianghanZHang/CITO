@@ -12,9 +12,9 @@ from differential_model_force_free import DifferentialActionModelForceExplicit
 from friction_cone import  ResidualLinearFrictionCone
 from complementarity_constraints_force_free import ResidualModelComplementarityErrorNormal, ResidualModelFrameTranslationNormal, ResidualModelComplementarityErrorTangential
 from differential_model_NumDiff import DifferentialActionModelForceExplicit_NoCalcDiff
-from differential_model_force_MJ import DifferentialActionModelForceMJ
+from differential_model_MJ import DifferentialActionModelMJ
 import mujoco
-from robot_env import create_go2_env_force_MJ, create_go2_env
+from robots.robot_env import create_go2_env_force_MJ, create_go2_env
 
 pin_env = create_go2_env()
 env = create_go2_env_force_MJ()
@@ -221,7 +221,7 @@ constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)
 #     constraintModelManager.addConstraint("ComplementarityConstraintTangential_"+ env["contactFnames"][idx] + str(idx), ComplementarityConstraint)
 
 print("Testing DifferentialActionModelForceMJ")
-DAM_numerical = DifferentialActionModelForceMJ(mj_model, mj_data, state, nu, njoints, contactFids, cost_model)
+DAM_numerical = DifferentialActionModelMJ(mj_model, mj_data, state, nu, njoints, contactFids, cost_model)
                                                  
 # DAM_numerical = crocoddyl.DifferentialActionModelNumDiff(DAM_no_calc_diff, True)
 test_DAM(DAM_numerical, rmodel, mj_model, mj_data)

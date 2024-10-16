@@ -4,13 +4,19 @@ import mim_solvers
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../*')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../python/*')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../robots/*')))
 
-from ResidualModels import ResidualModelFootClearanceNumDiff
-from differential_model_force_MJ import DifferentialActionModelForceMJ
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'python/*')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'robots/*')))
+
+from python.ResidualModels import ResidualModelFootClearanceNumDiff
+from differential_model_MJ import DifferentialActionModelMJ
 from integrated_action_model_MJ import IntegratedActionModelForceMJ
 import time
 
-from robot_env import go2_init_conf0
+from robots.robot_env import go2_init_conf0
 from croco_mpc_utils.ocp import OptimalControlProblemClassical
 import croco_mpc_utils.pinocchio_utils as pin_utils
 import crocoddyl 
@@ -130,11 +136,11 @@ def create_walking_ocp(pin_model, mj_model, config):
     terminalCostModel.addCost("xDes_terminal", xDesCostTerminal, stateRegWeightTerminal)
 
 
-    terminal_DAM = DifferentialActionModelForceMJ(mj_model, state, nu, njoints, fids, terminalCostModel, None)
+    terminal_DAM = DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, terminalCostModel, None)
     
 
     runningModels = [IntegratedActionModelForceMJ
-                     (DifferentialActionModelForceMJ(mj_model, state, nu, njoints, fids, runningCostModel, constraintModelManager), dt, True) 
+                     (DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, runningCostModel, constraintModelManager), dt, True) 
                     for _ in range(T)]
     
     

@@ -89,7 +89,7 @@ class Go2Sim:
 
         self.q0 = self.initial_q
 
-        self.pos0 = np.array([0., 0., 0.2900])
+        self.pos0 = np.array([0., 0., 0.2750])
         self.rot0 = np.array([1., 0., 0., 0.])
         self.reset()
         mujoco.mj_step(self.model, self.data)

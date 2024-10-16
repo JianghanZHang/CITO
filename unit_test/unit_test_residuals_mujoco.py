@@ -6,16 +6,16 @@ import argparse
 # Add the outer directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from friction_cone import ResidualLinearFrictionCone
-from ResidualModels import ResidualModelFrameTranslationNormal, ResidualModelFrameVelocityTangential
+from python.ResidualModels import ResidualModelFrameTranslationNormal, ResidualModelFrameVelocityTangential
 import crocoddyl
 import pinocchio as pin
 import numpy as np
-from robot_env import create_go2_env, create_go2_env_force_MJ
+from robots.robot_env import create_go2_env, create_go2_env_force_MJ
 import mujoco
 from utils import change_convention_pin2mj, change_convention_mj2pin, stateMapping_mj2pin, stateMapping_pin2mj
 from numerical_difference import stateMappingDerivative_pin2mj_numDiff, stateMappingDerivative_mj2pin_numDiff
-from ResidualModels import ResidualModelFrameVelocityTangentialNumDiff
-from ResidualModels import ResidualModelFootClearance, ResidualModelFootClearanceNumDiff
+from python.ResidualModels import ResidualModelFrameVelocityTangentialNumDiff
+from python.ResidualModels import ResidualModelFootClearance, ResidualModelFootClearanceNumDiff
 pin_env = create_go2_env()
 rmodel = pin_env["rmodel"]
 
