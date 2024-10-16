@@ -98,7 +98,7 @@ def main():
         runningCostModel.addCost(f"footClearance_{idx}", footClearanceCost, w)
         terminalCostModel.addCost(f"footClearance_{idx}", footClearanceCost, w)
     ################ State Cost ######################
-    Px_des = 1.0
+    Px_des = 1.5
 
     P_des = [Px_des, 0.0, 0.2800] # desired base position
     O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0)) # desired base orientation (quaternion)
@@ -152,7 +152,7 @@ def main():
     uResidual = crocoddyl.ResidualModelControl(state, nu)
     uRegActivation = crocoddyl.ActivationModelWeightedQuad(np.array(12 * [1.0]))
     uRegCost = crocoddyl.CostModelResidual(state, uRegActivation, uResidual)
-    runningCostModel.addCost("uReg", uRegCost, 1e-2)
+    runningCostModel.addCost("uReg", uRegCost, 1e-4)
 
     ################### Initialize running and terminal models ################
     runningModels = [IntegratedActionModelForceMJ
@@ -190,14 +190,14 @@ def main():
             xs_init[i][2] = 0.2800
             xs_init[i][0] = base_x_values[i] 
             xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
-            xs_init[i] = add_noise_to_state(rmodel, xs_init[i], scale=0.02).copy()
+            xs_init[i] = add_noise_to_state(rmodel, xs_init[i], scale=0.05).copy()
     
     elif solver_type == "FDDP":
          for i in range(1, num_steps):
             xs_init[i][2] = 0.2800
             xs_init[i][0] = base_x_values[i] 
             xs_init[i][nq] = Vx_des #assign desired base velocity to initial guess
-            xs_init[i] = add_noise_to_state(rmodel, xs_init[i], scale=0.02).copy()
+            xs_init[i] = add_noise_to_state(rmodel, xs_init[i], scale=0.05).copy()
     else:
         exit("Invalid solver type")
 
