@@ -99,20 +99,25 @@ def main():
         terminalCostModel.addCost(f"footClearance_{idx}", footClearanceCost, w)
     ################ State Cost ######################
     Px_des = 1.0
-    Vx_des = Px_des / T_total
 
-    P_des = [Px_des, 0.0, 0.2700]
-    O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0))
+    P_des = [Px_des, 0.0, 0.2800] # desired base position
+    O_des = pin.Quaternion(pin.utils.rpyToMatrix(0.0, 0.0, 0.0)) # desired base orientation (quaternion)
 
-    V_des = [Vx_des, 0.0, 0.0]
-    W_des = [0.0, 0.0, 0.0]
+    Vx_des = Px_des / T_total # desired base velocity 
 
+    joint_pos_des = q0[7:] # desired joint positions
+    joint_vel_des = v0[6:] # desired joint velocities
+
+    V_des = [Vx_des, 0.0, 0.0] # desired base linear velocity
+    W_des = [0.0, 0.0, 0.0] # desired base angular velocity
+
+    # Putting together the desired state vector
     x_des = np.array(P_des + 
                     [O_des[0], O_des[1], O_des[2], O_des[3]] + 
-                    q0[7:] +
+                    joint_pos_des +
                     V_des + 
                     W_des + 
-                    v0[6:])
+                    joint_vel_des)
     
     xDesActivationRunning = crocoddyl.ActivationModelWeightedQuad(np.array(
                                                                         1 * [1] +  # base x position
@@ -176,6 +181,7 @@ def main():
     base_x_values = np.linspace(base_x_start, base_x_end, num_steps)
     us_init = [np.zeros(nu) for i in range(T)]
 
+    # Loading precomputed trajectory and extending it for smaller time step OCP
     # xs_init, us_init = load_arrays("go2_walking_MJ_CSQP")
     # xs_init, us_init = extend_trajectory(xs_init, us_init, 10)
 
@@ -195,9 +201,10 @@ def main():
     else:
         exit("Invalid solver type")
 
-    maxIter = 400
     ################### Set solver params and solve ###################
     print('Start solving')
+    
+    maxIter = 300
     if solver_type == "CSQP":
         solver = mim_solvers.SolverCSQP(problem)
         solver.mu_constraint = 100.
@@ -218,60 +225,69 @@ def main():
     else:
         exit("Invalid solver type")
 
+    
+
     xs, us = solver.xs, solver.us
     log = solver.getCallbacks()[-1]
     print(f'Solved: {flag}')
+
+    # Optionally save the solution
+    # save_arrays(xs, us, TRAJECTORY_DIECTORY + "precomputed_trajectory_" + solver_type)
 
     #Extract data from the solver for visualizations
     runningDatas = problem.runningDatas
     runningModels = problem.runningModels
     terminalData = problem.terminalData
     terminalModel = problem.terminalModel
+    forces = np.array([runningModel.forces[:, :3] for runningModel in problem.runningModels])
+    contacts = [runningModel.contacts for runningModel in problem.runningModels]
+    formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
+    np.set_printoptions(linewidth=210, precision=4, suppress=False, formatter=formatter)
 
+    # Some plots using builtin functions
     print(f'Final state: \n {xs[-1]}')
     if solver_type == "CSQP":
         mim_solvers.plotConvergence(log.convergence_data)
     elif solver_type == "FDDP":
         crocoddyl.plotConvergence(log.costs, log.pregs, log.dregs, log.grads, log.stops, log.steps, figIndex=2)
     crocoddyl.plotOCSolution(xs, us)
-
-    input("Press to display")
-
-    forces = np.array([runningModel.forces[:, :3] for runningModel in problem.runningModels])
-    contacts = [runningModel.contacts for runningModel in problem.runningModels]
-    formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
-    np.set_printoptions(linewidth=210, precision=4, suppress=False, formatter=formatter)
+    input("Press to connect to meshcat visualizer") 
+    from meshcat.animation import Animation
+    import meshcat.transformations as tf    
 
     from pinocchio.visualize import MeshcatVisualizer
     viz = MeshcatVisualizer(rmodel, pin_env["gmodel"], pin_env["vmodel"])
-
-    import imageio
-    frames = []
-    fps = int(0.5/dt) 
-
-    import zmq    
     try:
-        viewer = meshcat.Visualizer(zmq_url="tcp://127.0.0.1:6000")
-    except zmq.ZMQError as e:
-        print(f"Failed to connect to Meshcat server: {e}")
+        viz.initViewer(open=True)
+    except ImportError as err:
+        print(err)
+        sys.exit(0)
+    
 
-    print('Connected to meshcat')
-    viz.initViewer(viewer)
+#################Visualizations storage settings############################################################
+    import imageio
+    import os
+    import subprocess
+    
+    frames = []
+    fps = int(1/dt) 
+    fps = int(fps/2) # Using half speed w.r.t. real-time
+    TRAJECTORY_DIECTORY = "trajectories/"
+    PLOT_DIRECTORY = "visualizations/plots/ocp/"
+    VIDEO_DIRECTORY = "visualizations/videos/ocp/"
+    IMAGE_DIRECTORY = "visualizations/frames/"  # Directory to store individual frames for video creation
+    TASK = "walking_"                          # Task name for the video
+    if not os.path.exists(IMAGE_DIRECTORY):
+        os.makedirs(IMAGE_DIRECTORY)
+
+######################################Start visluaization###############################################
+    
     viz.loadViewerModel()
     viz.initializeFrames()
     viz.display_frames = True
     arrows = []
-    fids = fids
-    PLOT_DIRECTORY = "visualizations/plots/ocp/"
-    VIDEO_DIRECTORY = "visualizations/videos/ocp/"
-    IMAGE_DIRECTORY = "visualizations/frames/"  # Directory to store individual frames
-    with_clearance = "with_clearance_"
-    TASK = "walking_"
     foots_velocities = []
-    import os
-    import subprocess
-    if not os.path.exists(IMAGE_DIRECTORY):
-        os.makedirs(IMAGE_DIRECTORY)
+    fids = fids
 
     input("Press to display")
     for i in range(len(fids)):
@@ -293,7 +309,7 @@ def main():
             pin.updateFramePlacements(rmodel, rdata)
             print(f'foot id:{eff}')
             print(f'forces: {forces[i][eff]}')
-            print(f'distance:{rdata.oMf[fid].translation[2] - GO2_FOOT_RADIUS}')
+            print(f'distance:{rdata.oMf[fid].translation[2]}')
 
             name = "footClearance_" + str(eff)
 
@@ -313,6 +329,9 @@ def main():
             arrows[eff].anchor_as_vector(rdata.oMf[fid].translation, force_eff)    
 
         foots_velocities.append(foots_velocity)
+        
+        # viz.setCameraTarget(np.array([x_t[0]+0.1, 0.0, 0.0]))
+        # viz.setCameraPosition(np.array([0.5, -1.0, 0.3]))
 
         viz.display(xs[i][:rmodel.nq])
         frame = np.asarray(viz.viewer.get_image())  # Modify this line to capture frames properly in the right format
@@ -324,16 +343,16 @@ def main():
     
     print(f'Final cost: {terminalData.differential.costs.costs["xDes_terminal"].cost * terminalModel.differential.costs.costs["xDes_terminal"].weight}')
     
-    plot_normal_forces(forces, fids, dt, output_file=PLOT_DIRECTORY + TASK +with_clearance + "normal_forces_" + solver_type + ".pdf")
+    plot_normal_forces(forces, fids, dt, output_file=PLOT_DIRECTORY + TASK  + "normal_forces_" + solver_type + ".pdf")
 
     positions = [x[:3] for x in xs]  # Extract the first three elements (positions) from each array in xs
     orientations = [x[3:7] for x in xs]  # Extract elements 3 to 6 (quaternions) from each array in xs
-    plot_base_poses(positions, orientations, dt, output_file= PLOT_DIRECTORY+ TASK + with_clearance+ "base_pose_" + solver_type + ".pdf")
+    plot_base_poses(positions, orientations, dt, output_file= PLOT_DIRECTORY+ TASK + "base_pose_" + solver_type + ".pdf")
 
-    plot_sliding(foots_velocities, forces, fids, dt, output_file= PLOT_DIRECTORY+ TASK+with_clearance+"sliding_" + solver_type + ".pdf")
+    plot_sliding(foots_velocities, forces, fids, dt, output_file= PLOT_DIRECTORY+ TASK+"sliding_" + solver_type + ".pdf")
 
     # Call FFmpeg manually to convert the images into a video with the probesize option
-    output_file = VIDEO_DIRECTORY + TASK + with_clearance + "CSQP" + "_1ms.mp4"
+    output_file = VIDEO_DIRECTORY + TASK + "CSQP" + ".mp4"
     subprocess.call([
         'ffmpeg', '-y', '-probesize', '50M', '-framerate', str(fps),
         '-i', os.path.join(IMAGE_DIRECTORY, 'frame_%04d.png'),
@@ -341,10 +360,6 @@ def main():
     ])
 
     print(f"Video saved to {output_file}")
-    
-    save = input("Save trajectory? (y/n)")
-    if save == "y":
-        save_arrays(xs, us, "precomputed_trajectory_" + solver_type)
 
 
 if __name__   == "__main__":
