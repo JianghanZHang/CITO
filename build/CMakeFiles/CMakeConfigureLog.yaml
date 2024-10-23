@@ -1,0 +1,1212 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeDetermineSystem.cmake:211 (message)"
+      - "build/_deps/jrl-cmakemodules-src/CMakeLists.txt:7 (project)"
+    message: |
+      The system is: Linux - 5.15.0-124-generic - x86_64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "build/_deps/jrl-cmakemodules-src/CMakeLists.txt:7 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /usr/bin/c++ 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+      
+      The CXX compiler identification is GNU, found in:
+        /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/3.27.4/CompilerIdCXX/a.out
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "build/_deps/jrl-cmakemodules-src/CMakeLists.txt:7 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-W3fbhd"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-W3fbhd"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-W3fbhd'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_94d70/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_94d70.dir/build.make CMakeFiles/cmTC_94d70.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-W3fbhd'
+        Building CXX object CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/c++   -std=gnu++11   -v -o CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o -c /home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeCXXCompilerABI.cpp
+        Using built-in specs.
+        COLLECT_GCC=/usr/bin/c++
+        OFFLOAD_TARGET_NAMES=nvptx-none:hsa
+        OFFLOAD_TARGET_DEFAULT=1
+        Target: x86_64-linux-gnu
+        Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+        Thread model: posix
+        gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) 
+        COLLECT_GCC_OPTIONS='-std=gnu++11' '-v' '-o' 'CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+         /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o -std=gnu++11 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccRWzshj.s
+        GNU C++11 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)
+        	compiled by GNU C version 9.4.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+        
+        warning: GMP header version 6.2.0 differs from library version 6.3.0.
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
+        ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+        ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
+        ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /usr/include/c++/9
+         /usr/include/x86_64-linux-gnu/c++/9
+         /usr/include/c++/9/backward
+         /usr/lib/gcc/x86_64-linux-gnu/9/include
+         /usr/local/include
+         /usr/include/x86_64-linux-gnu
+         /usr/include
+        End of search list.
+        GNU C++11 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)
+        	compiled by GNU C version 9.4.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+        
+        warning: GMP header version 6.2.0 differs from library version 6.3.0.
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        Compiler executable checksum: 3d1eba838554fa2348dba760e4770469
+        COLLECT_GCC_OPTIONS='-std=gnu++11' '-v' '-o' 'CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+         as -v --64 -o CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccRWzshj.s
+        GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34
+        COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/
+        LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-std=gnu++11' '-v' '-o' 'CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+        Linking CXX executable cmTC_94d70
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_94d70.dir/link.txt --verbose=1
+        /usr/bin/c++  -v CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_94d70 
+        Using built-in specs.
+        COLLECT_GCC=/usr/bin/c++
+        COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper
+        OFFLOAD_TARGET_NAMES=nvptx-none:hsa
+        OFFLOAD_TARGET_DEFAULT=1
+        Target: x86_64-linux-gnu
+        Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+        Thread model: posix
+        gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) 
+        COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/
+        LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_94d70' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+         /usr/lib/gcc/x86_64-linux-gnu/9/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper -plugin-opt=-fresolution=/tmp/ccyyWSXL.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_94d70 /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../.. CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_94d70' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-W3fbhd'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeDetermineCompilerABI.cmake:127 (message)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "build/_deps/jrl-cmakemodules-src/CMakeLists.txt:7 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/usr/include/c++/9]
+          add: [/usr/include/x86_64-linux-gnu/c++/9]
+          add: [/usr/include/c++/9/backward]
+          add: [/usr/lib/gcc/x86_64-linux-gnu/9/include]
+          add: [/usr/local/include]
+          add: [/usr/include/x86_64-linux-gnu]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/usr/include/c++/9] ==> [/usr/include/c++/9]
+        collapse include dir [/usr/include/x86_64-linux-gnu/c++/9] ==> [/usr/include/x86_64-linux-gnu/c++/9]
+        collapse include dir [/usr/include/c++/9/backward] ==> [/usr/include/c++/9/backward]
+        collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/9/include] ==> [/usr/lib/gcc/x86_64-linux-gnu/9/include]
+        collapse include dir [/usr/local/include] ==> [/usr/local/include]
+        collapse include dir [/usr/include/x86_64-linux-gnu] ==> [/usr/include/x86_64-linux-gnu]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/usr/include/c++/9;/usr/include/x86_64-linux-gnu/c++/9;/usr/include/c++/9/backward;/usr/lib/gcc/x86_64-linux-gnu/9/include;/usr/local/include;/usr/include/x86_64-linux-gnu;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeDetermineCompilerABI.cmake:152 (message)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "build/_deps/jrl-cmakemodules-src/CMakeLists.txt:7 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-W3fbhd']
+        ignore line: []
+        ignore line: [Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_94d70/fast]
+        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_94d70.dir/build.make CMakeFiles/cmTC_94d70.dir/build]
+        ignore line: [make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-W3fbhd']
+        ignore line: [Building CXX object CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/c++   -std=gnu++11   -v -o CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o -c /home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/usr/bin/c++]
+        ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:hsa]
+        ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+        ignore line: [Target: x86_64-linux-gnu]
+        ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c ada c++ go brig d fortran objc obj-c++ gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32 m64 mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+        ignore line: [Thread model: posix]
+        ignore line: [gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-std=gnu++11' '-v' '-o' 'CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o -std=gnu++11 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccRWzshj.s]
+        ignore line: [GNU C++11 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)]
+        ignore line: [	compiled by GNU C version 9.4.0  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22.1-GMP]
+        ignore line: []
+        ignore line: [warning: GMP header version 6.2.0 differs from library version 6.3.0.]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"]
+        ignore line: [ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /usr/include/c++/9]
+        ignore line: [ /usr/include/x86_64-linux-gnu/c++/9]
+        ignore line: [ /usr/include/c++/9/backward]
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/9/include]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /usr/include/x86_64-linux-gnu]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [GNU C++11 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)]
+        ignore line: [	compiled by GNU C version 9.4.0  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22.1-GMP]
+        ignore line: []
+        ignore line: [warning: GMP header version 6.2.0 differs from library version 6.3.0.]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [Compiler executable checksum: 3d1eba838554fa2348dba760e4770469]
+        ignore line: [COLLECT_GCC_OPTIONS='-std=gnu++11' '-v' '-o' 'CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccRWzshj.s]
+        ignore line: [GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34]
+        ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-std=gnu++11' '-v' '-o' 'CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+        ignore line: [Linking CXX executable cmTC_94d70]
+        ignore line: [/home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_94d70.dir/link.txt --verbose=1]
+        ignore line: [/usr/bin/c++  -v CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_94d70 ]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/usr/bin/c++]
+        ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper]
+        ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:hsa]
+        ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+        ignore line: [Target: x86_64-linux-gnu]
+        ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c ada c++ go brig d fortran objc obj-c++ gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32 m64 mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+        ignore line: [Thread model: posix]
+        ignore line: [gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) ]
+        ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_94d70' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+        link line: [ /usr/lib/gcc/x86_64-linux-gnu/9/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper -plugin-opt=-fresolution=/tmp/ccyyWSXL.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_94d70 /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../.. CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/collect2] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so] ==> ignore
+          arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccyyWSXL.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [--build-id] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [--hash-style=gnu] ==> ignore
+          arg [--as-needed] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-pie] ==> ignore
+          arg [-znow] ==> ignore
+          arg [-zrelro] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_94d70] ==> ignore
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/9] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib]
+          arg [-L/lib/x86_64-linux-gnu] ==> dir [/lib/x86_64-linux-gnu]
+          arg [-L/lib/../lib] ==> dir [/lib/../lib]
+          arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
+          arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../..]
+          arg [CMakeFiles/cmTC_94d70.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [-lstdc++] ==> lib [stdc++]
+          arg [-lm] ==> lib [m]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o]
+        collapse obj [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o] ==> [/usr/lib/x86_64-linux-gnu/Scrt1.o]
+        collapse obj [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o] ==> [/usr/lib/x86_64-linux-gnu/crti.o]
+        collapse obj [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o] ==> [/usr/lib/x86_64-linux-gnu/crtn.o]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9] ==> [/usr/lib/gcc/x86_64-linux-gnu/9]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib] ==> [/usr/lib]
+        collapse library dir [/lib/x86_64-linux-gnu] ==> [/lib/x86_64-linux-gnu]
+        collapse library dir [/lib/../lib] ==> [/lib]
+        collapse library dir [/usr/lib/x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+        collapse library dir [/usr/lib/../lib] ==> [/usr/lib]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../..] ==> [/usr/lib]
+        implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+        implicit objs: [/usr/lib/x86_64-linux-gnu/Scrt1.o;/usr/lib/x86_64-linux-gnu/crti.o;/usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o;/usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o;/usr/lib/x86_64-linux-gnu/crtn.o]
+        implicit dirs: [/usr/lib/gcc/x86_64-linux-gnu/9;/usr/lib/x86_64-linux-gnu;/usr/lib;/lib/x86_64-linux-gnu;/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-pedantic"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-49AApd"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-49AApd"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-pedantic"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-49AApd'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_8ce1c/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_8ce1c.dir/build.make CMakeFiles/cmTC_8ce1c.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-49AApd'
+        Building CXX object CMakeFiles/cmTC_8ce1c.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-pedantic -pedantic -o CMakeFiles/cmTC_8ce1c.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-49AApd/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_8ce1c
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8ce1c.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_8ce1c.dir/src.cxx.o -o cmTC_8ce1c 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-49AApd'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-Wno-long-long"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-RF709d"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-RF709d"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-Wno-long-long"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-RF709d'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_c6d39/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_c6d39.dir/build.make CMakeFiles/cmTC_c6d39.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-RF709d'
+        Building CXX object CMakeFiles/cmTC_c6d39.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-Wno-long-long -Wno-long-long -o CMakeFiles/cmTC_c6d39.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-RF709d/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_c6d39
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c6d39.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_c6d39.dir/src.cxx.o -o cmTC_c6d39 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-RF709d'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-Wall"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-9NtJxe"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-9NtJxe"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-Wall"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-9NtJxe'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_20141/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_20141.dir/build.make CMakeFiles/cmTC_20141.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-9NtJxe'
+        Building CXX object CMakeFiles/cmTC_20141.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-Wall -Wall -o CMakeFiles/cmTC_20141.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-9NtJxe/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_20141
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_20141.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_20141.dir/src.cxx.o -o cmTC_20141 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-9NtJxe'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-Wextra"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-3Cxkmc"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-3Cxkmc"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-Wextra"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-3Cxkmc'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_dde7f/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_dde7f.dir/build.make CMakeFiles/cmTC_dde7f.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-3Cxkmc'
+        Building CXX object CMakeFiles/cmTC_dde7f.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-Wextra -Wextra -o CMakeFiles/cmTC_dde7f.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-3Cxkmc/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_dde7f
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dde7f.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_dde7f.dir/src.cxx.o -o cmTC_dde7f 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-3Cxkmc'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-Wcast-align"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Og96lc"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Og96lc"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-Wcast-align"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Og96lc'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_26983/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_26983.dir/build.make CMakeFiles/cmTC_26983.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Og96lc'
+        Building CXX object CMakeFiles/cmTC_26983.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-Wcast-align -Wcast-align -o CMakeFiles/cmTC_26983.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Og96lc/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_26983
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_26983.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_26983.dir/src.cxx.o -o cmTC_26983 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Og96lc'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-Wcast-qual"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Re5XRf"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Re5XRf"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-Wcast-qual"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Re5XRf'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_3c8d9/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_3c8d9.dir/build.make CMakeFiles/cmTC_3c8d9.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Re5XRf'
+        Building CXX object CMakeFiles/cmTC_3c8d9.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-Wcast-qual -Wcast-qual -o CMakeFiles/cmTC_3c8d9.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Re5XRf/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_3c8d9
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3c8d9.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_3c8d9.dir/src.cxx.o -o cmTC_3c8d9 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Re5XRf'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-Wformat"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-aiInCc"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-aiInCc"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-Wformat"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-aiInCc'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_82c36/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_82c36.dir/build.make CMakeFiles/cmTC_82c36.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-aiInCc'
+        Building CXX object CMakeFiles/cmTC_82c36.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-Wformat -Wformat -o CMakeFiles/cmTC_82c36.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-aiInCc/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_82c36
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_82c36.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_82c36.dir/src.cxx.o -o cmTC_82c36 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-aiInCc'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-Wwrite-strings"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Gfrryc"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Gfrryc"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-Wwrite-strings"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Gfrryc'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_eb9af/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_eb9af.dir/build.make CMakeFiles/cmTC_eb9af.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Gfrryc'
+        Building CXX object CMakeFiles/cmTC_eb9af.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-Wwrite-strings -Wwrite-strings -o CMakeFiles/cmTC_eb9af.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Gfrryc/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_eb9af
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_eb9af.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_eb9af.dir/src.cxx.o -o cmTC_eb9af 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-Gfrryc'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:162 (check_cxx_compiler_flag)"
+      - "build/_deps/jrl-cmakemodules-src/compiler.cmake:62 (cxx_flags_by_compiler_frontend)"
+      - "build/_deps/jrl-cmakemodules-src/post-project.cmake:62 (_setup_project_warnings)"
+      - "CMakeLists.txt:40 (project)"
+    checks:
+      - "Performing Test res_-Wconversion"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-f6wKbc"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-f6wKbc"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "res_-Wconversion"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-f6wKbc'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_19223/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_19223.dir/build.make CMakeFiles/cmTC_19223.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-f6wKbc'
+        Building CXX object CMakeFiles/cmTC_19223.dir/src.cxx.o
+        /usr/bin/c++   -std=gnu++11   -Dres_-Wconversion -Wconversion -o CMakeFiles/cmTC_19223.dir/src.cxx.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-f6wKbc/src.cxx
+        <command-line>: warning: ISO C++11 requires whitespace after the macro name
+        Linking CXX executable cmTC_19223
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_19223.dir/link.txt --verbose=1
+        /usr/bin/c++ CMakeFiles/cmTC_19223.dir/src.cxx.o -o cmTC_19223 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-f6wKbc'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/FindOpenMP.cmake:219 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/FindOpenMP.cmake:483 (_OPENMP_GET_FLAGS)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:164 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    description: "Detecting CXX OpenMP compiler info"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "OpenMP_COMPILE_RESULT_CXX_fopenmp"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_f233c/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_f233c.dir/build.make CMakeFiles/cmTC_f233c.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe'
+        Building CXX object CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion  -fopenmp -v -std=gnu++11 -o CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe/OpenMPTryFlag.cpp
+        Using built-in specs.
+        COLLECT_GCC=/usr/bin/c++
+        OFFLOAD_TARGET_NAMES=nvptx-none:hsa
+        OFFLOAD_TARGET_DEFAULT=1
+        Target: x86_64-linux-gnu
+        Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+        Thread model: posix
+        gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) 
+        COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-std=gnu++11' '-o' 'CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread'
+         /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D_REENTRANT /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe/OpenMPTryFlag.cpp -quiet -dumpbase OpenMPTryFlag.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o -Wpedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat=1 -Wwrite-strings -Wconversion -std=gnu++11 -version -fopenmp -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccuwtVsf.s
+        GNU C++11 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)
+        	compiled by GNU C version 9.4.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+        
+        warning: GMP header version 6.2.0 differs from library version 6.3.0.
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
+        ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+        ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
+        ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /usr/include/c++/9
+         /usr/include/x86_64-linux-gnu/c++/9
+         /usr/include/c++/9/backward
+         /usr/lib/gcc/x86_64-linux-gnu/9/include
+         /usr/local/include
+         /usr/include/x86_64-linux-gnu
+         /usr/include
+        End of search list.
+        GNU C++11 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)
+        	compiled by GNU C version 9.4.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+        
+        warning: GMP header version 6.2.0 differs from library version 6.3.0.
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        Compiler executable checksum: 3d1eba838554fa2348dba760e4770469
+        COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-std=gnu++11' '-o' 'CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread'
+         as -v --64 -o CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o /tmp/ccuwtVsf.s
+        GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34
+        COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/
+        LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-std=gnu++11' '-o' 'CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread'
+        Linking CXX executable cmTC_f233c
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f233c.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion  -fopenmp -v CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o -o cmTC_f233c  -v 
+        Using built-in specs.
+        COLLECT_GCC=/usr/bin/c++
+        COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper
+        OFFLOAD_TARGET_NAMES=nvptx-none:hsa
+        OFFLOAD_TARGET_DEFAULT=1
+        Target: x86_64-linux-gnu
+        Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+        Thread model: posix
+        gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) 
+        COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/
+        LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/
+        Reading specs from /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.spec
+        COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-o' 'cmTC_f233c' '-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread'
+         /usr/lib/gcc/x86_64-linux-gnu/9/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper -plugin-opt=-fresolution=/tmp/ccJnQUXI.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f233c /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o /usr/lib/gcc/x86_64-linux-gnu/9/crtoffloadbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../.. CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o -lstdc++ -lm -lgomp -lgcc_s -lgcc -lpthread -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o /usr/lib/gcc/x86_64-linux-gnu/9/crtoffloadend.o
+        COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-o' 'cmTC_f233c' '-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread'
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/FindOpenMP.cmake:262 (message)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/FindOpenMP.cmake:483 (_OPENMP_GET_FLAGS)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:164 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    message: |
+      Parsed CXX OpenMP implicit link information from above output:
+        link line regex: [^( *|.*[/\\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe']
+        ignore line: []
+        ignore line: [Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_f233c/fast]
+        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_f233c.dir/build.make CMakeFiles/cmTC_f233c.dir/build]
+        ignore line: [make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe']
+        ignore line: [Building CXX object CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o]
+        ignore line: [/usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion  -fopenmp -v -std=gnu++11 -o CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe/OpenMPTryFlag.cpp]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/usr/bin/c++]
+        ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:hsa]
+        ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+        ignore line: [Target: x86_64-linux-gnu]
+        ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c ada c++ go brig d fortran objc obj-c++ gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32 m64 mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+        ignore line: [Thread model: posix]
+        ignore line: [gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-std=gnu++11' '-o' 'CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread']
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D_REENTRANT /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-cxrtEe/OpenMPTryFlag.cpp -quiet -dumpbase OpenMPTryFlag.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o -Wpedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat=1 -Wwrite-strings -Wconversion -std=gnu++11 -version -fopenmp -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccuwtVsf.s]
+        ignore line: [GNU C++11 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)]
+        ignore line: [	compiled by GNU C version 9.4.0  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22.1-GMP]
+        ignore line: []
+        ignore line: [warning: GMP header version 6.2.0 differs from library version 6.3.0.]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"]
+        ignore line: [ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /usr/include/c++/9]
+        ignore line: [ /usr/include/x86_64-linux-gnu/c++/9]
+        ignore line: [ /usr/include/c++/9/backward]
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/9/include]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /usr/include/x86_64-linux-gnu]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [GNU C++11 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)]
+        ignore line: [	compiled by GNU C version 9.4.0  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22.1-GMP]
+        ignore line: []
+        ignore line: [warning: GMP header version 6.2.0 differs from library version 6.3.0.]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [Compiler executable checksum: 3d1eba838554fa2348dba760e4770469]
+        ignore line: [COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-std=gnu++11' '-o' 'CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o /tmp/ccuwtVsf.s]
+        ignore line: [GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34]
+        ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-std=gnu++11' '-o' 'CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread']
+        ignore line: [Linking CXX executable cmTC_f233c]
+        ignore line: [/home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f233c.dir/link.txt --verbose=1]
+        ignore line: [/usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion  -fopenmp -v CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o -o cmTC_f233c  -v ]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/usr/bin/c++]
+        ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper]
+        ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:hsa]
+        ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+        ignore line: [Target: x86_64-linux-gnu]
+        ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c ada c++ go brig d fortran objc obj-c++ gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32 m64 mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+        ignore line: [Thread model: posix]
+        ignore line: [gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) ]
+        ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/]
+        ignore line: [Reading specs from /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.spec]
+        ignore line: [COLLECT_GCC_OPTIONS='-Wpedantic' '-Wno-long-long' '-Wall' '-Wextra' '-Wcast-align' '-Wcast-qual' '-Wformat=1' '-Wwrite-strings' '-Wconversion' '-fopenmp' '-v' '-o' 'cmTC_f233c' '-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-pthread']
+        link line: [ /usr/lib/gcc/x86_64-linux-gnu/9/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper -plugin-opt=-fresolution=/tmp/ccJnQUXI.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f233c /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o /usr/lib/gcc/x86_64-linux-gnu/9/crtoffloadbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../.. CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o -lstdc++ -lm -lgomp -lgcc_s -lgcc -lpthread -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o /usr/lib/gcc/x86_64-linux-gnu/9/crtoffloadend.o]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/collect2] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [/usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so] ==> ignore
+          arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccJnQUXI.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lpthread] ==> ignore
+          arg [-plugin-opt=-pass-through=-lc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [--build-id] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [--hash-style=gnu] ==> ignore
+          arg [--as-needed] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-pie] ==> ignore
+          arg [-znow] ==> ignore
+          arg [-zrelro] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_f233c] ==> ignore
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/9] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib]
+          arg [-L/lib/x86_64-linux-gnu] ==> dir [/lib/x86_64-linux-gnu]
+          arg [-L/lib/../lib] ==> dir [/lib/../lib]
+          arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
+          arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../..]
+          arg [CMakeFiles/cmTC_f233c.dir/OpenMPTryFlag.cpp.o] ==> ignore
+          arg [-lstdc++] ==> lib [stdc++]
+          arg [-lm] ==> lib [m]
+          arg [-lgomp] ==> lib [gomp]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lpthread] ==> lib [pthread]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9] ==> [/usr/lib/gcc/x86_64-linux-gnu/9]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib] ==> [/usr/lib]
+        collapse library dir [/lib/x86_64-linux-gnu] ==> [/lib/x86_64-linux-gnu]
+        collapse library dir [/lib/../lib] ==> [/lib]
+        collapse library dir [/usr/lib/x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+        collapse library dir [/usr/lib/../lib] ==> [/usr/lib]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../..] ==> [/usr/lib]
+        implicit libs: [stdc++;m;gomp;gcc_s;gcc;pthread;c;gcc_s;gcc]
+        implicit objs: []
+        implicit dirs: [/usr/lib/gcc/x86_64-linux-gnu/9;/usr/lib/x86_64-linux-gnu;/usr/lib;/lib/x86_64-linux-gnu;/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/FindOpenMP.cmake:419 (try_compile)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/FindOpenMP.cmake:557 (_OPENMP_GET_SPEC_DATE)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:164 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    description: "Detecting CXX OpenMP version"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-zOoRme"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-zOoRme"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "OpenMP_SPECTEST_CXX_"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-zOoRme'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_8f651/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_8f651.dir/build.make CMakeFiles/cmTC_8f651.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-zOoRme'
+        Building CXX object CMakeFiles/cmTC_8f651.dir/OpenMPCheckVersion.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion  -fopenmp -std=gnu++11 -o CMakeFiles/cmTC_8f651.dir/OpenMPCheckVersion.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-zOoRme/OpenMPCheckVersion.cpp
+        Linking CXX executable cmTC_8f651
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8f651.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion  -fopenmp CMakeFiles/cmTC_8f651.dir/OpenMPCheckVersion.cpp.o -o cmTC_8f651 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeScratch/TryCompile-zOoRme'
+        
+      exitCode: 0
+  -
+    kind: "try_run-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/cxx-standard.cmake:49 (try_run)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/eigenpyConfig.cmake:196 (CHECK_MINIMAL_CXX_STANDARD)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:167 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "_cxx_standard_build_status"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_61779/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_61779.dir/build.make CMakeFiles/cmTC_61779.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_61779.dir/tmp-cxx-standard.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   -std=gnu++11 -o CMakeFiles/cmTC_61779.dir/tmp-cxx-standard.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/cmake/tmp-cxx-standard.cpp
+        Linking CXX executable cmTC_61779
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_61779.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   "CMakeFiles/cmTC_61779.dir/tmp-cxx-standard.cpp.o" -o cmTC_61779 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+    runResult:
+      variable: "_cxx_standard_run_status"
+      cached: true
+      stdout: |
+        201103
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_run-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/cxx-standard.cmake:49 (try_run)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/eigenpyConfig.cmake:196 (CHECK_MINIMAL_CXX_STANDARD)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:167 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "_cxx_standard_build_status"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_6ef26/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_6ef26.dir/build.make CMakeFiles/cmTC_6ef26.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_6ef26.dir/tmp-cxx-standard.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   -std=gnu++11 -o CMakeFiles/cmTC_6ef26.dir/tmp-cxx-standard.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/cmake/tmp-cxx-standard.cpp
+        Linking CXX executable cmTC_6ef26
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6ef26.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   "CMakeFiles/cmTC_6ef26.dir/tmp-cxx-standard.cpp.o" -o cmTC_6ef26 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+    runResult:
+      variable: "_cxx_standard_run_status"
+      cached: true
+      stdout: |
+        201103
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_run-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/cxx-standard.cmake:49 (try_run)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/eigenpyConfig.cmake:196 (CHECK_MINIMAL_CXX_STANDARD)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:167 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "_cxx_standard_build_status"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_40282/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_40282.dir/build.make CMakeFiles/cmTC_40282.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_40282.dir/tmp-cxx-standard.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   -std=gnu++11 -o CMakeFiles/cmTC_40282.dir/tmp-cxx-standard.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/cmake/tmp-cxx-standard.cpp
+        Linking CXX executable cmTC_40282
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_40282.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   "CMakeFiles/cmTC_40282.dir/tmp-cxx-standard.cpp.o" -o cmTC_40282 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+    runResult:
+      variable: "_cxx_standard_run_status"
+      cached: true
+      stdout: |
+        201103
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_run-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/cxx-standard.cmake:49 (try_run)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/eigenpyConfig.cmake:196 (CHECK_MINIMAL_CXX_STANDARD)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:167 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "_cxx_standard_build_status"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_bc3cd/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_bc3cd.dir/build.make CMakeFiles/cmTC_bc3cd.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_bc3cd.dir/tmp-cxx-standard.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   -std=gnu++11 -o CMakeFiles/cmTC_bc3cd.dir/tmp-cxx-standard.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/cmake/tmp-cxx-standard.cpp
+        Linking CXX executable cmTC_bc3cd
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bc3cd.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   "CMakeFiles/cmTC_bc3cd.dir/tmp-cxx-standard.cpp.o" -o cmTC_bc3cd 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+    runResult:
+      variable: "_cxx_standard_run_status"
+      cached: true
+      stdout: |
+        201103
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_run-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/cxx-standard.cmake:49 (try_run)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/eigenpyConfig.cmake:196 (CHECK_MINIMAL_CXX_STANDARD)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:167 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "_cxx_standard_build_status"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_8b3a6/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_8b3a6.dir/build.make CMakeFiles/cmTC_8b3a6.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_8b3a6.dir/tmp-cxx-standard.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   -std=gnu++11 -o CMakeFiles/cmTC_8b3a6.dir/tmp-cxx-standard.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/cmake/tmp-cxx-standard.cpp
+        Linking CXX executable cmTC_8b3a6
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8b3a6.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   "CMakeFiles/cmTC_8b3a6.dir/tmp-cxx-standard.cpp.o" -o cmTC_8b3a6 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+    runResult:
+      variable: "_cxx_standard_run_status"
+      cached: true
+      stdout: |
+        201103
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_run-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/cxx-standard.cmake:49 (try_run)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/eigenpyConfig.cmake:196 (CHECK_MINIMAL_CXX_STANDARD)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:167 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "_cxx_standard_build_status"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_fc74c/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_fc74c.dir/build.make CMakeFiles/cmTC_fc74c.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_fc74c.dir/tmp-cxx-standard.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   -std=gnu++11 -o CMakeFiles/cmTC_fc74c.dir/tmp-cxx-standard.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/cmake/tmp-cxx-standard.cpp
+        Linking CXX executable cmTC_fc74c
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fc74c.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   "CMakeFiles/cmTC_fc74c.dir/tmp-cxx-standard.cpp.o" -o cmTC_fc74c 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+    runResult:
+      variable: "_cxx_standard_run_status"
+      cached: true
+      stdout: |
+        201103
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_run-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/cxx-standard.cmake:49 (try_run)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/eigenpyConfig.cmake:196 (CHECK_MINIMAL_CXX_STANDARD)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:167 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "_cxx_standard_build_status"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_da331/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_da331.dir/build.make CMakeFiles/cmTC_da331.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_da331.dir/tmp-cxx-standard.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   -std=gnu++11 -o CMakeFiles/cmTC_da331.dir/tmp-cxx-standard.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/cmake/tmp-cxx-standard.cpp
+        Linking CXX executable cmTC_da331
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da331.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   "CMakeFiles/cmTC_da331.dir/tmp-cxx-standard.cpp.o" -o cmTC_da331 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+    runResult:
+      variable: "_cxx_standard_run_status"
+      cached: true
+      stdout: |
+        201103
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_run-v1"
+    backtrace:
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/cxx-standard.cmake:49 (try_run)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/eigenpy/eigenpyConfig.cmake:196 (CHECK_MINIMAL_CXX_STANDARD)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/home/jianghan/miniconda3/envs/mim_cio/lib/cmake/pinocchio/pinocchioConfig.cmake:167 (find_dependency)"
+      - "build/_deps/jrl-cmakemodules-src/package-config.cmake:130 (find_package)"
+      - "CMakeLists.txt:72 (add_project_dependency)"
+    directories:
+      source: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+      binary: "/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "_cxx_standard_build_status"
+      cached: true
+      stdout: |
+        Change Dir: '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_37fc0/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_37fc0.dir/build.make CMakeFiles/cmTC_37fc0.dir/build
+        make[1]: Entering directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_37fc0.dir/tmp-cxx-standard.cpp.o
+        /usr/bin/c++   -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   -std=gnu++11 -o CMakeFiles/cmTC_37fc0.dir/tmp-cxx-standard.cpp.o -c /home/jianghan/Devel/workspace_autogait/src/CITO/build/cmake/tmp-cxx-standard.cpp
+        Linking CXX executable cmTC_37fc0
+        /home/jianghan/miniconda3/envs/mim_cio/bin/cmake -E cmake_link_script CMakeFiles/cmTC_37fc0.dir/link.txt --verbose=1
+        /usr/bin/c++ -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion   "CMakeFiles/cmTC_37fc0.dir/tmp-cxx-standard.cpp.o" -o cmTC_37fc0 
+        make[1]: Leaving directory '/home/jianghan/Devel/workspace_autogait/src/CITO/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+    runResult:
+      variable: "_cxx_standard_run_status"
+      cached: true
+      stdout: |
+        201103
+      exitCode: 0
+...

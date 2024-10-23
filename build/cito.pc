@@ -1,0 +1,22 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${pcfiledir}/../..
+libdir=${pcfiledir}/../../lib
+bindir=${pcfiledir}/../../bin
+pkglibdir=${pcfiledir}/../../lib/cito
+includedir=${pcfiledir}/../../include
+datarootdir=${pcfiledir}/../../share
+pkgdatarootdir=${pcfiledir}/../../share
+docdir=${pcfiledir}/../../share/doc/cito
+doxygendocdir=${pcfiledir}/../../share/doc/cito/doxygen-html
+
+Name: cito
+Description: contact-implicit trajectory optimization project
+URL: https://github.com/cito/cito
+Version: 0.0.0
+Requires: example-robot-data, ipopt
+Conflicts: 
+Libs: -L${libdir} 
+Libs.private: 
+Cflags:  -I${includedir}
+
+

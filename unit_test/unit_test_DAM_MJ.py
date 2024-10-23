@@ -76,49 +76,6 @@ def calcDiff_numdiff(x, u, model, rmodel, h=1e-8):
     
     return Fx_num, Fu_num
 
-
-def mujoco_forward(mj_model, mj_data, q, v, u):
-    mj_model.opt.timestep = dt
-    mj_model.opt.integrator = 0
-    mj_data.qpos[:] = q
-    mj_data.qvel[:] = v
-    mj_data.ctrl[:] = u
-    mujoco.mj_forward(mj_model, mj_data)
-    nq = mj_model.nq
-    nv = mj_model.nv
-    nx = nq + nv
-    nu = mj_model.nu
-    A = np.zeros((2*nv, 2*nv))
-    B = np.zeros((2*nv, nu))
-    mujoco.mjd_transitionFD(mj_model, mj_data, eps = 1e-8, flag_centered = 0, A = A, B = B, C = None, D = None)
-    return mj_data.qacc, A, B
-
-def mujoco_forward_diff(mj_model, mj_data, x, u):
-    mj_model.opt.solver = 0 # Using Newton
-    mj_model.opt.timestep = dt
-    mj_model.opt.integrator = 0 # Using Semi-implicit Euler
-    mj_model.opt.tolerance = 0.
-
-    nq = mj_model.nq
-    nv = mj_model.nv
-    nu = mj_model.nu
-    # import pdb; pdb.set_trace() 
-    mj_data.qpos[:] = x[:nq]
-    mj_data.qvel[:] = x[nq:]
-    mj_data.ctrl[:] = u
-    mujoco.mj_forward(mj_model, mj_data)
-    A = np.zeros((2*nv, 2*nv))
-    B = np.zeros((2*nv, nu))
-    mujoco.mjd_transitionFD(mj_model, mj_data, eps = 1e-8, flg_centered = 1, A = A, B = B, C = None, D = None)
-    da_dq = A[nv:, :nv] / dt
-    da_dv = (A[nv:, nv:] - np.eye(nv))/ dt
-    da_du = B[nv:, :] / dt
-    da_dx = np.hstack((da_dq, da_dv))
-
-    print(mj_data.contact)
-
-    return mj_data.qacc, da_dx, da_du
-
 def test_DAM(numerical_model, rmodel, mj_model, mj_data):
     state = numerical_model.state
     nq, nv = rmodel.nq, rmodel.nv
@@ -225,15 +182,3 @@ DAM_numerical = DifferentialActionModelMJ(mj_model, mj_data, state, nu, njoints,
                                                  
 # DAM_numerical = crocoddyl.DifferentialActionModelNumDiff(DAM_no_calc_diff, True)
 test_DAM(DAM_numerical, rmodel, mj_model, mj_data)
-
-'''
-Test state: [1.0687 -0.3318 0.8894 0.3815 0.8455 0.2892 -0.2366 -0.5177 0.8427 -0.6981 0.1696 -0.0710 0.4049 -0.4248 0.0421 1.4207 1.3075 0.4264 0.6827 0.8630 0.7604 0.5086 0.5175 0.5282 0.5602 0.2512 0.8426 0.1299 0.4830
- 0.7772 0.5389 0.6985 0.8436 0.4608 0.3294 0.8526 0.2088]
-Test control: [0.3006 0.0846 0.2669 0.7285 0.3089 0.4565 0.6249 0.8999 0.0832 0.2781 0.6626 0.3864]
-
-Test state: [1.0687 -0.3318 0.8894 0.3815 0.8455 0.2892 -0.2366 -0.5177 0.8427 -0.6981 0.1696 -0.0710 0.4049 -0.4248 0.0421 1.4207 1.3075 0.4264 0.6827 0.8603 0.4313 0.5337 0.9937 0.5440 0.6510 0.6066 0.2462 0.6862 0.4548
- 0.7979 0.9324 0.9338 0.0182 0.0566 0.8083 0.8853 0.3603]
-Test control: [0.9989 0.2540 0.1728 0.7494 0.1320 0.2154 0.3781 0.4849 0.9614 0.8272 0.5919 0.6214]
-
-
-'''
