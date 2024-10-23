@@ -28,6 +28,9 @@
     
 4. Build and install:
    ```bash
+   git clone --recursive https://github.com/JianghanZHang/CITO.git 
+   ```
+   ```bash
    mkdir build
    cd build
    cmake .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CODNA_PREFIX -DCMAKE_BUILD_TYPE=Release
