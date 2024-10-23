@@ -16,7 +16,7 @@
     ```bash
     conda install pinocchio crocoddyl matplotlib imageio mim-solvers meshcat-python=0.3.0 mujoco==3.2.0 -c conda-forge
 
-    conda install cmake=3.23
+    conda install cmake=3.23 -c conda-forge
     ```
 4. Build and install:
    ```bash
@@ -24,7 +24,7 @@
    cd build
    cmake .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CODNA_PREFIX -DCMAKE_BUILD_TYPE=Release
    make [-j8]
-   sudo make install
+   sudo make install 
     ```
 
 ## Running an Example
