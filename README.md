@@ -32,9 +32,16 @@
    ```
    ```bash
    mkdir build
+   ```
+   ```bash
    cd build
+   ```
+   ```bash
    cmake .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CODNA_PREFIX -DCMAKE_BUILD_TYPE=Release
+   ```
+   ```bash
    make [-j8]
+   ```
    sudo make install 
     ```
 
