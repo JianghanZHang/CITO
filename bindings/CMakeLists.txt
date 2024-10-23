@@ -19,11 +19,17 @@ set_target_properties(${PY_NAME}_pywrap PROPERTIES
   PREFIX ""
   SUFFIX ${PYTHON_EXT_SUFFIX})
 
-# Link the main project library and eigenpy to the Python wrapper
-target_link_libraries(${PY_NAME}_pywrap PUBLIC ${PROJECT_NAME} 
-                                               ${CMAKE_SOURCE_DIR} 
-                                               ${PARENT_DIR}/include
+# # Link the main project library and eigenpy to the Python wrapper
+# target_link_libraries(${PY_NAME}_pywrap PUBLIC ${PROJECT_NAME} 
+#                                                ${CMAKE_SOURCE_DIR} 
+#                                                ${PARENT_DIR}/include
+#                                                eigenpy::eigenpy)
+target_link_libraries(${PY_NAME}_pywrap PUBLIC ${PROJECT_NAME}
                                                eigenpy::eigenpy)
+
+target_include_directories(${PY_NAME}_pywrap PUBLIC 
+                           ${CMAKE_SOURCE_DIR}/include
+                           ${PARENT_DIR}/include)
 
 # Print include directories for debugging
 message("Include directories: ${CMAKE_INCLUDE_PATH}")

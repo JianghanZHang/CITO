@@ -11,7 +11,7 @@ add_compile_options(-fno-stack-protector)
 
 option(BUILD_PYTHON_INTERFACE "Build the python bindings" ON)
 
-set(CXX_DISABLE_WERROR ON)
+# set(CXX_DISABLE_WERROR ON)
 
 set(PROJECT_USE_CMAKE_EXPORT TRUE)
 set(CUSTOM_HEADER_DIR ${PROJECT_NAME})
@@ -42,6 +42,9 @@ project(${PROJECT_NAME} ${PROJECT_ARGS})
 
 set(MUJOCO_INCLUDE_DIR "${CMAKE_PREFIX_PATH}/include/mujoco")
 set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.so.3.2.0")
+# For Macos
+# set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.3.2.0.dylib")
+
 
 # Find the MuJoCo headers and libraries
 find_path(MUJOCO_INCLUDE_DIR mujoco.h
@@ -110,12 +113,16 @@ target_link_libraries(${PROJECT_NAMESPACE}-${PROJECT_NAME} ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAMESPACE}-${PROJECT_NAME} PRIVATE ${MUJOCO_INCLUDE_DIR})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN/../lib")
+message(STATUS "Include Directory: ${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Build Python interface if enabled
 if(BUILD_PYTHON_INTERFACE)
   add_subdirectory(bindings)
   target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 endif()
+
+
+
 
 # Install Python bindings
 if(BUILD_PYTHON_INTERFACE)
