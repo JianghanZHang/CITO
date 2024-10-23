@@ -15,7 +15,7 @@
 3. Install necessary dependencies:
     ```bash
     conda install pinocchio crocoddyl matplotlib imageio mim-solvers meshcat-python=0.3.0 mujoco==3.2.0 -c conda-forge
-
+    conda install boost=1.84 -c conda-forge
     conda install cmake=3.23 -c conda-forge
     ```
 4. Build and install:
