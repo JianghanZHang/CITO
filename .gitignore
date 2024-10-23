@@ -4,7 +4,7 @@ __pycache__/
 
 *vscode*
 
-build/
+build/*
 # Ignore text files
 *MUJOCO*.txt
 
