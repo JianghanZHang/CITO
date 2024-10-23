@@ -42,6 +42,7 @@
    ```bash
    make [-j8]
    ```
+   ```bash
    sudo make install 
     ```
 
