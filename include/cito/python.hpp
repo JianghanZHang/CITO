@@ -4,9 +4,9 @@
 #include <pinocchio/multibody/fwd.hpp>  // Must be included first!
 #include <boost/python.hpp>
 
-#include "mim-cio/actions/differential-contact-mujoco.hpp"
-#include "mim-cio/actions/integrated-contact-mujoco.hpp"
-#include "mim-cio/fwd.hpp"
+#include "cito/actions/differential-contact-mujoco.hpp"
+#include "cito/actions/integrated-contact-mujoco.hpp"
+#include "cito/fwd.hpp"
 
 namespace cito{
 namespace python{

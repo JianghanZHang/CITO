@@ -12,8 +12,8 @@
 #include <crocoddyl/core/mathbase.hpp>
 #include <mujoco.h>
 
-namespace cito {
-namespace pin_mj_converter {
+namespace cito{
+namespace pin_mj_converter{
 // Helper functions for quaternion conversion
 Eigen::Vector4d wxyz2xyzw(const Eigen::Vector4d& quat_mj);
 Eigen::Vector4d xyzw2wxyz(const Eigen::Vector4d& quat_pin);

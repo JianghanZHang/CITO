@@ -13,7 +13,7 @@ This is a class for Integrated Action Model with Mujoco for Contact Dynamics
 #include <mujoco/mujoco.h>
 #include "cito/utils/pin-mj-conversion.hpp"
 #include <crocoddyl/core/mathbase.hpp>
-
+#include "cito/utils/pin-mj-conversion.hpp"
 using namespace crocoddyl;
 
 namespace cito {

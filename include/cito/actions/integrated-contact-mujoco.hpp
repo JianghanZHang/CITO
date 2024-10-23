@@ -7,7 +7,7 @@ This is a class for Integrated Action Model with Mujoco for Contact Dynamics
 
 #include <crocoddyl/core/fwd.hpp>
 #include <crocoddyl/core/mathbase.hpp>
-
+#include "cito/utils/pin-mj-conversion.hpp"
 #include <crocoddyl/core/integ-action-base.hpp>
 #include "cito/fwd.hpp"
 #include "cito/utils/pin-mj-conversion.hpp"
