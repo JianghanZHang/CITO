@@ -94,7 +94,6 @@
 #include "cito/actions/differential-contact-mujoco.hpp"
 #include "utils/copyable.hpp"
 #include <crocoddyl/core/diff-action-base.hpp>
-#include "cito/utils/pyboost11-converter.hpp"
 #include <mujoco/mujoco.h>
 #include <mujoco/mjdata.h>
 #include <mujoco/mjmodel.h>
