@@ -14,12 +14,7 @@
 
 3. Install necessary dependencies:
     ```bash
-    conda install pinocchio crocoddyl matplotlib imageio mim-solvers meshcat-python=0.3.0 -c conda-forge
-    ```
-
-5. Install MuJoCo (not available in Conda):
-    ```bash
-    pip install mujoco==3.2.3
+    conda install pinocchio crocoddyl matplotlib imageio mim-solvers meshcat-python=0.3.0 mujoco==3.2.0 -c conda-forge
     ```
 
 ## Running an Example
