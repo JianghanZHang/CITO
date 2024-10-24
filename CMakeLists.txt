@@ -42,9 +42,6 @@ project(${PROJECT_NAME} ${PROJECT_ARGS})
 
 set(MUJOCO_INCLUDE_DIR "${CMAKE_PREFIX_PATH}/include/mujoco")
 set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.so.3.2.0")
-# For Macos
-# set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.3.2.0.dylib")
-
 
 # Find the MuJoCo headers and libraries
 find_path(MUJOCO_INCLUDE_DIR mujoco.h
@@ -54,6 +51,16 @@ find_path(MUJOCO_INCLUDE_DIR mujoco.h
 find_library(MUJOCO_LIBRARY mujoco
   PATHS ${MUJOCO_LIBRARY}
 )
+
+set(IPOPT_LIBRARY_DIRS "${CMAKE_PREFIX_PATH}/lib")
+set(IPOPT_INCLUDE_DIRS "${CMAKE_PREFIX_PATH}/include")
+
+message("ipopt binary path is: " ${IPOPT_LIBRARY_DIRS} )
+message("ipopt include path is: " ${IPOPT_INCLUDE_DIRS} )
+
+include_directories(${IPOPT_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/include)
+link_directories(${IPOPT_LIBRARY_DIRS})
+
 
 # Check if MuJoCo was found
 if(NOT MUJOCO_LIBRARY OR NOT MUJOCO_INCLUDE_DIR)
@@ -105,6 +112,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
 
 
 # Add executable for the main program
+target_link_libraries(${PROJECT_NAME} ipopt)
 add_executable(${PROJECT_NAMESPACE}-${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} pinocchio::pinocchio)
 target_link_libraries(${PROJECT_NAME} crocoddyl::crocoddyl)
@@ -113,16 +121,12 @@ target_link_libraries(${PROJECT_NAMESPACE}-${PROJECT_NAME} ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAMESPACE}-${PROJECT_NAME} PRIVATE ${MUJOCO_INCLUDE_DIR})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN/../lib")
-message(STATUS "Include Directory: ${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Build Python interface if enabled
 if(BUILD_PYTHON_INTERFACE)
   add_subdirectory(bindings)
   target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 endif()
-
-
-
 
 # Install Python bindings
 if(BUILD_PYTHON_INTERFACE)
