@@ -214,7 +214,7 @@ def main():
     ################### Set solver params and solve ###################
     print('Start solving')
     
-    maxIter = 300
+    maxIter = 1
     if solver_type == "CSQP":
         solver = mim_solvers.SolverCSQP(problem)
         solver.mu_constraint = 100.
@@ -250,18 +250,29 @@ def main():
     terminalData = problem.terminalData
     terminalModel = problem.terminalModel
     forces = np.array([runningModel.forces[:, :3] for runningModel in problem.runningModels])
-    contacts = [runningModel.contacts for runningModel in problem.runningModels]
+    # contacts = [runningModel.contacts for runningModel in problem.runningModels]
     formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
     np.set_printoptions(linewidth=210, precision=4, suppress=False, formatter=formatter)
 
-    # Some plots using builtin functions
+
     print(f'Final state: \n {xs[-1]}')
     if solver_type == "CSQP":
         mim_solvers.plotConvergence(log.convergence_data)
     elif solver_type == "FDDP":
         crocoddyl.plotConvergence(log.costs, log.pregs, log.dregs, log.grads, log.stops, log.steps, figIndex=2)
+    # print(f'forces: \n {runningModel.forces}')
     crocoddyl.plotOCSolution(xs, us)
-    input("Press to connect to meshcat visualizer") 
+
+    input("Press to display")
+
+    forces = np.array([runningModel.forces[:, :3] for runningModel in problem.runningModels])
+    # contacts = [runningModel.contacts for runningModel in problem.runningModels]
+    # mj_datas = [runningModel.mj_data for runningModel in problem.runningModels]
+
+    formatter = {'float_kind': lambda x: "{:.4f}".format(x)}
+    np.set_printoptions(linewidth=210, precision=4, suppress=False, formatter=formatter)
+
+
     from meshcat.animation import Animation
     import meshcat.transformations as tf    
 
@@ -290,8 +301,9 @@ def main():
     if not os.path.exists(IMAGE_DIRECTORY):
         os.makedirs(IMAGE_DIRECTORY)
 
-######################################Start visluaization###############################################
-    
+####################################################################################################
+
+    # save_arrays(xs, us, TRAJECTORY_DIECTORY + "precomputed_trajectory_" + solver_type)
     viz.loadViewerModel()
     viz.initializeFrames()
     viz.display_frames = True
@@ -310,7 +322,7 @@ def main():
         print(f"\n********************Time:{i*dt}********************\n")
         print(f'Controls:{us[i][:njoints]}')
         print(f'Base position:{x_t[:3]}')
-        print(f'Contacts:\n {contacts[i]}')
+        # print(f'Contacts:\n {contacts[i]}')
         foots_velocity = []
         for eff, fid in enumerate(fids):
             q, v = x_t[:rmodel.nq], x_t[rmodel.nq:]
@@ -328,7 +340,7 @@ def main():
             foot_velocity = pin.getFrameVelocity(rmodel, rdata, fid, pin.LOCAL_WORLD_ALIGNED)
             foots_velocity.append(foot_velocity.linear)
             print(f'foot velocity: {foot_velocity.linear}')
-            # foot_clearance_cost = runningData.differential.costs.costs[name].cost
+            # foot_clearance_cost =  runningData.differential.costs.costs[name].cost
             # foot_clearance_weight = runningModel.differential.costs.costs[name].weight
 
             # print(f'foot clearance cost: {foot_clearance_cost * foot_clearance_weight}\n')
@@ -341,6 +353,8 @@ def main():
         foots_velocities.append(foots_velocity)
         
         # viz.setCameraTarget(np.array([x_t[0]+0.1, 0.0, 0.0]))
+    
+
         # viz.setCameraPosition(np.array([0.5, -1.0, 0.3]))
 
         viz.display(xs[i][:rmodel.nq])
@@ -348,7 +362,7 @@ def main():
         imageio.imwrite(os.path.join(IMAGE_DIRECTORY, f'frame_{i:04d}.png'), frame)
 
         print(f'number of frames: {len(frames)}')
-        print(f'\nureg_cost: {ureg_cost * ureg_weight} ')
+        # print(f'\nureg_cost: {ureg_cost * ureg_weight} ')
         print(f'__________________________________________')
     
     # print(f'Final cost: {terminalData.differential.costs.costs["xDes_terminal"].cost * terminalModel.differential.costs.costs["xDes_terminal"].weight}')
