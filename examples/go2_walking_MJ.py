@@ -22,6 +22,7 @@ from utils import xyzw2wxyz, wxyz2xyzw, add_noise_to_state
 from python.ResidualModels import ResidualModelFootClearanceNumDiff, ResidualModelFootSlippingNumDiff, ResidualModelFootClearance, ResidualModelFootSlipping
 import sys
 from robots.robot_env import GO2_FOOT_RADIUS
+import cito
 
 def main():
     solver_type = sys.argv[1]
@@ -50,6 +51,7 @@ def main():
     print(f'x0:{q0 + v0}')
     ################# Initialize crocoddyl models ################
     state = crocoddyl.StateMultibody(rmodel)
+    actuation = crocoddyl.ActuationModelFloatingBase(state)
     runningCostModel = crocoddyl.CostModelSum(state, nu)
     terminalCostModel = crocoddyl.CostModelSum(state, nu)
     constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)    
@@ -155,12 +157,20 @@ def main():
     runningCostModel.addCost("uReg", uRegCost, 1e-4)
 
     ################### Initialize running and terminal models ################
-    runningModels = [IntegratedActionModelForceMJ
-                     (DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, runningCostModel, constraintModelManager), dt, True) 
+    # runningModels = [IntegratedActionModelForceMJ
+    #                  (DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, runningCostModel, constraintModelManager), dt, True) 
+    #                 for _ in range(T)]
+    
+    
+    # terminalModel = IntegratedActionModelForceMJ(DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, terminalCostModel, None), 0., True)
+
+    runningModels = [cito.IntegratedActionModelContactMj(
+                    cito.DifferentialActionModelContactMj(mj_model, state, actuation, runningCostModel, constraintModelManager), dt) 
                     for _ in range(T)]
     
+    terminal_DAM = cito.DifferentialActionModelContactMj(mj_model, state, actuation, runningCostModel, None)
     
-    terminalModel = IntegratedActionModelForceMJ(DifferentialActionModelMJ(mj_model, state, nu, njoints, fids, terminalCostModel, None), 0., True)
+    terminalModel = cito.IntegratedActionModelContactMj(terminal_DAM, 0.)
 
     # Added for FDDP solver
     for runningModel in runningModels:
@@ -311,20 +321,20 @@ def main():
             print(f'forces: {forces[i][eff]}')
             print(f'distance:{rdata.oMf[fid].translation[2]}')
 
-            name = "footClearance_" + str(eff)
+            # name = "footClearance_" + str(eff)
 
             pin.forwardKinematics(rmodel, rdata, q, v)
 
             foot_velocity = pin.getFrameVelocity(rmodel, rdata, fid, pin.LOCAL_WORLD_ALIGNED)
             foots_velocity.append(foot_velocity.linear)
             print(f'foot velocity: {foot_velocity.linear}')
-            foot_clearance_cost = runningData.differential.costs.costs[name].cost
-            foot_clearance_weight = runningModel.differential.costs.costs[name].weight
+            # foot_clearance_cost = runningData.differential.costs.costs[name].cost
+            # foot_clearance_weight = runningModel.differential.costs.costs[name].weight
 
-            print(f'foot clearance cost: {foot_clearance_cost * foot_clearance_weight}\n')
+            # print(f'foot clearance cost: {foot_clearance_cost * foot_clearance_weight}\n')
             
-            ureg_cost = runningData.differential.costs.costs["uReg"].cost
-            ureg_weight = runningModel.differential.costs.costs["uReg"].weight
+            # ureg_cost = runningData.differential.costs.costs["uReg"].cost
+            # ureg_weight = runningModel.differential.costs.costs["uReg"].weight
             force_eff = forces[i][eff]
             arrows[eff].anchor_as_vector(rdata.oMf[fid].translation, force_eff)    
 
@@ -341,7 +351,7 @@ def main():
         print(f'\nureg_cost: {ureg_cost * ureg_weight} ')
         print(f'__________________________________________')
     
-    print(f'Final cost: {terminalData.differential.costs.costs["xDes_terminal"].cost * terminalModel.differential.costs.costs["xDes_terminal"].weight}')
+    # print(f'Final cost: {terminalData.differential.costs.costs["xDes_terminal"].cost * terminalModel.differential.costs.costs["xDes_terminal"].weight}')
     
     plot_normal_forces(forces, fids, dt, output_file=PLOT_DIRECTORY + TASK  + "normal_forces_" + solver_type + ".pdf")
 

@@ -5,19 +5,20 @@
   <!-- <option cone="elliptic" impratio="100.0"  --> 
   <option cone="pyramidal" impratio="1.0" 
           integrator="Euler"
-          iterations="500" ls_iterations="50" solver='Newton' tolerance="1e-6"
-          ccd_iterations="1000" ccd_tolerance="1e-6"
-          sdf_iterations="1000" sdf_initpoints="100">
+          iterations="500" ls_iterations="50" solver='Newton' tolerance="1e-6">s
+          <!-- ccd_iterations="1000" ccd_tolerance="1e-6" -->
+          <!-- sdf_iterations="1000" sdf_initpoints="100"> -->
 
     <flag   eulerdamp="enable"
             clampctrl="disable"
             warmstart="disable"
             frictionloss="enable"
-            autoreset="disable"
             fwdinv="enable"
             midphase="disable"
             multiccd="enable"   
             invdiscrete="disable">
+            <!-- autoreset="disable" -->
+
     </flag>
   </option>
   <default>
