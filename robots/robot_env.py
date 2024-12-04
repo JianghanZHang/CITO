@@ -120,6 +120,10 @@ def create_go2_env():
         
     return env
 
+def create_trifinger_env():
+    env = {"contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]}
+
+
 
 def create_go2_env_force_MJ():
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"

@@ -1,0 +1,579 @@
+<?xml version="1.0"?>
+<robot name="trifinger">
+  <!-- Define the base link -->
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- Define the trifinger base link -->
+  <link name="trifinger_base_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joint from base_link to trifinger_base_link -->
+  <joint name="base_to_trifinger_base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="trifinger_base_link"/>
+    <!-- Rotation of -90 degrees (in radians) around Z-axis -->
+    <origin xyz="0 0 0.283" rpy="0 0 -1.57079632679"/>
+  </joint>
+
+  <!-- Define materials for each finger -->
+  <material name="finger0_material">
+    <color rgba="0.6 0.0 0.0 1.0"/>
+  </material>
+  <material name="finger1_material">
+    <color rgba="0.0 0.6 0.0 1.0"/>
+  </material>
+  <material name="finger2_material">
+    <color rgba="0.0 0.0 0.6 1.0"/>
+  </material>
+
+  <!-- ==================== FINGER 0 ==================== -->
+  <!-- Base link of finger 0 -->
+  <link name="finger0_base_link">
+    <!-- Visuals and collisions -->
+    <!-- Base back -->
+    <visual>
+      <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_back.stl"/>
+      </geometry>
+      <material name="finger0_material"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_back.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base front -->
+    <visual>
+      <origin xyz="0.0255 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_front.stl"/>
+      </geometry>
+      <material name="finger0_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_front.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base side left -->
+    <visual>
+      <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_side_left.stl"/>
+      </geometry>
+      <material name="finger0_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_side_left.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base top -->
+    <visual>
+      <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_top.stl"/>
+      </geometry>
+      <material name="finger0_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_top.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.1 0 0.4" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="0.0608333333333" ixy="0" ixz="0" iyy="0.0566666666667" iyz="0" izz="0.0108333333333"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joint attaching finger0_base_link to trifinger_base_link -->
+  <joint name="trifinger_base_to_finger0_joint" type="fixed">
+    <parent link="trifinger_base_link"/>
+    <child link="finger0_base_link"/>
+    <origin xyz="-0.0455 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Upper link -->
+  <link name="finger0_upper_link">
+    <visual>
+      <origin xyz="0.0195 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_link.stl"/>
+      </geometry>
+      <material name="finger0_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0195 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.079 0 0" rpy="0 0 0"/>
+      <mass value="0.14854"/>
+      <inertia ixx="3e-05" ixy="5e-05" ixz="0" iyy="0.00041" iyz="0" izz="0.00041"/>
+    </inertial>
+  </link>
+
+  <joint name="finger0_base_to_upper_joint" type="revolute">
+    <parent link="finger0_base_link"/>
+    <child link="finger0_upper_link"/>
+    <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="1000"/>
+    <axis xyz="-1 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Middle link -->
+  <link name="finger0_middle_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/middle_link.stl"/>
+      </geometry>
+      <material name="finger0_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/middle_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 -0.019 -0.079" rpy="0 0 0"/>
+      <mass value="0.14854"/>
+      <inertia ixx="0.00041" ixy="0" ixz="0" iyy="0.00041" iyz="5e-05" izz="3e-05"/>
+    </inertial>
+  </link>
+
+  <joint name="finger0_upper_to_middle_joint" type="revolute">
+    <parent link="finger0_upper_link"/>
+    <child link="finger0_middle_link"/>
+    <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.014 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Lower link -->
+  <link name="finger0_lower_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_link.stl"/>
+      </geometry>
+      <material name="finger0_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 -0.009 -0.089" rpy="0 0 0"/>
+      <mass value="0.03070"/>
+      <inertia ixx="0.00012" ixy="0" ixz="0" iyy="0.00012" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="finger0_middle_to_lower_joint" type="revolute">
+    <parent link="finger0_middle_link"/>
+    <child link="finger0_lower_link"/>
+    <limit effort="1000" lower="-3.14159265359" upper="3.14159265359" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.03745 -0.16" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Finger tip link -->
+  <link name="finger0_tip_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1.66666666667e-07" ixy="0" ixz="0" iyy="1.66666666667e-07" iyz="0" izz="1.66666666667e-07"/>
+    </inertial>
+  </link>
+
+  <joint name="finger0_lower_to_tip_joint" type="fixed">
+    <parent link="finger0_lower_link"/>
+    <child link="finger0_tip_link"/>
+    <origin xyz="0 -0.008 -0.16" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ==================== FINGER 1 ==================== -->
+  <!-- Base link of finger 1 -->
+  <link name="finger1_base_link">
+    <!-- Visuals and collisions -->
+    <!-- Base back -->
+    <visual>
+      <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_back.stl"/>
+      </geometry>
+      <material name="finger1_material"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_back.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base front -->
+    <visual>
+      <origin xyz="0.0255 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_front.stl"/>
+      </geometry>
+      <material name="finger1_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_front.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base side left -->
+    <visual>
+      <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_side_left.stl"/>
+      </geometry>
+      <material name="finger1_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_side_left.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base top -->
+    <visual>
+      <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_top.stl"/>
+      </geometry>
+      <material name="finger1_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_top.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.1 0 0.4" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="0.0608333333333" ixy="0" ixz="0" iyy="0.0566666666667" iyz="0" izz="0.0108333333333"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joint attaching finger1_base_link to trifinger_base_link -->
+  <joint name="trifinger_base_to_finger1_joint" type="fixed">
+    <parent link="trifinger_base_link"/>
+    <child link="finger1_base_link"/>
+    <!-- Position and rotation from Mujoco XML (rotated by -120 degrees) -->
+    <origin xyz="0.02275 0.03940416 0" rpy="0 0 -2.0943951"/>
+  </joint>
+
+  <!-- Upper link -->
+  <link name="finger1_upper_link">
+    <visual>
+      <origin xyz="0.0195 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_link.stl"/>
+      </geometry>
+      <material name="finger1_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0195 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.079 0 0" rpy="0 0 0"/>
+      <mass value="0.14854"/>
+      <inertia ixx="3e-05" ixy="5e-05" ixz="0" iyy="0.00041" iyz="0" izz="0.00041"/>
+    </inertial>
+  </link>
+
+  <joint name="finger1_base_to_upper_joint" type="revolute">
+    <parent link="finger1_base_link"/>
+    <child link="finger1_upper_link"/>
+    <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="1000"/>
+    <axis xyz="-1 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Middle link -->
+  <link name="finger1_middle_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/middle_link.stl"/>
+      </geometry>
+      <material name="finger1_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/middle_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 -0.019 -0.079" rpy="0 0 0"/>
+      <mass value="0.14854"/>
+      <inertia ixx="0.00041" ixy="0" ixz="0" iyy="0.00041" iyz="5e-05" izz="3e-05"/>
+    </inertial>
+  </link>
+
+  <joint name="finger1_upper_to_middle_joint" type="revolute">
+    <parent link="finger1_upper_link"/>
+    <child link="finger1_middle_link"/>
+    <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.014 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Lower link -->
+  <link name="finger1_lower_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_link.stl"/>
+      </geometry>
+      <material name="finger1_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 -0.009 -0.089" rpy="0 0 0"/>
+      <mass value="0.03070"/>
+      <inertia ixx="0.00012" ixy="0" ixz="0" iyy="0.00012" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="finger1_middle_to_lower_joint" type="revolute">
+    <parent link="finger1_middle_link"/>
+    <child link="finger1_lower_link"/>
+    <limit effort="1000" lower="-3.14159265359" upper="3.14159265359" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.03745 -0.16" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Finger tip link -->
+  <link name="finger1_tip_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1.66666666667e-07" ixy="0" ixz="0" iyy="1.66666666667e-07" iyz="0" izz="1.66666666667e-07"/>
+    </inertial>
+  </link>
+
+  <joint name="finger1_lower_to_tip_joint" type="fixed">
+    <parent link="finger1_lower_link"/>
+    <child link="finger1_tip_link"/>
+    <origin xyz="0 -0.008 -0.16" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ==================== FINGER 2 ==================== -->
+  <!-- Base link of finger 2 -->
+  <link name="finger2_base_link">
+    <!-- Visuals and collisions -->
+    <!-- Base back -->
+    <visual>
+      <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_back.stl"/>
+      </geometry>
+      <material name="finger2_material"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_back.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base front -->
+    <visual>
+      <origin xyz="0.0255 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_front.stl"/>
+      </geometry>
+      <material name="finger2_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_front.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base side left -->
+    <visual>
+      <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_side_left.stl"/>
+      </geometry>
+      <material name="finger2_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_side_left.stl"/>
+      </geometry>
+    </collision>
+    <!-- Base top -->
+    <visual>
+      <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_top.stl"/>
+      </geometry>
+      <material name="finger2_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/base_top.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.1 0 0.4" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="0.0608333333333" ixy="0" ixz="0" iyy="0.0566666666667" iyz="0" izz="0.0108333333333"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joint attaching finger2_base_link to trifinger_base_link -->
+  <joint name="trifinger_base_to_finger2_joint" type="fixed">
+    <parent link="trifinger_base_link"/>
+    <child link="finger2_base_link"/>
+    <!-- Position and rotation from Mujoco XML (rotated by +120 degrees or -240 degrees) -->
+    <origin xyz="0.02275 -0.03940416 0" rpy="0 0 -4.1887902"/>
+  </joint>
+
+  <!-- Upper link -->
+  <link name="finger2_upper_link">
+    <visual>
+      <origin xyz="0.0195 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_link.stl"/>
+      </geometry>
+      <material name="finger2_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0195 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.079 0 0" rpy="0 0 0"/>
+      <mass value="0.14854"/>
+      <inertia ixx="3e-05" ixy="5e-05" ixz="0" iyy="0.00041" iyz="0" izz="0.00041"/>
+    </inertial>
+  </link>
+
+  <joint name="finger2_base_to_upper_joint" type="revolute">
+    <parent link="finger2_base_link"/>
+    <child link="finger2_upper_link"/>
+    <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="1000"/>
+    <axis xyz="-1 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Middle link -->
+  <link name="finger2_middle_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/middle_link.stl"/>
+      </geometry>
+      <material name="finger2_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/middle_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 -0.019 -0.079" rpy="0 0 0"/>
+      <mass value="0.14854"/>
+      <inertia ixx="0.00041" ixy="0" ixz="0" iyy="0.00041" iyz="5e-05" izz="3e-05"/>
+    </inertial>
+  </link>
+
+  <joint name="finger2_upper_to_middle_joint" type="revolute">
+    <parent link="finger2_upper_link"/>
+    <child link="finger2_middle_link"/>
+    <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.014 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Lower link -->
+  <link name="finger2_lower_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_link.stl"/>
+      </geometry>
+      <material name="finger2_material"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_link.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 -0.009 -0.089" rpy="0 0 0"/>
+      <mass value="0.03070"/>
+      <inertia ixx="0.00012" ixy="0" ixz="0" iyy="0.00012" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="finger2_middle_to_lower_joint" type="revolute">
+    <parent link="finger2_middle_link"/>
+    <child link="finger2_lower_link"/>
+    <limit effort="1000" lower="-3.14159265359" upper="3.14159265359" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.03745 -0.16" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Finger tip link -->
+  <link name="finger2_tip_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1.66666666667e-07" ixy="0" ixz="0" iyy="1.66666666667e-07" iyz="0" izz="1.66666666667e-07"/>
+    </inertial>
+  </link>
+
+  <joint name="finger2_lower_to_tip_joint" type="fixed">
+    <parent link="finger2_lower_link"/>
+    <child link="finger2_tip_link"/>
+    <origin xyz="0 -0.008 -0.16" rpy="0 0 0"/>
+  </joint>
+
+</robot>
