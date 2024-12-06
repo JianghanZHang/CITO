@@ -45,56 +45,56 @@
     <visual>
       <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_back.stl"/>
+        <mesh filename="package://trifinger/meshes/base_back.stl"/>
       </geometry>
       <material name="finger0_material"/>
     </visual>
     <collision>
       <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_back.stl"/>
+        <mesh filename="package://trifinger/meshes/base_back.stl"/>
       </geometry>
     </collision>
     <!-- Base front -->
     <visual>
       <origin xyz="0.0255 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_front.stl"/>
+        <mesh filename="package://trifinger/meshes/base_front.stl"/>
       </geometry>
       <material name="finger0_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_front.stl"/>
+        <mesh filename="package://trifinger/meshes/base_front.stl"/>
       </geometry>
     </collision>
     <!-- Base side left -->
     <visual>
       <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_side_left.stl"/>
+        <mesh filename="package://trifinger/meshes/base_side_left.stl"/>
       </geometry>
       <material name="finger0_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_side_left.stl"/>
+        <mesh filename="package://trifinger/meshes/base_side_left.stl"/>
       </geometry>
     </collision>
     <!-- Base top -->
     <visual>
       <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_top.stl"/>
+        <mesh filename="package://trifinger/meshes/base_top.stl"/>
       </geometry>
       <material name="finger0_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_top.stl"/>
+        <mesh filename="package://trifinger/meshes/base_top.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -116,14 +116,14 @@
     <visual>
       <origin xyz="0.0195 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/upper_link.stl"/>
+        <mesh filename="package://trifinger/meshes/upper_link.stl"/>
       </geometry>
       <material name="finger0_material"/>
     </visual>
     <collision>
       <origin xyz="0.0195 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/upper_link.stl"/>
+        <mesh filename="package://trifinger/meshes/upper_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -146,14 +146,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/middle_link.stl"/>
+        <mesh filename="package://trifinger/meshes/middle_link.stl"/>
       </geometry>
       <material name="finger0_material"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/middle_link.stl"/>
+        <mesh filename="package://trifinger/meshes/middle_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -176,14 +176,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/lower_link.stl"/>
+        <mesh filename="package://trifinger/meshes/lower_link.stl"/>
       </geometry>
       <material name="finger0_material"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/lower_link.stl"/>
+        <mesh filename="package://trifinger/meshes/lower_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -224,56 +224,56 @@
     <visual>
       <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_back.stl"/>
+        <mesh filename="package://trifinger/meshes/base_back.stl"/>
       </geometry>
       <material name="finger1_material"/>
     </visual>
     <collision>
       <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_back.stl"/>
+        <mesh filename="package://trifinger/meshes/base_back.stl"/>
       </geometry>
     </collision>
     <!-- Base front -->
     <visual>
       <origin xyz="0.0255 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_front.stl"/>
+        <mesh filename="package://trifinger/meshes/base_front.stl"/>
       </geometry>
       <material name="finger1_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_front.stl"/>
+        <mesh filename="package://trifinger/meshes/base_front.stl"/>
       </geometry>
     </collision>
     <!-- Base side left -->
     <visual>
       <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_side_left.stl"/>
+        <mesh filename="package://trifinger/meshes/base_side_left.stl"/>
       </geometry>
       <material name="finger1_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_side_left.stl"/>
+        <mesh filename="package://trifinger/meshes/base_side_left.stl"/>
       </geometry>
     </collision>
     <!-- Base top -->
     <visual>
       <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_top.stl"/>
+        <mesh filename="package://trifinger/meshes/base_top.stl"/>
       </geometry>
       <material name="finger1_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_top.stl"/>
+        <mesh filename="package://trifinger/meshes/base_top.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -296,14 +296,14 @@
     <visual>
       <origin xyz="0.0195 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/upper_link.stl"/>
+        <mesh filename="package://trifinger/meshes/upper_link.stl"/>
       </geometry>
       <material name="finger1_material"/>
     </visual>
     <collision>
       <origin xyz="0.0195 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/upper_link.stl"/>
+        <mesh filename="package://trifinger/meshes/upper_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -326,14 +326,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/middle_link.stl"/>
+        <mesh filename="package://trifinger/meshes/middle_link.stl"/>
       </geometry>
       <material name="finger1_material"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/middle_link.stl"/>
+        <mesh filename="package://trifinger/meshes/middle_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -356,14 +356,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/lower_link.stl"/>
+        <mesh filename="package://trifinger/meshes/lower_link.stl"/>
       </geometry>
       <material name="finger1_material"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/lower_link.stl"/>
+        <mesh filename="package://trifinger/meshes/lower_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -404,56 +404,56 @@
     <visual>
       <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_back.stl"/>
+        <mesh filename="package://trifinger/meshes/base_back.stl"/>
       </geometry>
       <material name="finger2_material"/>
     </visual>
     <collision>
       <origin xyz="-0.17995 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_back.stl"/>
+        <mesh filename="package://trifinger/meshes/base_back.stl"/>
       </geometry>
     </collision>
     <!-- Base front -->
     <visual>
       <origin xyz="0.0255 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_front.stl"/>
+        <mesh filename="package://trifinger/meshes/base_front.stl"/>
       </geometry>
       <material name="finger2_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_front.stl"/>
+        <mesh filename="package://trifinger/meshes/base_front.stl"/>
       </geometry>
     </collision>
     <!-- Base side left -->
     <visual>
       <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_side_left.stl"/>
+        <mesh filename="package://trifinger/meshes/base_side_left.stl"/>
       </geometry>
       <material name="finger2_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0.02 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_side_left.stl"/>
+        <mesh filename="package://trifinger/meshes/base_side_left.stl"/>
       </geometry>
     </collision>
     <!-- Base top -->
     <visual>
       <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_top.stl"/>
+        <mesh filename="package://trifinger/meshes/base_top.stl"/>
       </geometry>
       <material name="finger2_material"/>
     </visual>
     <collision>
       <origin xyz="0.0255 0 0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/base_top.stl"/>
+        <mesh filename="package://trifinger/meshes/base_top.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -476,14 +476,14 @@
     <visual>
       <origin xyz="0.0195 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/upper_link.stl"/>
+        <mesh filename="package://trifinger/meshes/upper_link.stl"/>
       </geometry>
       <material name="finger2_material"/>
     </visual>
     <collision>
       <origin xyz="0.0195 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/upper_link.stl"/>
+        <mesh filename="package://trifinger/meshes/upper_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -506,14 +506,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/middle_link.stl"/>
+        <mesh filename="package://trifinger/meshes/middle_link.stl"/>
       </geometry>
       <material name="finger2_material"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/middle_link.stl"/>
+        <mesh filename="package://trifinger/meshes/middle_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -536,14 +536,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/lower_link.stl"/>
+        <mesh filename="package://trifinger/meshes/lower_link.stl"/>
       </geometry>
       <material name="finger2_material"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/lower_link.stl"/>
+        <mesh filename="package://trifinger/meshes/lower_link.stl"/>
       </geometry>
     </collision>
     <inertial>

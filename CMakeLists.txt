@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-set(CMAKE_CXX_STANDARD 11)  # Or set it to 14, 17, or higher depending on your project requirements.
+set(CMAKE_CXX_STANDARD 17)  # Or set it to 14, 17, or higher depending on your project requirements.
 
 
 set(PROJECT_NAMESPACE cito)
@@ -41,7 +41,20 @@ project(${PROJECT_NAME} ${PROJECT_ARGS})
 # Assuming you want to link MuJoCo from the Conda environment where the Python package is installed
 
 set(MUJOCO_INCLUDE_DIR "${CMAKE_PREFIX_PATH}/include/mujoco")
-set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.so.3.2.0")
+# set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.so.3.2.6")
+
+# Search for the MuJoCo library dynamically
+file(GLOB MUJOCO_LIBRARIES "${CMAKE_PREFIX_PATH}/lib/libmujoco.so*")
+
+# Check if any library is found
+if(MUJOCO_LIBRARIES)
+    # Take the first match
+    list(SORT MUJOCO_LIBRARIES)
+    list(GET MUJOCO_LIBRARIES 0 MUJOCO_LIBRARY)
+    message(STATUS "MuJoCo library found: ${MUJOCO_LIBRARY}")
+else()
+    message(FATAL_ERROR "MuJoCo library not found in ${CMAKE_PREFIX_PATH}/lib")
+endif()
 
 # Find the MuJoCo headers and libraries
 find_path(MUJOCO_INCLUDE_DIR mujoco.h

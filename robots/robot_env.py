@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../robo
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'python/')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'robots/')))
 import mujoco
+
 import pinocchio as pin 
 
 import numpy as np
@@ -88,7 +89,7 @@ def create_go2_env():
 
     print(f"URDF Path: {urdf_path}")
     print(f"Package Dirs: {package_dirs}")
-    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, root_joint= pin.JointModelFreeFlyer(), verbose=True)
+    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, root_joint=pin.JointModelFreeFlyer(), verbose=True)
 
     env = {
         "nq" : 19,
@@ -121,10 +122,50 @@ def create_go2_env():
     return env
 
 def create_trifinger_env():
-    env = {"contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]}
+    package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    urdf_path = os.path.join(package_dir, "trifinger/trifinger.urdf")
+    xml_path = os.path.join(package_dir, "trifinger/trifinger.xml")
+    
+    package_dirs = [package_dir]
 
+    print(f"URDF Path: {urdf_path}")
+    print(f"Package Dirs: {package_dirs}")
 
+    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, root_joint=pin.JointModelFreeFlyer(), verbose=True)
+    mj_model = mujoco.MjModel.from_xml_path(xml_path)
+    # env = {"contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]}
+    xml_urdf_sanity_check(mj_model, rmodel)
 
+def xml_urdf_sanity_check(mj_model, pin_model):
+    # print(pin_model)
+    pin_data = pin.Data(pin_model)
+    mj_data = mujoco.MjData(mj_model)
+    
+    pin_nq = pin_model.nq
+    mj_nq = mj_model.nq
+
+    print(pin_nq)
+    print(mj_nq)
+
+    # pin.forwardKinematics(pin_model, data, q)
+    # pin.updateFramePlacements(pin_model, data)
+    # for idx, frame in enumerate(pin_model.frames):
+    #     print(f"Frame {frame.name}: position={data.oMf[idx].translation}, rotation={data.oMf[idx].rotation}")
+    
+    qpos = np.random.uniform(
+        low=mj_model.jnt_range[:, 0],  # Lower bounds of joint range
+        high=mj_model.jnt_range[:, 1]  # Upper bounds of joint range
+    )
+    mj_data.qpos[:] = qpos
+    mujoco.mj_step(mj_model, mj_data)
+    print(mj_data.qpos)
+    pin_qpos = qpos
+    # for body_id in range(mj_model.nbody):
+    #     body_name = mj_model.names[mj_model.name_bodyadr[body_id]:]
+    #     position = mj_data.xpos[body_id]
+    #     rotation = mj_data.xmat[body_id].reshape(3, 3)
+    #     print(f"Body:{body_name} position={position}, rotation={rotation}")
+    
 def create_go2_env_force_MJ():
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
@@ -243,3 +284,9 @@ def create_cube_pusher_env():
         env["contactFids"].append(env["rmodel"].getFrameId(frameName))
 
     return env
+
+def main():
+    create_trifinger_env()
+
+if __name__ == "__main__":
+    main()
