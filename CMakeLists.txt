@@ -43,17 +43,22 @@ project(${PROJECT_NAME} ${PROJECT_ARGS})
 set(MUJOCO_INCLUDE_DIR "${CMAKE_PREFIX_PATH}/include/mujoco")
 # set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.so.3.2.6")
 
+if(UNIX AND NOT APPLE) # Check if the platform is Linux
 # Search for the MuJoCo library dynamically
-file(GLOB MUJOCO_LIBRARIES "${CMAKE_PREFIX_PATH}/lib/libmujoco.so*")
+  file(GLOB MUJOCO_LIBRARIES "${CMAKE_PREFIX_PATH}/lib/libmujoco.so*")
 
-# Check if any library is found
-if(MUJOCO_LIBRARIES)
-    # Take the first match
-    list(SORT MUJOCO_LIBRARIES)
-    list(GET MUJOCO_LIBRARIES 0 MUJOCO_LIBRARY)
-    message(STATUS "MuJoCo library found: ${MUJOCO_LIBRARY}")
-else()
-    message(FATAL_ERROR "MuJoCo library not found in ${CMAKE_PREFIX_PATH}/lib")
+  # Check if any library is found
+  if(MUJOCO_LIBRARIES)
+      # Take the first match
+      list(SORT MUJOCO_LIBRARIES)
+      list(GET MUJOCO_LIBRARIES 0 MUJOCO_LIBRARY)
+      message(STATUS "MuJoCo library found: ${MUJOCO_LIBRARY}")
+  else()
+      message(FATAL_ERROR "MuJoCo library not found in ${CMAKE_PREFIX_PATH}/lib")
+  endif()
+elseif(APPLE)
+  set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.dylib")
+  set(MUJOCO_INCLUDE_DIR "${CMAKE_PREFIX_PATH}/include")
 endif()
 
 # Find the MuJoCo headers and libraries
