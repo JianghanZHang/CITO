@@ -82,45 +82,6 @@ go2_v0 = np.array([0.0000, 0.0000, 0.0000,
 
 #     return env
 
-def create_go2_env():
-    urdf_path = "robots/go2_robot_sdk/urdf/go2.urdf"
-    package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-    package_dirs = [package_dir]
-
-    print(f"URDF Path: {urdf_path}")
-    print(f"Package Dirs: {package_dirs}")
-    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, root_joint=pin.JointModelFreeFlyer(), verbose=True)
-
-    env = {
-        "nq" : 19,
-        "nv" : 18,
-        "rmodel" : rmodel,
-        "gmodel" : gmodel,
-        "vmodel" : vmodel,
-        "nu" : 12,
-        "njoints" : 12,
-        "ncontacts" : 4,
-        "contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"],
-        "contactFids" : [],
-        "jointFnames" : ["FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
-                         "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
-                         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"],
-        "jointFids" : [],
-        "q0" : list(go2_init_conf0),
-        "v0" : list(go2_v0),
-    }
-    
-    env["nf"] = 3 * env["ncontacts"]
-
-    for idx, frameName in enumerate(env["contactFnames"]):
-        env["contactFids"].append(env["rmodel"].getFrameId(frameName))
-
-    for idx, frameName in enumerate(env["jointFnames"]):
-        env["jointFids"].append(env["rmodel"].getFrameId(frameName))
-        
-    return env
-
 def create_trifinger_env():
     package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
     urdf_path = os.path.join(package_dir, "trifinger/trifinger.urdf")
@@ -166,6 +127,46 @@ def xml_urdf_sanity_check(mj_model, pin_model):
     #     rotation = mj_data.xmat[body_id].reshape(3, 3)
     #     print(f"Body:{body_name} position={position}, rotation={rotation}")
     
+
+def create_go2_env():
+    urdf_path = "robots/go2_robot_sdk/urdf/go2.urdf"
+    package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    package_dirs = [package_dir]
+
+    print(f"URDF Path: {urdf_path}")
+    print(f"Package Dirs: {package_dirs}")
+    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, root_joint=pin.JointModelFreeFlyer(), verbose=True)
+
+    env = {
+        "nq" : 19,
+        "nv" : 18,
+        "rmodel" : rmodel,
+        "gmodel" : gmodel,
+        "vmodel" : vmodel,
+        "nu" : 12,
+        "njoints" : 12,
+        "ncontacts" : 4,
+        "contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"],
+        "contactFids" : [],
+        "jointFnames" : ["FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+                         "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+                         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
+                         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"],
+        "jointFids" : [],
+        "q0" : list(go2_init_conf0),
+        "v0" : list(go2_v0),
+    }
+    
+    env["nf"] = 3 * env["ncontacts"]
+
+    for idx, frameName in enumerate(env["contactFnames"]):
+        env["contactFids"].append(env["rmodel"].getFrameId(frameName))
+
+    for idx, frameName in enumerate(env["jointFnames"]):
+        env["jointFids"].append(env["rmodel"].getFrameId(frameName))
+        
+    return env
+
 def create_go2_env_force_MJ():
     xml_path = "robots/unitree_go2/scene_foot_collision.xml"
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
