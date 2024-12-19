@@ -1,0 +1,124 @@
+<mujoco model="trifinger">
+    <compiler angle="radian" autolimits="true" meshdir="meshes"/>
+    <visual>
+        <global offwidth="1280" offheight="960"/>
+    </visual>
+    <size njmax="500" nconmax="100"/>
+    <asset>
+        <!-- Use your own assets here -->
+        <mesh name="Base_Link" file="base_top.stl"/>
+        <mesh name="Upper_Link" file="upper_link.stl"/>
+        <mesh name="Middle_Link" file="middle_link.stl"/>
+        <mesh name="Lower_Link" file="lower_link.stl"/>
+
+        <!-- Ground texture and material from the example -->
+        <texture type="2d" name="groundplane" builtin="checker" mark="edge"
+                 rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+                 markrgb="0.8 0.8 0.8" width="300" height="300"/>
+        <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5"
+                  reflectance="0.0"/>
+    </asset>
+
+    <worldbody>
+        <light directional="true" ambient="0.2 0.2 0.2" diffuse="0.8 0.8 0.8"  castshadow="false" pos="0 1 4" dir="0 0 -1" name="light0"/>
+        <camera name="demo-cam"  pos="-0.005 -0.529 0.575" xyaxes="1.000 -0.002 -0.000 0.001 0.644 0.765"/>
+
+        <!-- Ground plane -->
+        <geom name="table" rgba="0.8 0.8 0.8 1.0" friction="0.5"
+              size="0 0 0.05" type="plane" material="groundplane"
+              condim="6"
+        />
+
+        <!-- =================== finger arms base =================== -->
+        <!-- Using SIM__BL_Finger_Base mesh for each finger base position -->
+        <geom pos="0 0.219 0.29" type="mesh" rgba="0.5 0 0 1" mesh="Base_Link"/>
+        <geom pos="0.18966 -0.1095 0.29" quat="0.5 0 0 -0.866025" type="mesh" rgba="0 0.5 0 1"
+              mesh="Base_Link"/>
+        <geom pos="-0.18966 -0.1095 0.29" quat="-0.5 0 0 -0.866025" type="mesh" rgba="0 0.5 0.5 1"
+              mesh="Base_Link"/>
+
+        <!-- =================== arms 1 (0 degrees) =================== -->
+        <body name="finger0_upper_link" pos="0 0.04 0.29">
+            <inertial pos="0 0.06 0" quat="0.707107 0.707107 0 0" mass="0.2"
+                      diaginertia="0.000353333 0.000353333 5.33333e-05"/>
+            <joint name="finger0_base_to_upper_joint" pos="0 0 0" axis="-1 0 0" limited="true" range="-1.5708 1.5708"/>
+            <geom pos="0 -0.02695 0" type="mesh" rgba="0.5 0 0 1" mesh="Upper_Link"/>
+            <body name="finger0_middle_link" pos="0 0 0">
+                <inertial pos="0.028 0 -0.08" mass="0.2" diaginertia="0.000353333 0.000353333 5.33333e-05"/>
+                <joint name="finger0_upper_to_middle_joint" pos="0 0 0" axis="0 1 0" limited="true"
+                       range="-1.35263 4.49422"/>
+                <geom pos="0.014 0 0" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.5 0 0 1"
+                      mesh="Middle_Link"/>
+                <body name="finger0_lower_link" pos="0 0 -0.16">
+                    <inertial pos="0 0 -0.126667" mass="0.03" diaginertia="8.36667e-05 8.36667e-05 1e-06"/>
+                    <joint name="finger0_middle_to_lower_joint" pos="0 0 0" axis="0 1 0" limited="true"
+                           range="-3.00197 3.00197"/>
+                    <geom name="finger0_tip" friction="0.9 0.005 0.0001" pos="0.014 0 0" quat="0.707107 0.707107 0 0"
+                          type="mesh" rgba="0.5 0 0 1" mesh="Lower_Link"/>
+                    <site rgba="0.5 0.0 0.0 1" size="0.001" pos="0 0 -0.16" name="finger0_tip"/>
+                </body>
+            </body>
+        </body>
+
+        <!-- =================== arms 2 (120 degrees) =================== -->
+        <body name="finger1_upper_link" pos="0.034641 -0.02 0.29" quat="0.5 0 0 -0.866025">
+            <inertial pos="0 0.06 0" quat="0.707107 0.707107 0 0" mass="0.2"
+                      diaginertia="0.000353333 0.000353333 5.33333e-05"/>
+            <joint name="finger1_base_to_upper_joint" pos="0 0 0" axis="-1 0 0" limited="true"
+                   range="-1.5708 1.5708"/>
+            <geom pos="0 -0.02695 0" type="mesh" rgba="0 0.5 0 1" mesh="Upper_Link"/>
+            <body name="finger1_middle_link" pos="0 0 0">
+                <inertial pos="0.028 0 -0.08" mass="0.2" diaginertia="0.000353333 0.000353333 5.33333e-05"/>
+                <joint name="finger1_upper_to_middle_joint" pos="0 0 0" axis="0 1 0" limited="true"
+                       range="-1.35263 4.49422"/>
+                <geom pos="0.014 0 0" quat="0.707107 0.707107 0 0" type="mesh" rgba="0 0.5 0 1"
+                      mesh="Middle_Link"/>
+                <body name="finger1_lower_link" pos="0 0 -0.16">
+                    <inertial pos="0 0 -0.126667" mass="0.03" diaginertia="8.36667e-05 8.36667e-05 1e-06"/>
+                    <joint name="finger1_middle_to_lower_joint" pos="0 0 0" axis="0 1 0" limited="true"
+                           range="-3.00197 3.00197"/>
+                    <geom name="finger1_tip" friction="0.9 0.005 0.0001" pos="0.014 0 0" quat="0.707107 0.707107 0 0"
+                          type="mesh" rgba="0 0.5 0 1" mesh="Lower_Link"/>
+                    <site rgba="0.0 0.5 0.0 1" size="0.001" pos="0 0 -0.16" name="finger1_tip"/>
+                </body>
+            </body>
+        </body>
+
+        <!-- =================== arms 3 (240 degrees) =================== -->
+        <body name="finger2_upper_link" pos="-0.034641 -0.02 0.29" quat="-0.5 0 0 -0.866025">
+            <inertial pos="0 0.06 0" quat="0.707107 0.707107 0 0" mass="0.2"
+                      diaginertia="0.000353333 0.000353333 5.33333e-05"/>
+            <joint name="finger2_base_to_upper_joint" pos="0 0 0" axis="-1 0 0" limited="true"
+                   range="-1.5708 1.5708"/>
+            <geom pos="0 -0.02695 0" type="mesh" rgba="0 0.5 0.5 1" mesh="Upper_Link"/>
+            <body name="finger2_middle_link" pos="0 0 0">
+                <inertial pos="0.028 0 -0.08" mass="0.2" diaginertia="0.000353333 0.000353333 5.33333e-05"/>
+                <joint name="finger2_upper_to_middle_joint" pos="0 0 0" axis="0 1 0" limited="true"
+                       range="-1.35263 4.49422"/>
+                <geom pos="0.014 0 0" quat="0.707107 0.707107 0 0" type="mesh" rgba="0 0.5 0.5 1"
+                      mesh="Middle_Link"/>
+                <body name="finger2_lower_link" pos="0 0 -0.16">
+                    <inertial pos="0 0 -0.126667" mass="0.03" diaginertia="8.36667e-05 8.36667e-05 1e-06"/>
+                    <joint name="finger2_middle_to_lower_joint" pos="0 0 0" axis="0 1 0" limited="true"
+                           range="-3.00197 3.00197"/>
+                    <geom name="finger2_tip" friction="0.9 0.005 0.0001" pos="0.014 0 0" quat="0.707107 0.707107 0 0"
+                          type="mesh" rgba="0 0.5 0.5 1" mesh="Lower_Link"/>
+                    <site rgba="0.0 0.0 0.5 1" size="0.001" pos="0 0 -0.16" name="finger2_tip"/>
+                </body>
+            </body>
+        </body>
+
+    </worldbody>
+
+    <actuator>
+        <motor name="finger0_base_to_upper_joint_act" joint="finger0_base_to_upper_joint" />
+        <motor name="finger0_upper_to_middle_joint_act" joint="finger0_upper_to_middle_joint"/>
+        <motor name="finger0_middle_to_lower_joint_act" joint="finger0_middle_to_lower_joint" />
+        <motor name="finger1_base_to_upper_joint_act" joint="finger1_base_to_upper_joint" />
+        <motor name="finger1_upper_to_middle_joint_act" joint="finger1_upper_to_middle_joint" />
+        <motor name="finger1_middle_to_lower_joint_act" joint="finger1_middle_to_lower_joint"  />
+        <motor name="finger2_base_to_upper_joint_act" joint="finger2_base_to_upper_joint"  />
+        <motor name="finger2_upper_to_middle_joint_act" joint="finger2_upper_to_middle_joint"  />
+        <motor name="finger2_middle_to_lower_joint_act" joint="finger2_middle_to_lower_joint" />
+    </actuator>
+</mujoco>

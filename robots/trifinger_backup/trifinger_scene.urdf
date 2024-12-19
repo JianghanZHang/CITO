@@ -1,0 +1,243 @@
+<?xml version="1.0"?>
+<robot name="trifinger_with_ground">
+
+  <!-- Root link: no joint to the world, so zero DOF -->
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- Ground link to represent the floor -->
+  <link name="ground_link">
+    <visual>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <!-- A large flat box (10x10m) placed slightly below zero to emulate a plane -->
+      <geometry>
+        <box size="20 20 0.1"/>
+      </geometry>
+      <material name="ground_material">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <geometry>
+        <box size="20 20 0.1"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1"/>
+      <!-- Low inertia since this is just a static plane -->
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joint attaching ground_link to base_link -->
+  <joint name="base_to_ground_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="ground_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- trifinger_base_link attached by a fixed joint -->
+  <link name="trifinger_base_link">
+    <inertial>
+      <origin xyz="0 0 -0.35" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <joint name="base_to_trifinger_base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="trifinger_base_link"/>
+    <!-- From MuJoCo: trifinger_base_link at (0,0,0.283) rotated -90 deg around Z -->
+    <origin xyz="0 0 0.283" rpy="0 0 -1.57079632679"/>
+  </joint>
+
+  <material name="finger0_material">
+    <color rgba="0.6 0 0 1.0"/>
+  </material>
+  <material name="finger1_material">
+    <color rgba="0 0.6 0 1.0"/>
+  </material>
+  <material name="finger2_material">
+    <color rgba="0 0 0.6 1.0"/>
+  </material>
+
+  <!-- ==================== FINGER 0 ==================== -->
+  <link name="finger0_base_link">
+    <!-- Add visuals & collisions as before -->
+    <inertial>
+      <origin xyz="-0.1 0 0.4" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="0.0608333333" ixy="0" ixz="0" iyy="0.0566666667" iyz="0" izz="0.0108333333"/>
+    </inertial>
+  </link>
+
+  <joint name="trifinger_base_to_finger0_joint" type="fixed">
+    <parent link="trifinger_base_link"/>
+    <child link="finger0_base_link"/>
+    <origin xyz="-0.0455 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="finger0_upper_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger0_base_to_upper_joint" type="revolute">
+    <parent link="finger0_base_link"/>
+    <child link="finger0_upper_link"/>
+    <limit effort="1000" lower="-1.5708" upper="1.5708" velocity="1000"/>
+    <axis xyz="-1 0 0"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <link name="finger0_middle_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger0_upper_to_middle_joint" type="revolute">
+    <parent link="finger0_upper_link"/>
+    <child link="finger0_middle_link"/>
+    <limit effort="1000" lower="-1.5708" upper="1.5708" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.014 0"/>
+  </joint>
+
+  <link name="finger0_lower_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger0_middle_to_lower_joint" type="revolute">
+    <parent link="finger0_middle_link"/>
+    <child link="finger0_lower_link"/>
+    <limit effort="1000" lower="-3.14159" upper="3.14159" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.03745 -0.16"/>
+  </joint>
+
+  <link name="finger0_tip_link">
+    <!-- inertials -->
+  </link>
+  <joint name="finger0_lower_to_tip_joint" type="fixed">
+    <parent link="finger0_lower_link"/>
+    <child link="finger0_tip_link"/>
+    <origin xyz="0 -0.008 -0.16" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ==================== FINGER 1 ==================== -->
+  <link name="finger1_base_link">
+    <!-- visuals, collisions, inertials similar to finger0_base_link -->
+  </link>
+
+  <!-- Finger1 base attached to trifinger_base_link -->
+  <!-- From MuJoCo: finger1_base_link pos="0.02275 0.03940416 0" rotated by -120 deg -->
+  <!-- -120 deg = -2.0943951 rad about Z-axis -->
+  <joint name="trifinger_base_to_finger1_joint" type="fixed">
+    <parent link="trifinger_base_link"/>
+    <child link="finger1_base_link"/>
+    <origin xyz="0.02275 0.03940416 0" rpy="0 0 -2.0943951"/>
+  </joint>
+
+  <link name="finger1_upper_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger1_base_to_upper_joint" type="revolute">
+    <parent link="finger1_base_link"/>
+    <child link="finger1_upper_link"/>
+    <limit effort="1000" lower="-1.5708" upper="1.5708" velocity="1000"/>
+    <axis xyz="-1 0 0"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <link name="finger1_middle_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger1_upper_to_middle_joint" type="revolute">
+    <parent link="finger1_upper_link"/>
+    <child link="finger1_middle_link"/>
+    <limit effort="1000" lower="-1.5708" upper="1.5708" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.014 0"/>
+  </joint>
+
+  <link name="finger1_lower_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger1_middle_to_lower_joint" type="revolute">
+    <parent link="finger1_middle_link"/>
+    <child link="finger1_lower_link"/>
+    <limit effort="1000" lower="-3.14159" upper="3.14159" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.03745 -0.16"/>
+  </joint>
+
+  <link name="finger1_tip_link">
+    <!-- inertials -->
+  </link>
+  <joint name="finger1_lower_to_tip_joint" type="fixed">
+    <parent link="finger1_lower_link"/>
+    <child link="finger1_tip_link"/>
+    <origin xyz="0 -0.008 -0.16" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ==================== FINGER 2 ==================== -->
+  <link name="finger2_base_link">
+    <!-- visuals, collisions, inertials similar to finger0_base_link -->
+  </link>
+
+  <!-- Finger2 base attached to trifinger_base_link -->
+  <!-- From MuJoCo: finger2_base_link pos="0.02275 -0.03940416 0" rotated by +120 deg (or -240 deg) -->
+  <!-- +120 deg = 2.0943951 rad, we can also use -240 deg = -4.1887902 rad about Z -->
+  <joint name="trifinger_base_to_finger2_joint" type="fixed">
+    <parent link="trifinger_base_link"/>
+    <child link="finger2_base_link"/>
+    <origin xyz="0.02275 -0.03940416 0" rpy="0 0 -4.1887902"/>
+  </joint>
+
+  <link name="finger2_upper_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger2_base_to_upper_joint" type="revolute">
+    <parent link="finger2_base_link"/>
+    <child link="finger2_upper_link"/>
+    <limit effort="1000" lower="-1.5708" upper="1.5708" velocity="1000"/>
+    <axis xyz="-1 0 0"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <link name="finger2_middle_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger2_upper_to_middle_joint" type="revolute">
+    <parent link="finger2_upper_link"/>
+    <child link="finger2_middle_link"/>
+    <limit effort="1000" lower="-1.5708" upper="1.5708" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.014 0"/>
+  </joint>
+
+  <link name="finger2_lower_link">
+    <!-- visuals, collisions, inertials -->
+  </link>
+  <joint name="finger2_middle_to_lower_joint" type="revolute">
+    <parent link="finger2_middle_link"/>
+    <child link="finger2_lower_link"/>
+    <limit effort="1000" lower="-3.14159" upper="3.14159" velocity="1000"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.03745 -0.16"/>
+  </joint>
+
+  <link name="finger2_tip_link">
+    <!-- inertials -->
+  </link>
+  <joint name="finger2_lower_to_tip_joint" type="fixed">
+    <parent link="finger2_lower_link"/>
+    <child link="finger2_tip_link"/>
+    <origin xyz="0 -0.008 -0.16" rpy="0 0 0"/>
+  </joint>
+
+
+</robot>
