@@ -41,7 +41,7 @@ def main():
     nq = mj_env["nq"]
     nv = mj_env["nv"]
     mj_model = mj_env["mj_model"]
-
+    import pdb; pdb.set_trace()
     ################# OCP params ################
     dt = 0.01                                 
     mj_model.opt.timestep = dt                
