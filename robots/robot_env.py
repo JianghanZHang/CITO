@@ -35,8 +35,8 @@ go2_v0 = np.array([0.0000, 0.0000, 0.0000,
 
 def create_trifinger_env():
     package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-    urdf_path = os.path.join(package_dir, "trifinger/trifinger_scene.urdf")
-    xml_path = os.path.join(package_dir, "trifinger/trifinger_scene.xml")
+    urdf_path = os.path.join(package_dir, "trifinger/trifinger.urdf")
+    xml_path = os.path.join(package_dir, "trifinger/trifinger.xml")
     
     package_dirs = [package_dir]
 
@@ -114,6 +114,39 @@ def create_go2_env_force_MJ():
 
     return env
 
+# def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
+#     # Create data
+#     pin_data = pin.Data(pin_model)
+#     mj_data = mujoco.MjData(mj_model)
+
+#     print("Pinocchio nq:", pin_model.nq)
+#     print("MuJoCo nq:", mj_model.nq)
+
+#     qpos = np.zeros(pin_model.nq)
+#     mj_data.qpos[:] = qpos
+#     mujoco.mj_forward(mj_model, mj_data)
+
+#     pin_q = qpos.copy()
+
+#     pin.forwardKinematics(pin_model, pin_data, pin_q)
+#     pin.updateFramePlacements(pin_model, pin_data)
+#     if with_cube:
+#         cube_body_id = mj_model.body(name="cube").id
+#         mj_cube_pos = mj_data.xpos[cube_body_id]
+#         mj_cube_mat = mj_data.xmat[cube_body_id].reshape(3,3)
+
+#         # In Pinocchio, find cube frame id:
+#         cube_frame_id = pin_model.getFrameId("cube_floating_joint")  # from create_cube() function
+
+#         pin_cube_pos = pin_data.oMf[cube_frame_id].translation
+#         pin_cube_mat = pin_data.oMf[cube_frame_id].rotation
+
+#         print("\nCube body comparison:")
+#         print("MuJoCo cube position:", mj_cube_pos)
+#         print("Pinocchio cube position:", pin_cube_pos)
+#         print("MuJoCo cube rotation:\n", mj_cube_mat)
+#         print("Pinocchio cube rotation:\n", pin_cube_mat)
+
 def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
     # Create data
     pin_data = pin.Data(pin_model)
@@ -130,6 +163,71 @@ def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
 
     pin.forwardKinematics(pin_model, pin_data, pin_q)
     pin.updateFramePlacements(pin_model, pin_data)
+    
+    # Check the three base links: finger0_base_link, finger1_base_link, finger2_base_link
+    # base_links = ["finger0_base_link", "finger1_base_link", "finger2_base_link"]
+    # print("\nBase links position comparison:")
+    # for bl in base_links:
+    #     # Get MuJoCo body id and position
+    #     mj_body_id = mj_model.body(name=bl).id
+    #     mj_body_pos = mj_data.xpos[mj_body_id]
+
+    #     # Get Pinocchio frame id and position
+    #     pin_frame_id = pin_model.getFrameId(bl)
+    #     pin_body_pos = pin_data.oMf[pin_frame_id].translation
+
+    #     print(f"{bl}:")
+    #     print("  MuJoCo position:", mj_body_pos)
+    #     print("  URDF/Pinocchio position:", pin_body_pos)
+
+    upper_links = ["finger_upper_link_0", "finger_upper_link_120", "finger_upper_link_240"]
+    print("\nUpper links position comparison:")
+    for ul in upper_links:
+        # Get MuJoCo body id and position
+        mj_body_id = mj_model.body(name=ul).id
+        mj_body_pos = mj_data.xpos[mj_body_id]
+
+        # Get Pinocchio frame id and position
+        pin_frame_id = pin_model.getFrameId(ul)
+        pin_body_pos = pin_data.oMf[pin_frame_id].translation
+
+        print(f"{ul}:")
+        print("  MuJoCo position:", mj_body_pos)
+        print("  URDF/Pinocchio position:", pin_body_pos)
+
+    lower_links = ["finger_lower_link_0", "finger_lower_link_120", "finger_lower_link_240"]
+    print("\nLower links position comparison:")
+    for ll in lower_links:
+        # Get MuJoCo body id and position
+        mj_body_id = mj_model.body(name=ll).id
+        mj_body_pos = mj_data.xpos[mj_body_id]
+
+        # Get Pinocchio frame id and position
+        pin_frame_id = pin_model.getFrameId(ll)
+        pin_body_pos = pin_data.oMf[pin_frame_id].translation
+
+        print(f"{ll}:")
+        print("  MuJoCo position:", mj_body_pos)
+        print("  URDF/Pinocchio position:", pin_body_pos)
+
+    tips_xml = ["finger_tip_0", "finger_tip_120", "finger_tip_240"]
+    tips_urdf = ["finger_tip_link_0", "finger_tip_link_120", "finger_tip_link_240"]
+    print("\nTip links position comparison:")
+    for idx in range(len(tips_xml)):
+        # Get MuJoCo body id and position
+        mj_body_id = mj_model.site(name=tips_xml[idx]).id
+        mj_body_pos = mj_data.site_xpos[mj_body_id]
+
+        # Get Pinocchio frame id and position
+        pin_frame_id = pin_model.getFrameId(tips_urdf[idx])
+        pin_body_pos = pin_data.oMf[pin_frame_id].translation
+
+        print(f"{tips_xml[idx]}:")
+        print("  MuJoCo position:", mj_body_pos)
+        print("  URDF/Pinocchio position:", pin_body_pos)
+
+
+    # If with_cube is True, also check cube positions/orientations
     if with_cube:
         cube_body_id = mj_model.body(name="cube").id
         mj_cube_pos = mj_data.xpos[cube_body_id]
@@ -147,10 +245,12 @@ def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
         print("MuJoCo cube rotation:\n", mj_cube_mat)
         print("Pinocchio cube rotation:\n", pin_cube_mat)
 
+
+
 def create_cube(name="cube", color=[1.,0,0.,1.]):
     parent_id = 0
-    mass = 0.5
-    cube_length = 0.05
+    mass = 0.05
+    cube_length = 0.025
     cube_length_collision = 0.05
 
     rmodel = pin.Model()
@@ -179,9 +279,11 @@ def create_cube(name="cube", color=[1.,0,0.,1.]):
 
 def create_trifinger_cube_env():
     package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    package_dir_trifinger = os.path.join(package_dir, "trifinger")
     urdf_path = os.path.join(package_dir, "trifinger/trifinger_scene.urdf")
     xml_path = os.path.join(package_dir, "trifinger/trifinger_scene.xml")
-    package_dirs = [package_dir]
+    package_dirs = [package_dir_trifinger]
+    # import pdb; pdb.set_trace()
 
     # Load Pinocchio model for trifinger
     finger_rmodel, finger_gmodel,finger_vmodel = pin.buildModelsFromUrdf(
@@ -230,7 +332,7 @@ def create_trifinger_cube_env():
     cube_body_str = """
     <body name="cube" pos="0 0 0">
       <joint name="cube_freejoint" type="free"/>
-      <geom name="cube_geom" type="box" size="0.05 0.05 0.05" mass="0.5" rgba="0 1 0 1"/>
+      <geom name="cube_geom" type="box" size="0.025 0.025 0.025" mass="0.05" rgba="0 1 0 1"/>
     </body>
     """
 
@@ -258,18 +360,18 @@ def create_trifinger_cube_env():
     return env
 
 def main():
-    create_trifinger_env()
+    # _, mj_model = create_trifinger_env()
     env = create_trifinger_cube_env()
     mj_model = env["mj_model"]
     # Assume mj_model is already created
     mj_data = mujoco.MjData(mj_model)
-    # viewer = mujoco.viewer.launch_passive(mj_model, mj_data)
-    viwer = mujoco.viewer.launch_passive(mj_model, mj_data)
+    import mujoco.viewer as viewer
+    viewer.launch(mj_model)
+
     # import mujoco_viewer
-    # # # Create a viewer
     # viewer = mujoco_viewer.MujocoViewer(mj_model, mj_data)
     # for _ in range(10000000000000000):
-    #     # print(f"cube position: {mj_data.qpos[9:12]}")
+    #     print(f"cube position: {mj_data.qpos[9:12]}")
     #     if viewer.is_alive:
     #         mujoco.mj_step(mj_model, mj_data)
     #         viewer.render()
