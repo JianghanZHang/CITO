@@ -33,6 +33,70 @@ go2_v0 = np.array([0.0000, 0.0000, 0.0000,
                 0.0000, 0.0000, 0.0000])
                 
 
+def create_go2_env():
+    urdf_path = "robots/go2_robot_sdk/urdf/go2.urdf"
+    package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    package_dirs = [package_dir]
+
+    print(f"URDF Path: {urdf_path}")
+    print(f"Package Dirs: {package_dirs}")
+    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, verbose=True)
+
+    env = {
+        "nq" : 19,
+        "nv" : 18,
+        "rmodel" : rmodel,
+        "gmodel" : gmodel,
+        "vmodel" : vmodel,
+        "nu" : 12,
+        "njoints" : 12,
+        "ncontacts" : 4,
+        "contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"],
+        "contactFids" : [],
+        "jointFnames" : ["FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+                         "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+                         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
+                         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"],
+        "jointFids" : [],
+        "q0" : list(go2_init_conf0),
+        "v0" : list(go2_v0),
+    }
+    
+    env["nf"] = 3 * env["ncontacts"]
+
+    for idx, frameName in enumerate(env["contactFnames"]):
+        env["contactFids"].append(env["rmodel"].getFrameId(frameName))
+
+    for idx, frameName in enumerate(env["jointFnames"]):
+        env["jointFids"].append(env["rmodel"].getFrameId(frameName))
+        
+    return env
+
+def create_go2_env_force_MJ():
+    xml_path = "robots/unitree_go2/scene_foot_collision.xml"
+    mj_model = mujoco.MjModel.from_xml_path(xml_path)
+
+    env = {
+        "nq" : 19,
+        "nv" : 18,
+        "mj_model" : mj_model,
+        "nu" : 12,
+        "njoints" : 12,
+        "ncontacts" : 4,
+        "contactFnames" : ["FL", "FR", "RL", "RR"],
+        "contactFids" : [],
+        "q0" : list(go2_init_conf0),
+        "v0" : list(go2_v0),
+    }
+
+    env["nf"] = 3 * env["ncontacts"]
+
+    for idx, frameName in enumerate(env["contactFnames"]):
+        env["contactFids"].append(mj_model.geom(name=frameName).id)
+
+    return env
+
+
 
 def create_trifinger_env():
     package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
@@ -63,7 +127,7 @@ def create_cube(name="cube", color=[1.,0,0.,1.]):
     gmodel = pin.GeometryModel()
 
     # Free-flyer joint for the cube
-    joint_name = name + "_floating_joint"
+    joint_name = "root_joint"
     joint_placement = pin.SE3.Identity()
     base_id = rmodel.addJoint(parent_id, pin.JointModelFreeFlyer(), joint_placement, joint_name)
     rmodel.addJointFrame(base_id)
@@ -99,12 +163,13 @@ def create_trifinger_cube_env():
 
     # Append cube to trifinger model
     pin_model_combined, gmodel_combined = pin.appendModel(
-        finger_pin_model, cube_pin_model, finger_gmodel, cube_gmodel, 0, pin.SE3.Identity()
+        cube_pin_model, finger_pin_model, cube_gmodel, finger_gmodel, 0, pin.SE3.Identity()
     )
 
     pin_model = pin_model_combined
     gmodel = gmodel_combined
     
+    import pdb; pdb.set_trace()
 
     q0 = []
     v0 = []
@@ -147,7 +212,14 @@ def create_trifinger_cube_env():
     # Sanity check
     xml_urdf_sanity_check(mj_model, pin_model)
 
-    return pin_model, mj_model
+
+    frameName = "root_joint"
+
+
+
+    cube_frame_id = pin_model.getFrameId(frameName)
+
+    return pin_model, mj_model, cube_frame_id
 
 
 def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
@@ -221,7 +293,10 @@ def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
         mj_cube_mat = mj_data.xmat[cube_body_id].reshape(3,3)
 
         # In Pinocchio, find cube frame id:
-        cube_frame_id = pin_model.getFrameId("cube_floating_joint")  # from create_cube() function
+
+        import pdb; pdb.set_trace() 
+        
+        cube_frame_id = pin_model.getFrameId("root_joint")  # from create_cube() function
 
         pin_cube_pos = pin_data.oMf[cube_frame_id].translation
         pin_cube_mat = pin_data.oMf[cube_frame_id].rotation
@@ -236,7 +311,9 @@ def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
 
 # Do some test here
 def main():
-    _, mj_model = create_trifinger_cube_env()
+    pin_model, mj_model, _ = create_trifinger_cube_env()
+    
+    
     import mujoco.viewer as viewer
     viewer.launch(mj_model)
 
