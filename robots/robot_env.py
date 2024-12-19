@@ -359,16 +359,15 @@ def create_trifinger_cube_env():
 
     return env
 
+# Do some test here
 def main():
-    # _, mj_model = create_trifinger_env()
     env = create_trifinger_cube_env()
     mj_model = env["mj_model"]
-    # Assume mj_model is already created
     mj_data = mujoco.MjData(mj_model)
     import mujoco.viewer as viewer
     viewer.launch(mj_model)
 
-    # import mujoco_viewer
+    # import mujoco_viewerx
     # viewer = mujoco_viewer.MujocoViewer(mj_model, mj_data)
     # for _ in range(10000000000000000):
     #     print(f"cube position: {mj_data.qpos[9:12]}")
