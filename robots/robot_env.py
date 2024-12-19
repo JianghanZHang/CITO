@@ -3,6 +3,7 @@
 # import mim_robots
 import sys
 import os
+import re
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../python/')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../robots/')))
@@ -32,101 +33,23 @@ go2_v0 = np.array([0.0000, 0.0000, 0.0000,
                 0.0000, 0.0000, 0.0000])
                 
 
-# def create_solo12_env_free_force():
-
-#     solo12 = Solo12RobotWithoutPybullet()
-#     solo12_robot = solo12.pin_robot
-#     solo_rmodel, solo_gmodel, solo_vmodel  = solo12_robot.model, solo12_robot.collision_model, solo12_robot.visual_model
-#     env = {
-#         "nq" : 19,
-#         "nv" : 18,
-#         "rmodel" : solo_rmodel,
-#         "gmodel" : solo_gmodel,
-#         "vmodel" : solo_vmodel,
-#         "nu" : 24,
-#         "njoints" : 12,
-#         "ncontacts" : 4,
-#         "contactFnames" : ["FL_FOOT", "FR_FOOT", "HL_FOOT", "HR_FOOT"],
-#         "contactFids" : [],
-#         "q0" : Solo12Config.initial_configuration,
-#         "v0" : Solo12Config.initial_velocity,
-#     }
-
-#     env["nu"] = env["njoints"] + 3 * env["ncontacts"]
-
-#     for idx, frameName in enumerate(env["contactFnames"]):
-#         env["contactFids"].append(env["rmodel"].getFrameId(frameName))
-    
-#     return env
-
-# def create_solo12_env_force_MJ():
-#     mj_model = mim_robots.robot_loader.load_mujoco_model("solo12")
-#     mj_data = mujoco.MjData(mj_model)
-#     env = {
-#         "nq" : 19,
-#         "nv" : 18,
-#         "mj_model" : mj_model,
-#         "nu" : 12,
-#         "njoints" : 12,
-#         "ncontacts" : 4,
-#         "contactFnames" : ["FL_FOOT", "FR_FOOT", "HL_FOOT", "HR_FOOT"],
-#         "contactFids" : [],
-#         "q0" : Solo12Config.initial_configuration,
-#         "v0" : Solo12Config.initial_velocity,
-#     }
-
-#     env["nf"] = 3 * env["ncontacts"]
-
-#     for idx, frameName in enumerate(env["contactFnames"]):
-#         env["contactFids"].append(mj_model.body(name=frameName).id)
-
-#     return env
-
 def create_trifinger_env():
     package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-    urdf_path = os.path.join(package_dir, "trifinger/trifinger.urdf")
-    xml_path = os.path.join(package_dir, "trifinger/trifinger.xml")
+    urdf_path = os.path.join(package_dir, "trifinger/trifinger_scene.urdf")
+    xml_path = os.path.join(package_dir, "trifinger/trifinger_scene.xml")
     
     package_dirs = [package_dir]
 
     print(f"URDF Path: {urdf_path}")
     print(f"Package Dirs: {package_dirs}")
 
-    rmodel, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, root_joint=pin.JointModelFreeFlyer(), verbose=True)
+    pin_model, gmodel, vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, verbose=True)
     mj_model = mujoco.MjModel.from_xml_path(xml_path)
-    # env = {"contactFnames" : ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]}
-    xml_urdf_sanity_check(mj_model, rmodel)
 
-def xml_urdf_sanity_check(mj_model, pin_model):
-    # print(pin_model)
-    pin_data = pin.Data(pin_model)
-    mj_data = mujoco.MjData(mj_model)
-    
-    pin_nq = pin_model.nq
-    mj_nq = mj_model.nq
+    # import pdb; pdb.set_trace()
+    xml_urdf_sanity_check(mj_model, pin_model, with_cube=False)
 
-    print(pin_nq)
-    print(mj_nq)
-
-    # pin.forwardKinematics(pin_model, data, q)
-    # pin.updateFramePlacements(pin_model, data)
-    # for idx, frame in enumerate(pin_model.frames):
-    #     print(f"Frame {frame.name}: position={data.oMf[idx].translation}, rotation={data.oMf[idx].rotation}")
-    
-    qpos = np.random.uniform(
-        low=mj_model.jnt_range[:, 0],  # Lower bounds of joint range
-        high=mj_model.jnt_range[:, 1]  # Upper bounds of joint range
-    )
-    mj_data.qpos[:] = qpos
-    mujoco.mj_step(mj_model, mj_data)
-    print(mj_data.qpos)
-    pin_qpos = qpos
-    # for body_id in range(mj_model.nbody):
-    #     body_name = mj_model.names[mj_model.name_bodyadr[body_id]:]
-    #     position = mj_data.xpos[body_id]
-    #     rotation = mj_data.xmat[body_id].reshape(3, 3)
-    #     print(f"Body:{body_name} position={position}, rotation={rotation}")
-    
+    return pin_model, mj_model
 
 def create_go2_env():
     urdf_path = "robots/go2_robot_sdk/urdf/go2.urdf"
@@ -191,6 +114,39 @@ def create_go2_env_force_MJ():
 
     return env
 
+def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
+    # Create data
+    pin_data = pin.Data(pin_model)
+    mj_data = mujoco.MjData(mj_model)
+
+    print("Pinocchio nq:", pin_model.nq)
+    print("MuJoCo nq:", mj_model.nq)
+
+    qpos = np.zeros(pin_model.nq)
+    mj_data.qpos[:] = qpos
+    mujoco.mj_forward(mj_model, mj_data)
+
+    pin_q = qpos.copy()
+
+    pin.forwardKinematics(pin_model, pin_data, pin_q)
+    pin.updateFramePlacements(pin_model, pin_data)
+    if with_cube:
+        cube_body_id = mj_model.body(name="cube").id
+        mj_cube_pos = mj_data.xpos[cube_body_id]
+        mj_cube_mat = mj_data.xmat[cube_body_id].reshape(3,3)
+
+        # In Pinocchio, find cube frame id:
+        cube_frame_id = pin_model.getFrameId("cube_floating_joint")  # from create_cube() function
+
+        pin_cube_pos = pin_data.oMf[cube_frame_id].translation
+        pin_cube_mat = pin_data.oMf[cube_frame_id].rotation
+
+        print("\nCube body comparison:")
+        print("MuJoCo cube position:", mj_cube_pos)
+        print("Pinocchio cube position:", pin_cube_pos)
+        print("MuJoCo cube rotation:\n", mj_cube_mat)
+        print("Pinocchio cube rotation:\n", pin_cube_mat)
+
 def create_cube(name="cube", color=[1.,0,0.,1.]):
     parent_id = 0
     mass = 0.5
@@ -201,12 +157,12 @@ def create_cube(name="cube", color=[1.,0,0.,1.]):
     rmodel.name = name
     gmodel = pin.GeometryModel()
 
-    ## Joints
+    # Free-flyer joint for the cube
     joint_name = name + "_floating_joint"
     joint_placement = pin.SE3.Identity()
     base_id = rmodel.addJoint(parent_id, pin.JointModelFreeFlyer(), joint_placement, joint_name)
     rmodel.addJointFrame(base_id)
-    
+
     cube_inertia = pin.Inertia.FromBox(mass, cube_length, cube_length, cube_length)
     cube_placement = pin.SE3.Identity()
     rmodel.appendBodyToJoint(base_id, cube_inertia, cube_placement)
@@ -221,73 +177,104 @@ def create_cube(name="cube", color=[1.,0,0.,1.]):
 
     return rmodel, gmodel, mass
 
-def create_cube_pusher_env_MJ():
-    xml_path = "robots/kuka/xml/iiwa_pusher_v2.xml"
-    mj_model = mujoco.MjModel.from_xml_path(xml_path)
+def create_trifinger_cube_env():
+    package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    urdf_path = os.path.join(package_dir, "trifinger/trifinger_scene.urdf")
+    xml_path = os.path.join(package_dir, "trifinger/trifinger_scene.xml")
+    package_dirs = [package_dir]
 
-    env = {
-        "nq" : 14,
-        "nv" : 13,
-        "mj_model" : mj_model,
-        "nu" : 7,
-        "njoints" : 7,
-        "ncontacts" : 1,
-        "contactFnames" : ["pusher_tip"],
-        "contactFids" : [],
-        "q0" : list(go2_init_conf0),
-        "v0" : list(go2_v0),
-    }
-
-    env["nf"] = 3 * env["ncontacts"]
-
-    for idx, frameName in enumerate(env["contactFnames"]):
-        env["contactFids"].append(mj_model.geom(name=frameName).id)
-
-    return env
-
-def create_cube_pusher_env():
-    urdf_path = "robots/kuka/urdf/iiwa_pusher_v2.urdf"
-    package_dirs = ["/home/jianghan/Devel/workspace_autogait/src/auto_gait_generation/robots/kuka"]
-
-    print(f"URDF Path: {urdf_path}")
-    print(f"Package Dirs: {package_dirs}")
-    pusher_rmodel, pusher_gmodel, pusher_vmodel = pin.buildModelsFromUrdf(urdf_path, package_dirs, verbose=True)
-    
-    cube_rmodel, cube_gmodel, cube_mass = create_cube("cube")
-
-    rmodel, gmodel = pin.appendModel(
-        pusher_rmodel, 
-        cube_rmodel, 
-        pusher_gmodel,
-        cube_gmodel,
-        0,
-        pin.SE3.Identity()
+    # Load Pinocchio model for trifinger
+    finger_rmodel, finger_gmodel,finger_vmodel = pin.buildModelsFromUrdf(
+        urdf_path, package_dirs, verbose=True
     )
 
+    # Create cube models
+    cube_rmodel, cube_gmodel, cube_mass = create_cube("cube", color=[0., 1., 0., 1.])
+
+    # Append cube to trifinger model
+    rmodel_combined, gmodel_combined = pin.appendModel(
+        finger_rmodel, cube_rmodel, finger_gmodel, cube_gmodel, 0, pin.SE3.Identity()
+    )
+
+    rmodel = rmodel_combined
+    gmodel = gmodel_combined
+    
+
+    # import pdb; pdb.set_trace()
+    q0 = []
+    v0 = []
+    # Setup initial state of the cube
+    q0[:cube_rmodel.nq] = np.zeros(cube_rmodel.nq)
+    v0[:cube_rmodel.nq] = np.zeros(cube_rmodel.nq)
+
+    # Setup initial state of the Trifinger
+    q0[-finger_rmodel.nq:] = np.zeros(finger_rmodel.nq)
+    v0[-finger_rmodel.nq:] = np.zeros(finger_rmodel.nq)
+
+    # Place the cube:
+    cube_q_idx = len(go2_init_conf0)
+    q0[cube_q_idx:cube_q_idx+3] = [0.0, 0.0, 0.0]     # cube pos
+    q0[cube_q_idx+3:cube_q_idx+7] = [1.0, 0.0, 0.0, 0.0]  # cube orientation (quat)
+
+    # For velocities:
+    v0[:len(go2_v0)] = go2_v0
+
+    # Load MuJoCo model from XML and insert cube:
+    with open(xml_path, 'r') as f:
+        xml_str = f.read()
+
+    # Modify meshdir to a proper path (e.g., absolute path)
+    mesh_dir_path = os.path.join(package_dir, "trifinger", "meshes")
+    xml_str = re.sub(r'meshdir="meshes"', f'meshdir="{mesh_dir_path}"', xml_str)
+
+    cube_body_str = """
+    <body name="cube" pos="0 0 0">
+      <joint name="cube_freejoint" type="free"/>
+      <geom name="cube_geom" type="box" size="0.05 0.05 0.05" mass="0.5" rgba="0 1 0 1"/>
+    </body>
+    """
+
+    # Insert cube body right after <worldbody>
+    xml_str = re.sub(r'(<worldbody[^>]*>)', r'\1' + cube_body_str, xml_str)
+
+    mj_model = mujoco.MjModel.from_xml_string(xml_str)
+
     env = {
-        "nq" : 14,
-        "nv" : 13,
-        "rmodel" : rmodel,
-        "gmodel" : gmodel,
-        "nu" : 7,
-        "njoints" : 7,
-        "cubeMass" : cube_mass,
-        "ncontacts" : 1,
-        "contactFnames" : ["pusher_tip"],
-        "contactFids" : [],
-        "q0" : list(go2_init_conf0),
-        "v0" : list(go2_v0),
+        "rmodel": rmodel,
+        "gmodel": gmodel,
+        "mj_model": mj_model,
+        "q0": list(q0),
+        "v0": list(v0),
+        "nu": 9,  # trifinger has 9 actuators, cube not actuated
+        "njoints": 9,
+        "ncontacts": 0,
+        "contactFnames": [],
+        "contactFids": []
     }
 
-    env["nf"] = 3 * env["ncontacts"]
-
-    for idx, frameName in enumerate(env["contactFnames"]):
-        env["contactFids"].append(env["rmodel"].getFrameId(frameName))
+    # Sanity check
+    xml_urdf_sanity_check(mj_model, rmodel)
 
     return env
 
 def main():
     create_trifinger_env()
+    env = create_trifinger_cube_env()
+    mj_model = env["mj_model"]
+    # Assume mj_model is already created
+    mj_data = mujoco.MjData(mj_model)
+    # viewer = mujoco.viewer.launch_passive(mj_model, mj_data)
+    viwer = mujoco.viewer.launch_passive(mj_model, mj_data)
+    # import mujoco_viewer
+    # # # Create a viewer
+    # viewer = mujoco_viewer.MujocoViewer(mj_model, mj_data)
+    # for _ in range(10000000000000000):
+    #     # print(f"cube position: {mj_data.qpos[9:12]}")
+    #     if viewer.is_alive:
+    #         mujoco.mj_step(mj_model, mj_data)
+    #         viewer.render()
+    #     else:
+    #         break
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<robot name="trifinger">
+<robot name="trifinger_with_ground">
 
-  <!-- Root link fixed in space by convention (no world link needed) -->
+  <!-- Root link: no joint to the world, so zero DOF -->
   <link name="base_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -9,6 +9,39 @@
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
     </inertial>
   </link>
+
+  <!-- Ground link to represent the floor -->
+  <link name="ground_link">
+    <visual>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <!-- A large flat box (10x10m) placed slightly below zero to emulate a plane -->
+      <geometry>
+        <box size="20 20 0.1"/>
+      </geometry>
+      <material name="ground_material">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <geometry>
+        <box size="20 20 0.1"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1"/>
+      <!-- Low inertia since this is just a static plane -->
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joint attaching ground_link to base_link -->
+  <joint name="base_to_ground_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="ground_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
 
   <!-- trifinger_base_link attached by a fixed joint -->
   <link name="trifinger_base_link">
@@ -205,5 +238,6 @@
     <child link="finger2_tip_link"/>
     <origin xyz="0 -0.008 -0.16" rpy="0 0 0"/>
   </joint>
+
 
 </robot>
