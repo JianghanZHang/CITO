@@ -4,7 +4,7 @@
 
 1. Create a new Conda environment:
     ```bash
-    conda create -n CITO python=3.10
+    conda create -n CITO python=3.12
     ```
    
 2. Activate the environment:

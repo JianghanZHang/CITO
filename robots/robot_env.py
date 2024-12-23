@@ -161,20 +161,9 @@ def create_trifinger_cube_env():
     # )
 
     pin_model, gmodel, _ =  pin.buildModelsFromUrdf(
-        urdf_path, package_dirs, root_joint=None, verbose=True
+        urdf_path, package_dirs, root_joint = pin.JointModelFreeFlyer(), root_joint_name="root_joint", verbose=True, 
     )
 
-    # Create cube models
-    # cube_pin_model, cube_gmodel, _ = create_cube("cube", color=[0., 1., 0., 1.])
-
-    # Append cube to trifinger model
-    # pin_model_combined, gmodel_combined = pin.appendModel(
-    #     cube_pin_model, finger_pin_model, cube_gmodel, finger_gmodel, 0, pin.SE3.Identity()
-    # )
-
-    # pin_model = pin_model_combined
-    # gmodel = gmodel_combined
-    
 
     q0 = []
     v0 = []
@@ -183,19 +172,6 @@ def create_trifinger_cube_env():
     v0 = np.zeros(pin_model.nv)
 
     
-    # Setup initial state of the cube
-    # q0[:cube_pin_model.nq] = np.zeros(cube_pin_model.nq)
-    # v0[:cube_pin_model.nq] = np.zeros(cube_pin_model.nq)
-
-    # # Setup initial state of the Trifinger
-    # q0[-finger_pin_model.nq:] = np.zeros(finger_pin_model.nq)
-    # v0[-finger_pin_model.nq:] = np.zeros(finger_pin_model.nq)
-
-    # Place the cube:
-    # cube_q_idx = len(go2_init_conf0)
-    # q0[cube_q_idx:cube_q_idx+3] = [0.0, 0.0, 0.0]     # cube pos
-    # q0[cube_q_idx+3:cube_q_idx+7] = [1.0, 0.0, 0.0, 0.0]  # cube orientation (quat)
-
     # Load MuJoCo model from XML and insert cube:
     with open(xml_path, 'r') as f:
         xml_str = f.read()
@@ -222,10 +198,7 @@ def create_trifinger_cube_env():
         print(frame)
     # import pdb; pdb.set_trace()
 
-
-    # xml_urdf_sanity_check(mj_model, pin_model)
-
-    frameName = "cube_joint"
+    frameName = "root_joint"
 
     cube_frame_id = pin_model.getFrameId(frameName)
 
