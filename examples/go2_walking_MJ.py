@@ -41,12 +41,17 @@ def main():
     nq = mj_env["nq"]
     nv = mj_env["nv"]
     mj_model = mj_env["mj_model"]
-    import pdb; pdb.set_trace()
     ################# OCP params ################
     dt = 0.01                                 
     mj_model.opt.timestep = dt                
     T = 100                                               
-    T_total = dt * T                          
+    T_total = dt * T                      
+
+
+    for frame in rmodel.frames:
+        print(frame)
+
+    import pdb;pdb.set_trace()    
 
     print(f'x0:{q0 + v0}')
     ################# Initialize crocoddyl models ################

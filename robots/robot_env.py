@@ -127,7 +127,7 @@ def create_cube(name="cube", color=[1.,0,0.,1.]):
     gmodel = pin.GeometryModel()
 
     # Free-flyer joint for the cube
-    joint_name = "root_joint"
+    joint_name = "cube_joint"
     joint_placement = pin.SE3.Identity()
     base_id = rmodel.addJoint(parent_id, pin.JointModelFreeFlyer(), joint_placement, joint_name)
     rmodel.addJointFrame(base_id)
@@ -149,45 +149,52 @@ def create_cube(name="cube", color=[1.,0,0.,1.]):
 def create_trifinger_cube_env():
     package_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
     package_dir_trifinger = os.path.join(package_dir, "trifinger")
-    urdf_path = os.path.join(package_dir, "trifinger/trifinger_scene.urdf")
+    # urdf_path = os.path.join(package_dir, "trifinger/trifinger_scene.urdf")
+    urdf_path = os.path.join(package_dir, "trifinger/trifinger_cube_scene.urdf")
+
     xml_path = os.path.join(package_dir, "trifinger/trifinger_scene.xml")
     package_dirs = [package_dir_trifinger]
 
     # Load Pinocchio model for trifinger
-    finger_pin_model, finger_gmodel, _ = pin.buildModelsFromUrdf(
-        urdf_path, package_dirs, verbose=True
+    # finger_pin_model, finger_gmodel, _ = pin.buildModelsFromUrdf(
+    #     urdf_path, package_dirs, verbose=True
+    # )
+
+    pin_model, gmodel, _ =  pin.buildModelsFromUrdf(
+        urdf_path, package_dirs, root_joint=None, verbose=True
     )
 
     # Create cube models
-    cube_pin_model, cube_gmodel, _ = create_cube("cube", color=[0., 1., 0., 1.])
+    # cube_pin_model, cube_gmodel, _ = create_cube("cube", color=[0., 1., 0., 1.])
 
     # Append cube to trifinger model
-    pin_model_combined, gmodel_combined = pin.appendModel(
-        cube_pin_model, finger_pin_model, cube_gmodel, finger_gmodel, 0, pin.SE3.Identity()
-    )
+    # pin_model_combined, gmodel_combined = pin.appendModel(
+    #     cube_pin_model, finger_pin_model, cube_gmodel, finger_gmodel, 0, pin.SE3.Identity()
+    # )
 
-    pin_model = pin_model_combined
-    gmodel = gmodel_combined
+    # pin_model = pin_model_combined
+    # gmodel = gmodel_combined
     
-    import pdb; pdb.set_trace()
 
     q0 = []
     v0 = []
-    # Setup initial state of the cube
-    q0[:cube_pin_model.nq] = np.zeros(cube_pin_model.nq)
-    v0[:cube_pin_model.nq] = np.zeros(cube_pin_model.nq)
 
-    # Setup initial state of the Trifinger
-    q0[-finger_pin_model.nq:] = np.zeros(finger_pin_model.nq)
-    v0[-finger_pin_model.nq:] = np.zeros(finger_pin_model.nq)
+    q0 = np.zeros(pin_model.nq)
+    v0 = np.zeros(pin_model.nv)
+
+    
+    # Setup initial state of the cube
+    # q0[:cube_pin_model.nq] = np.zeros(cube_pin_model.nq)
+    # v0[:cube_pin_model.nq] = np.zeros(cube_pin_model.nq)
+
+    # # Setup initial state of the Trifinger
+    # q0[-finger_pin_model.nq:] = np.zeros(finger_pin_model.nq)
+    # v0[-finger_pin_model.nq:] = np.zeros(finger_pin_model.nq)
 
     # Place the cube:
-    cube_q_idx = len(go2_init_conf0)
-    q0[cube_q_idx:cube_q_idx+3] = [0.0, 0.0, 0.0]     # cube pos
-    q0[cube_q_idx+3:cube_q_idx+7] = [1.0, 0.0, 0.0, 0.0]  # cube orientation (quat)
-
-    # For velocities:
-    v0[:len(go2_v0)] = go2_v0
+    # cube_q_idx = len(go2_init_conf0)
+    # q0[cube_q_idx:cube_q_idx+3] = [0.0, 0.0, 0.0]     # cube pos
+    # q0[cube_q_idx+3:cube_q_idx+7] = [1.0, 0.0, 0.0, 0.0]  # cube orientation (quat)
 
     # Load MuJoCo model from XML and insert cube:
     with open(xml_path, 'r') as f:
@@ -210,12 +217,15 @@ def create_trifinger_cube_env():
     mj_model = mujoco.MjModel.from_xml_string(xml_str)
 
     # Sanity check
-    xml_urdf_sanity_check(mj_model, pin_model)
+
+    for frame in pin_model.frames:
+        print(frame)
+    # import pdb; pdb.set_trace()
 
 
-    frameName = "root_joint"
+    # xml_urdf_sanity_check(mj_model, pin_model)
 
-
+    frameName = "cube_joint"
 
     cube_frame_id = pin_model.getFrameId(frameName)
 
@@ -294,7 +304,7 @@ def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
 
         # In Pinocchio, find cube frame id:
 
-        import pdb; pdb.set_trace() 
+        # import pdb; pdb.set_trace() 
         
         cube_frame_id = pin_model.getFrameId("root_joint")  # from create_cube() function
 
@@ -313,9 +323,31 @@ def xml_urdf_sanity_check(mj_model, pin_model, with_cube=True):
 def main():
     pin_model, mj_model, _ = create_trifinger_cube_env()
     
+    print("Trifinger")
+    print("*************************************************************************")
+    for frame in pin_model.frames:
+        print(frame)
     
-    import mujoco.viewer as viewer
-    viewer.launch(mj_model)
+    for joint in pin_model.joints:
+        print(joint)
+    print("*************************************************************************")
+
+    print("Go2")
+    
+    env = create_go2_env()
+    for frame in env["rmodel"].frames:
+        print(frame)
+
+    print("*************************************************************************")
+
+    for joint in env["rmodel"].joints:
+        print(joint)
+
+    print("*************************************************************************")
+    
+
+    # import mujoco.viewer as viewer
+    # viewer.launch(mj_model)
 
 
 if __name__ == "__main__":
