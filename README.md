@@ -4,7 +4,7 @@
 
 1. Create a new Conda environment:
     ```bash
-    conda create -n CITO python=3.12
+    conda create -n CITO python
     ```
    
 2. Activate the environment:
@@ -20,6 +20,10 @@
 
     ```bash
     conda install cmake=3.23 -c conda-forge
+    ```
+
+    ```bash
+    conda install pinocchio=3.3.1 -c conda-forge
     ```
 
     ```bash
