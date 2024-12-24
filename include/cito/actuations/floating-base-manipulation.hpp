@@ -62,7 +62,7 @@ class ActuationModelFloatingBaseManipulationTpl
                    << "u has wrong dimension (it should be " +
                           std::to_string(nu_) + ")");
     }
-    data->tau.tail(nu_) = u;
+    data->tau.head(nu_) = u;
   };
 
   /**
