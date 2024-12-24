@@ -25,7 +25,6 @@ def main():
     nq = pin_model.nq
     nv = pin_model.nv
 
-    q0 = list(np.zeros(nq))
     v0 = list(np.zeros(nv))
 
     njoints = 9
@@ -36,16 +35,31 @@ def main():
     T = 10                                              
     T_total = dt * T                          
 
-    print(f'x0:{q0 + v0}')
-    ################# Initialize crocoddyl models ################
-    print("1")
-    state = crocoddyl.StateMultibody(pin_model)
-    print("2")
+    FINGER_CONFIGURATION = [0.0, -1.0, -1.0]
+
+    q_finger = np.array(3 * FINGER_CONFIGURATION)
+
+    q_cube_mj = np.array([0, 0, 0.031, 
+                          
+                          1, 0, 0, 0])
     
-    actuation = crocoddyl.ActuationModelFloatingBase(state)
+    q_cube_pin = np.array([0, 0, 0.031, 
+                          
+                          0, 0, 0, 1])
+    
 
-    import pdb; pdb.set_trace()
 
+    q0 = list(np.hstack((q_finger, q_cube_pin)))
+
+    # print(f'x0:{q0 + v0}')
+    ################# Initialize crocoddyl models ################
+    state = crocoddyl.StateMultibody(pin_model)
+    
+    # actuation = crocoddyl.ActuationModelFloatingBase(state)
+
+    actuation = cito.ActuationModelFloatingBaseManipulation(state)
+
+    print(f"NU: {actuation.nu}")
     runningCostModel = crocoddyl.CostModelSum(state, nu)
     terminalCostModel = crocoddyl.CostModelSum(state, nu)
     constraintModelManager = crocoddyl.ConstraintModelManager(state, nu)    
@@ -58,9 +72,9 @@ def main():
     constraintModelManager.addConstraint("ControlLimitConstraint", ControlLimitConstraint)
 
     ################ Cube Target ################
-    Px_des = 0.1
+    Px_des = 0.0
     Py_des = 0.0
-    Pz_des = 0.0
+    Pz_des = 0.1
     CubeTarget = np.array([Px_des, Py_des, Pz_des])
 
     # import pdb; pdb.set_trace()
@@ -77,7 +91,7 @@ def main():
     uResidual = crocoddyl.ResidualModelControl(state, nu)
     uRegActivation = crocoddyl.ActivationModelWeightedQuad(np.array(9 * [1.0]))
     uRegCost = crocoddyl.CostModelResidual(state, uRegActivation, uResidual)
-    runningCostModel.addCost("uReg", uRegCost, 1e-4)
+    runningCostModel.addCost("uReg", uRegCost, 1e-3)
 
 
     runningModels = [cito.IntegratedActionModelContactMj(
@@ -99,9 +113,9 @@ def main():
     base_x_values = np.linspace(base_x_start, base_x_end, num_steps)
     us_init = [np.zeros(nu) for i in range(T)]
 
-    for i in range(1, num_steps):
-            xs_init[i][0] = base_x_values[i] 
-            xs_init[i][3] = Vx_des #assign desired base velocity to initial guess
+    # for i in range(1, num_steps):
+    #         xs_init[i][0] = base_x_values[i] 
+    #         xs_init[i][3] = Vx_des #assign desired base velocity to initial guess
     
     maxIter = 1000
 
@@ -113,7 +127,7 @@ def main():
     solver.verbose = True
     solver.termination_tolerance = 1e-3
     solver.remove_reg = False
-    solver.max_qp_iters = 25000
+    solver.max_qp_iters =100
 
     print(f'Solving')
     flag = solver.solve(xs_init, us_init, maxiter=maxIter, isFeasible=False)
