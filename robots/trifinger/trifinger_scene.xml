@@ -32,7 +32,7 @@
         
         <!-- Add a table -->
         <geom name="table" rgba="0.8 0.8 0.8 1.0" friction="0.9"
-              size="0 0 0.05" type="plane" material="groundplane"
+              size="0 0 0.00000000001" type="plane" material="groundplane"
               condim="6"/>
 
         <!-- =================== finger arms base =================== -->
@@ -116,16 +116,6 @@
     </worldbody>
 
     <actuator>
-        <!--          <position name="finger_base_to_upper_joint_0" joint="finger_base_to_upper_joint_0"  kp="100" kv="0.1"/>-->
-        <!--          <position name="finger_upper_to_middle_joint_0" joint="finger_upper_to_middle_joint_0" kp="100" kv="0.1"/>-->
-        <!--          <position name="finger_middle_to_lower_joint_0" joint="finger_middle_to_lower_joint_0"  kp="100" kv="0.1"/>-->
-        <!--          <position name="finger_base_to_upper_joint_120" joint="finger_base_to_upper_joint_120"  kp="10" kv="0.1"/>-->
-        <!--          <position name="finger_upper_to_middle_joint_120" joint="finger_upper_to_middle_joint_120"  kp="10" kv="0.1"/>-->
-        <!--          <position name="finger_middle_to_lower_joint_120" joint="finger_middle_to_lower_joint_120"  kp="10" kv="0.1"/>-->
-        <!--          <position name="finger_base_to_upper_joint_240" joint="finger_base_to_upper_joint_240"  kp="100" kv="0.1"/>-->
-        <!--          <position name="finger_upper_to_middle_joint_240" joint="finger_upper_to_middle_joint_240"  kp="100" kv="0.1"/>-->
-        <!--          <position name="finger_middle_to_lower_joint_240" joint="finger_middle_to_lower_joint_240"  kp="100" kv="0.1"/>-->
-
         <motor name="finger_base_to_upper_joint_0" joint="finger_base_to_upper_joint_0"/>
         <motor name="finger_upper_to_middle_joint_0" joint="finger_upper_to_middle_joint_0"/>
         <motor name="finger_middle_to_lower_joint_0" joint="finger_middle_to_lower_joint_0"/>

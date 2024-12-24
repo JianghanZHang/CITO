@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version="1.0" ?>
 <robot name="trifinger_scene">
-
+  
+  <!-- Define the global base_link -->
   <link name="world"/>
-
-    <!-- Define the floating "cube" body -->
-  <link name="cube">
+  
+  <!-- Define the cube link -->
+  <link name="cube_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="0.1"/>
@@ -14,16 +14,22 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.05 0.05 0.05"/>
+        <box size="0.025 0.025 0.025"/>
       </geometry>
     </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.05"/>
+      </geometry>
+    </visual>
   </link>
 
-  <!-- Free-floating joint for the cube -->
-  <joint name="root_joint" type="floating">
+  <!-- Floating joint connecting world to cube -->
+  <joint name="cube_joint" type="floating">
     <parent link="world"/>
-    <child link="cube"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <child link="cube_link"/>
+    <origin xyz="0 0 0.00" rpy="0 0 0"/>
   </joint>
 
   <!-- Define the upper holder -->
@@ -34,11 +40,15 @@
       <inertia ixx="4.166666666666667e-06" ixy="0" ixz="0" iyy="4.166666666666667e-06" iyz="0" izz="4.166666666666667e-06"/>
     </inertial>
   </link>
+  
+  <!-- Fixed joint connecting world to upper_holder_link -->
   <joint name="base_to_upper_holder_joint" type="fixed">
     <parent link="world"/>
     <child link="upper_holder_link"/>
     <origin xyz="0 0 0.29"/>
   </joint>
+  
+  <!-- Materials -->
   <material name="finger_0_material">
     <color rgba="0.6 0.0 0.0 1.0"/>
   </material>
@@ -48,9 +58,9 @@
   <material name="finger_240_material">
     <color rgba="0.0 0.0 0.6 1.0"/>
   </material>
-  <!--
-        Fixed links for the finger base (parts where the upper link is mounted).
-        -->
+  
+  <!-- Finger Bases and Links -->
+  <!-- Finger 0 -->
   <link name="finger_base_link_0">
     <visual>
       <origin rpy="0 0 0" xyz="0 0.179 0"/>
@@ -71,8 +81,8 @@
       <inertia ixx="0.00041666666666666675" ixy="0" ixz="0" iyy="0.00041666666666666675" iyz="0" izz="0.00041666666666666675"/>
     </inertial>
   </link>
-  <!-- The movable links (upper, middle and lower) of the finger. -->
-  <!-- TODO inertia parameters don't look correct, they cant be same for upper and middle! -->
+  
+  <!-- The movable links (upper, middle and lower) of the finger 0 -->
   <link name="finger_upper_link_0">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.02695 0"/>
@@ -93,6 +103,7 @@
       <inertia ixx="0.0003533333333333334" ixy="0" ixz="0" iyy="5.333333333333333e-05" iyz="0" izz="0.0003533333333333334"/>
     </inertial>
   </link>
+  
   <link name="finger_middle_link_0">
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0.014 0 0"/>
@@ -113,6 +124,7 @@
       <inertia ixx="0.0003533333333333334" ixy="0" ixz="0" iyy="0.0003533333333333334" iyz="0" izz="5.333333333333333e-05"/>
     </inertial>
   </link>
+  
   <link name="finger_lower_link_0">
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0.014 0 0"/>
@@ -133,7 +145,8 @@
       <inertia ixx="1.6666666666666667e-05" ixy="0" ixz="0" iyy="1.6666666666666667e-05" iyz="0" izz="6.666666666666667e-07"/>
     </inertial>
   </link>
-  <!-- fixed link for finger tip -->
+  
+  <!-- Fixed link for finger tip 0 -->
   <link name="finger_tip_link_0">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -141,16 +154,14 @@
       <inertia ixx="3.3333333333333335e-07" ixy="0" ixz="0" iyy="3.3333333333333335e-07" iyz="0" izz="3.3333333333333335e-07"/>
     </inertial>
   </link>
+  
   <joint name="finger_lower_to_tip_joint_0" type="fixed">
     <parent link="finger_lower_link_0"/>
     <child link="finger_tip_link_0"/>
     <origin xyz="0 0 -0.16"/>
   </joint>
-  <!-- kinematics -->
-  <!-- TODO: joint limits are based on values from wiki
-        (https://atlas.is.localnet/confluence/display/AMDW/Forward+Kinematics) but
-        should be verified on the real system (especially the finger tip limits look
-        a bit too big when visualizing the model. -->
+  
+  <!-- Revolute joints for finger 0 -->
   <joint name="finger_base_to_upper_joint_0" type="revolute">
     <parent link="finger_base_link_0"/>
     <child link="finger_upper_link_0"/>
@@ -158,6 +169,7 @@
     <axis xyz="0 1 0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
+  
   <joint name="finger_upper_to_middle_joint_0" type="revolute">
     <parent link="finger_upper_link_0"/>
     <child link="finger_middle_link_0"/>
@@ -165,6 +177,7 @@
     <axis xyz="-1 0 0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
+  
   <joint name="finger_middle_to_lower_joint_0" type="revolute">
     <parent link="finger_middle_link_0"/>
     <child link="finger_lower_link_0"/>
@@ -172,9 +185,9 @@
     <axis xyz="1 0 0"/>
     <origin rpy="0 0 0" xyz="0 0 -0.16"/>
   </joint>
-  <!--
-        Fixed links for the finger base (parts where the upper link is mounted).
-        -->
+  
+  <!-- Repeat similar definitions for finger_120 and finger_240 -->
+  <!-- Finger 120 -->
   <link name="finger_base_link_120">
     <visual>
       <origin rpy="0 0 0" xyz="0 0.179 0"/>
@@ -195,8 +208,7 @@
       <inertia ixx="0.00041666666666666675" ixy="0" ixz="0" iyy="0.00041666666666666675" iyz="0" izz="0.00041666666666666675"/>
     </inertial>
   </link>
-  <!-- The movable links (upper, middle and lower) of the finger. -->
-  <!-- TODO inertia parameters don't look correct, they cant be same for upper and middle! -->
+  
   <link name="finger_upper_link_120">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.02695 0"/>
@@ -217,6 +229,7 @@
       <inertia ixx="0.0003533333333333334" ixy="0" ixz="0" iyy="5.333333333333333e-05" iyz="0" izz="0.0003533333333333334"/>
     </inertial>
   </link>
+  
   <link name="finger_middle_link_120">
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0.014 0 0"/>
@@ -237,6 +250,7 @@
       <inertia ixx="0.0003533333333333334" ixy="0" ixz="0" iyy="0.0003533333333333334" iyz="0" izz="5.333333333333333e-05"/>
     </inertial>
   </link>
+  
   <link name="finger_lower_link_120">
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0.014 0 0"/>
@@ -257,7 +271,8 @@
       <inertia ixx="1.6666666666666667e-05" ixy="0" ixz="0" iyy="1.6666666666666667e-05" iyz="0" izz="6.666666666666667e-07"/>
     </inertial>
   </link>
-  <!-- fixed link for finger tip -->
+  
+  <!-- Fixed link for finger tip 120 -->
   <link name="finger_tip_link_120">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -265,16 +280,14 @@
       <inertia ixx="3.3333333333333335e-07" ixy="0" ixz="0" iyy="3.3333333333333335e-07" iyz="0" izz="3.3333333333333335e-07"/>
     </inertial>
   </link>
+  
   <joint name="finger_lower_to_tip_joint_120" type="fixed">
     <parent link="finger_lower_link_120"/>
     <child link="finger_tip_link_120"/>
     <origin xyz="0 0 -0.16"/>
   </joint>
-  <!-- kinematics -->
-  <!-- TODO: joint limits are based on values from wiki
-        (https://atlas.is.localnet/confluence/display/AMDW/Forward+Kinematics) but
-        should be verified on the real system (especially the finger tip limits look
-        a bit too big when visualizing the model. -->
+  
+  <!-- Revolute joints for finger 120 -->
   <joint name="finger_base_to_upper_joint_120" type="revolute">
     <parent link="finger_base_link_120"/>
     <child link="finger_upper_link_120"/>
@@ -282,6 +295,7 @@
     <axis xyz="0 1 0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
+  
   <joint name="finger_upper_to_middle_joint_120" type="revolute">
     <parent link="finger_upper_link_120"/>
     <child link="finger_middle_link_120"/>
@@ -289,6 +303,7 @@
     <axis xyz="-1 0 0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
+  
   <joint name="finger_middle_to_lower_joint_120" type="revolute">
     <parent link="finger_middle_link_120"/>
     <child link="finger_lower_link_120"/>
@@ -296,9 +311,8 @@
     <axis xyz="1 0 0"/>
     <origin rpy="0 0 0" xyz="0 0 -0.16"/>
   </joint>
-  <!--
-        Fixed links for the finger base (parts where the upper link is mounted).
-        -->
+  
+  <!-- Finger 240 -->
   <link name="finger_base_link_240">
     <visual>
       <origin rpy="0 0 0" xyz="0 0.179 0"/>
@@ -319,8 +333,7 @@
       <inertia ixx="0.00041666666666666675" ixy="0" ixz="0" iyy="0.00041666666666666675" iyz="0" izz="0.00041666666666666675"/>
     </inertial>
   </link>
-  <!-- The movable links (upper, middle and lower) of the finger. -->
-  <!-- TODO inertia parameters don't look correct, they cant be same for upper and middle! -->
+  
   <link name="finger_upper_link_240">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.02695 0"/>
@@ -341,6 +354,7 @@
       <inertia ixx="0.0003533333333333334" ixy="0" ixz="0" iyy="5.333333333333333e-05" iyz="0" izz="0.0003533333333333334"/>
     </inertial>
   </link>
+  
   <link name="finger_middle_link_240">
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0.014 0 0"/>
@@ -361,6 +375,7 @@
       <inertia ixx="0.0003533333333333334" ixy="0" ixz="0" iyy="0.0003533333333333334" iyz="0" izz="5.333333333333333e-05"/>
     </inertial>
   </link>
+  
   <link name="finger_lower_link_240">
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0.014 0 0"/>
@@ -381,7 +396,8 @@
       <inertia ixx="1.6666666666666667e-05" ixy="0" ixz="0" iyy="1.6666666666666667e-05" iyz="0" izz="6.666666666666667e-07"/>
     </inertial>
   </link>
-  <!-- fixed link for finger tip -->
+  
+  <!-- Fixed link for finger tip 240 -->
   <link name="finger_tip_link_240">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -389,16 +405,14 @@
       <inertia ixx="3.3333333333333335e-07" ixy="0" ixz="0" iyy="3.3333333333333335e-07" iyz="0" izz="3.3333333333333335e-07"/>
     </inertial>
   </link>
+  
   <joint name="finger_lower_to_tip_joint_240" type="fixed">
     <parent link="finger_lower_link_240"/>
     <child link="finger_tip_link_240"/>
     <origin xyz="0 0 -0.16"/>
   </joint>
-  <!-- kinematics -->
-  <!-- TODO: joint limits are based on values from wiki
-        (https://atlas.is.localnet/confluence/display/AMDW/Forward+Kinematics) but
-        should be verified on the real system (especially the finger tip limits look
-        a bit too big when visualizing the model. -->
+  
+  <!-- Revolute joints for finger 240 -->
   <joint name="finger_base_to_upper_joint_240" type="revolute">
     <parent link="finger_base_link_240"/>
     <child link="finger_upper_link_240"/>
@@ -406,6 +420,7 @@
     <axis xyz="0 1 0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
+  
   <joint name="finger_upper_to_middle_joint_240" type="revolute">
     <parent link="finger_upper_link_240"/>
     <child link="finger_middle_link_240"/>
@@ -413,6 +428,7 @@
     <axis xyz="-1 0 0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
+  
   <joint name="finger_middle_to_lower_joint_240" type="revolute">
     <parent link="finger_middle_link_240"/>
     <child link="finger_lower_link_240"/>
@@ -420,27 +436,34 @@
     <axis xyz="1 0 0"/>
     <origin rpy="0 0 0" xyz="0 0 -0.16"/>
   </joint>
+  
+  <!-- Fixed joints connecting upper_holder_link to fingers -->
   <joint name="holder_to_finger_0" type="fixed">
     <parent link="upper_holder_link"/>
     <child link="finger_base_link_0"/>
     <origin rpy="0 0 0" xyz="0.0 0.04 0"/>
   </joint>
+  
   <joint name="holder_to_finger_120" type="fixed">
     <parent link="upper_holder_link"/>
     <child link="finger_base_link_120"/>
     <origin rpy="0 0 -2.0943951023931953" xyz="0.034641016151377546 -0.01999999999999999 0"/>
   </joint>
+  
   <joint name="holder_to_finger_240" type="fixed">
     <parent link="upper_holder_link"/>
     <child link="finger_base_link_240"/>
     <origin rpy="0 0 -4.1887902047863905" xyz="-0.03464101615137754 -0.020000000000000018 0"/>
   </joint>
+  
+  <!-- Define the table and boundary links -->
   <material name="table_material">
     <color rgba="0.31 0.27 0.25 1.0"/>
   </material>
   <material name="boundary_material">
     <color rgba="0.95 0.95 0.95 1.0"/>
   </material>
+  
   <link name="table_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -461,6 +484,7 @@
       <inertia ixx="0.09628333333333333" ixy="0" ixz="0" iyy="0.08403333333333332" iyz="0" izz="0.18028333333333335"/>
     </inertial>
   </link>
+  
   <link name="boundary_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -481,14 +505,17 @@
       <inertia ixx="0.05708333333333333" ixy="0" ixz="0" iyy="0.05708333333333333" iyz="0" izz="0.10453333333333334"/>
     </inertial>
   </link>
+  
   <joint name="base_to_table" type="fixed">
     <parent link="world"/>
     <child link="table_link"/>
     <origin xyz="0 0 0"/>
   </joint>
+  
   <joint name="table_to_boundary" type="fixed">
     <parent link="table_link"/>
     <child link="boundary_link"/>
     <origin xyz="0 0 0"/>
   </joint>
+
 </robot>
