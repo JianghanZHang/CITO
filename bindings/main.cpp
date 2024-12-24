@@ -10,4 +10,5 @@ BOOST_PYTHON_MODULE(cito_pywrap) {
 
     cito::python::exposeDAMmujoco();
     cito::python::exposeIAMmujoco();
+    cito::python::exposeActuationFloatingBaseManipulation();
 }

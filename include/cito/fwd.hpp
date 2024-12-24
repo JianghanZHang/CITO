@@ -6,6 +6,13 @@
 // This is necessary for Eigen to work with Boost.Python
 #include <eigenpy/eigenpy.hpp>
 namespace cito {
+
+    template <typename Scalar>
+    class ActuationModelFloatingBaseManipulationTpl;
+
+    template <typename Scalar>
+    class ActuationDataFloatingBaseManipulationTpl;
+
     template <typename Scalar>
     class IntegratedActionModelContactMjTpl;
 
@@ -18,8 +25,12 @@ namespace cito {
     template <typename Scalar>
     struct DifferentialActionDataContactMjTpl;
 
+    typedef ActuationModelFloatingBaseManipulationTpl<double> ActuationModelFloatingBaseManipulation;
+    typedef ActuationDataFloatingBaseManipulationTpl<double> ActuationDataFloatingBaseManipulation;
+
     typedef IntegratedActionModelContactMjTpl<double> IntegratedActionModelContactMj;
     typedef IntegratedActionDataContactMjTpl<double> IntegratedActionDataContactMj;
+
     typedef DifferentialActionModelContactMjTpl<double> DifferentialActionModelContactMj;
     typedef DifferentialActionDataContactMjTpl<double> DifferentialActionDataContactMj;
 

@@ -2,6 +2,7 @@ set(${PY_NAME}_SOURCES
   main.cpp
   differential-contact-mujoco.cpp
   integrated-contact-mujoco.cpp
+  floating-base-manipulation.cpp
 )
 
 set(${PROJECT_NAME}_HEADERS

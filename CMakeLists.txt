@@ -41,7 +41,6 @@ project(${PROJECT_NAME} ${PROJECT_ARGS})
 # Assuming you want to link MuJoCo from the Conda environment where the Python package is installed
 
 set(MUJOCO_INCLUDE_DIR "${CMAKE_PREFIX_PATH}/include/mujoco")
-# set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.so.3.2.6")
 
 if(UNIX AND NOT APPLE) # Check if the platform is Linux
 # Search for the MuJoCo library dynamically
@@ -58,7 +57,6 @@ if(UNIX AND NOT APPLE) # Check if the platform is Linux
   endif()
 elseif(APPLE)
   set(MUJOCO_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libmujoco.dylib")
-  set(MUJOCO_INCLUDE_DIR "${CMAKE_PREFIX_PATH}/include")
 endif()
 
 # Find the MuJoCo headers and libraries
@@ -112,6 +110,7 @@ endif()
 set(${PROJECT_NAME}_HEADERS
   include/${CUSTOM_HEADER_DIR}/fwd.hpp
   include/${CUSTOM_HEADER_DIR}/python.hpp
+  include/${CUSTOM_HEADER_DIR}/actuations/floating-base-manipulation.hpp
   include/${CUSTOM_HEADER_DIR}/actions/differential-contact-mujoco.hpp
   include/${CUSTOM_HEADER_DIR}/actions/differential-contact-mujoco.hxx
   include/${CUSTOM_HEADER_DIR}/actions/integrated-contact-mujoco.hpp

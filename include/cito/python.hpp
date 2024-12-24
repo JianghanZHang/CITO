@@ -6,12 +6,14 @@
 
 #include "cito/actions/differential-contact-mujoco.hpp"
 #include "cito/actions/integrated-contact-mujoco.hpp"
+#include "cito/actuations/floating-base-manipulation.hpp"
 #include "cito/fwd.hpp"
 
 namespace cito{
 namespace python{
     void exposeDAMmujoco();
     void exposeIAMmujoco();
+    void exposeActuationFloatingBaseManipulation();
 } // namespace python
 } // namespace cito
 

@@ -89,8 +89,6 @@
 #include "cito/actions/differential-contact-mujoco.hpp"
 #include "utils/copyable.hpp"
 #include <crocoddyl/core/diff-action-base.hpp>
-#include "cito/python.hpp"
-#include "cito/fwd.hpp"
 #include "cito/actions/differential-contact-mujoco.hpp"
 #include "utils/copyable.hpp"
 #include <crocoddyl/core/diff-action-base.hpp>
