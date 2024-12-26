@@ -30,9 +30,9 @@ def main():
     njoints = 9
     nu = 9
     ################# OCP params ################
-    dt = 0.1                                 
+    dt = 0.01                                 
     mj_model.opt.timestep = dt                
-    T = 10                                              
+    T = 100                                              
     T_total = dt * T                          
 
     FINGER_CONFIGURATION = [0.0, -1.0, -1.0]
@@ -74,14 +74,19 @@ def main():
     ################ Cube Target ################
     Px_des = 0.0
     Py_des = 0.0
-    Pz_des = 0.1
+    Pz_des = 0.2
     CubeTarget = np.array([Px_des, Py_des, Pz_des])
 
-    # import pdb; pdb.set_trace()
+    for frame in pin_model.frames:
+        print(frame)
+
+    import pdb; pdb.set_trace()
     CubePositionActivation = crocoddyl.ActivationModelWeightedQuad(np.array(3 * [1.0]))
     CubePositionResidual = crocoddyl.ResidualModelFrameTranslation(state, id=cube_frame_id, xref=CubeTarget, nu=9)
     CubePositionCost = crocoddyl.CostModelResidual(state, CubePositionActivation, CubePositionResidual)
-    runningCostModel.addCost("Cube_position_cost", CubePositionCost, 1)
+    runningCostModel.addCost("Cube_position_cost", CubePositionCost, 10)
+
+    runningCostModel.addCost("Cube_position_cost", CubePositionCost, 100)
 
     Vx_des = Px_des/T_total
     Vy_des = Py_des/T_total
@@ -98,7 +103,7 @@ def main():
                     cito.DifferentialActionModelContactMj(mj_model, state, actuation, runningCostModel, constraintModelManager), dt) 
                     for _ in range(T)]
     
-    terminal_DAM = cito.DifferentialActionModelContactMj(mj_model, state, actuation, runningCostModel, None)
+    terminal_DAM = cito.DifferentialActionModelContactMj(mj_model, state, actuation, terminalCostModel, None)
     
     terminalModel = cito.IntegratedActionModelContactMj(terminal_DAM, 0.)
 

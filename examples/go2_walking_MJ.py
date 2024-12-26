@@ -173,7 +173,7 @@ def main():
                     cito.DifferentialActionModelContactMj(mj_model, state, actuation, runningCostModel, constraintModelManager), dt) 
                     for _ in range(T)]
     
-    terminal_DAM = cito.DifferentialActionModelContactMj(mj_model, state, actuation, runningCostModel, None)
+    terminal_DAM = cito.DifferentialActionModelContactMj(mj_model, state, actuation, terminalCostModel, None)
     
     terminalModel = cito.IntegratedActionModelContactMj(terminal_DAM, 0.)
 
