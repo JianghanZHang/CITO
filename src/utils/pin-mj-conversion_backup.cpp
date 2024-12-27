@@ -33,9 +33,9 @@ Eigen::VectorXd change_convention_mj2pin(const Eigen::VectorXd& x) {
     // std::cout << "Entered change_convention_mj2pin" << std::endl;
     
     Eigen::VectorXd x_tmp = x;
-    Eigen::Vector4d quat_mj = x.segment<4>(12);  // Extract quaternion from MuJoCo
+    Eigen::Vector4d quat_mj = x.segment<4>(3);  // Extract quaternion from MuJoCo
     Eigen::Vector4d quat_pin = wxyz2xyzw(quat_mj);  // Convert to Pinocchio convention
-    x_tmp.segment<4>(12) = quat_pin;
+    x_tmp.segment<4>(3) = quat_pin;
 
     // std::cout << "Exiting change_convention_mj2pin" << std::endl;
     
@@ -73,7 +73,7 @@ Eigen::VectorXd stateMapping_mj2pin(const Eigen::VectorXd& x_mj, pinocchio::Mode
     Eigen::Vector3d BaseLinVel_pin = R.transpose() * BaseLinVel_mj; // global to local base linear velocity
 
     // Update x_pin with the transformed velocity
-    x_pin.segment<3>(30) = BaseLinVel_pin;
+    x_pin.segment<3>(19) = BaseLinVel_pin;
     return x_pin;
 }
 
@@ -92,11 +92,11 @@ Eigen::VectorXd stateMapping_pin2mj(const Eigen::VectorXd& x_pin, pinocchio::Mod
 
     // Get the rotation matrix of the base frame
     Eigen::Matrix3d R = rdata.oMi[1].rotation();
-    Eigen::Vector3d BaseLinVel_pin = x_pin.segment<3>(30);
+    Eigen::Vector3d BaseLinVel_pin = x_pin.segment<3>(19);
     Eigen::Vector3d BaseLinVel_mj = R * BaseLinVel_pin; // local to global base linear velocity
 
     // Update x_mj with the transformed velocity
-    x_mj.segment<3>(30) = BaseLinVel_mj;
+    x_mj.segment<3>(19) = BaseLinVel_mj;
     return x_mj;
 }
 // Numerical differentiation of stateMapping_mj2pin
