@@ -11,9 +11,9 @@ This is a class for Integrated Action Model with Mujoco for Contact Dynamics
 #include "cito/actions/integrated-contact-mujoco.hpp"
 #include "cito/actions/differential-contact-mujoco.hpp"
 #include <mujoco/mujoco.h>
-#include "cito/utils/pin-mj-conversion.hpp"
+#include "cito/utils/pin-mj-conversion-finger.hpp"
 #include <crocoddyl/core/mathbase.hpp>
-#include "cito/utils/pin-mj-conversion.hpp"
+#include "cito/utils/pin-mj-conversion-finger.hpp"
 using namespace crocoddyl;
 
 namespace cito {
@@ -119,7 +119,7 @@ void IntegratedActionModelContactMjTpl<Scalar>::calc(
     d->r = d->differential->r;
   }
   set_contact(mjData_->contact); // store the contact in integrated data
-  extract_forces(mjModel_, mjData_, forces_); // store the forces in integrated data
+  // extract_forces(mjModel_, mjData_, forces_); // store the forces in integrated data
 }
 
 template <typename Scalar>
