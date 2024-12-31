@@ -5,7 +5,25 @@
     </visual>
 
     <compiler angle="radian" meshdir="meshes"/>
+
+    <option cone="elliptic" impratio="10.0" integrator="Euler"
+          iterations="20" ls_iterations="10" solver='Newton' tolerance="0" noslip_iterations="0">
+
+        <flag   eulerdamp="enable"
+                clampctrl="disable"
+                warmstart="enable"
+                frictionloss="enable"
+                fwdinv="enable"
+                midphase="enable"
+                multiccd="disable"   
+                invdiscrete="disable">
+                <!-- autoreset="disable" -->
+        </flag>
+
+    </option>
+
     <size njmax="500" nconmax="100"/>
+
     <asset>
         <mesh name="SIM__BL_Finger_Base" file="SIM__BL-Finger_Base.stl"/>
         <mesh name="SIM__BL_Finger_Proximal" file="SIM__BL-Finger_Proximal.stl"/>
@@ -27,6 +45,10 @@
         <global azimuth="130" elevation="-40"/>
     </visual>
 
+    <!-- Collision Options -->
+    <option>
+        <!-- No special options needed since we're using contype and conaffinity -->
+    </option>
 
     <worldbody> 
         <!-- Existing Trifinger Robot Definitions -->
@@ -35,35 +57,39 @@
         <camera name="demo-cam"  pos="-0.005 -0.529 0.575" xyaxes="1.000 -0.002 -0.000 0.001 0.644 0.765"/>
         
         <!-- Add a table -->
-        <geom name="table" rgba="0.8 0.8 0.8 1.0" friction="0.9"
-              size="0 0 0.00000000001" type="plane" material="groundplane"
-              condim="6"/>
+        <geom name="table" type="plane" size="0 0 0.00000000001" rgba="0.8 0.8 0.8 1.0" 
+              friction="0.0" margin="0"
+              material="groundplane"
+              condim="6" contype="4" conaffinity="3"/> <!-- Enabled collisions for the table with Robot and Cube -->
 
         <!-- =================== finger arms base =================== -->
-        <geom pos="0 0.219 0.29" type="mesh" rgba="0.5 0 0 1" mesh="SIM__BL_Finger_Base"/>
+        <geom pos="0 0.219 0.29" type="mesh" rgba="0.5 0 0 1" mesh="SIM__BL_Finger_Base" 
+              contype="1" conaffinity="6" margin="0"/>
         <geom pos="0.18966 -0.1095 0.29" quat="0.5 0 0 -0.866025" type="mesh" rgba="0 0.5 0 1"
-              mesh="SIM__BL_Finger_Base"/>
+              mesh="SIM__BL_Finger_Base" contype="1" conaffinity="6" margin="0"/>
         <geom pos="-0.18966 -0.1095 0.29" quat="-0.5 0 0 -0.866025" type="mesh" rgba="0 0.5 0.5 1"
-              mesh="SIM__BL_Finger_Base"/>
+              mesh="SIM__BL_Finger_Base" contype="1" conaffinity="6" margin="0"/>
 
         <!-- =================== arms 1 =================== -->
         <body name="finger_upper_link_0" pos="0 0.04 0.29">
             <inertial pos="0 0.06 0" quat="0.707107 0.707107 0 0" mass="0.2"
                       diaginertia="0.000353333 0.000353333 5.33333e-05"/>
             <joint name="finger_base_to_upper_joint_0" pos="0 0 0" axis="0 1 0" limited="true" range="-1.5708 1.5708"/>
-            <geom pos="0 -0.02695 0" type="mesh" rgba="0.5 0 0 1" mesh="SIM__BL_Finger_Proximal"/>
+            <geom pos="0 -0.02695 0" type="mesh" rgba="0.5 0 0 1" mesh="SIM__BL_Finger_Proximal" 
+                  contype="1" conaffinity="6" margin="0"/>
             <body name="finger_middle_link_0" pos="0 0 0">
                 <inertial pos="0.028 0 -0.08" mass="0.2" diaginertia="0.000353333 0.000353333 5.33333e-05"/>
                 <joint name="finger_upper_to_middle_joint_0" pos="0 0 0" axis="-1 0 0" limited="true"
                        range="-1.35263 4.49422"/>
                 <geom pos="0.014 0 0" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.5 0 0 1"
-                      mesh="SIM__BL_Finger_Intermediate"/>
+                      mesh="SIM__BL_Finger_Intermediate" contype="1" conaffinity="6" margin="0"/>
                 <body name="finger_lower_link_0" pos="0 0 -0.16">
                     <inertial pos="0 0 -0.126667" mass="0.03" diaginertia="8.36667e-05 8.36667e-05 1e-06"/>
                     <joint name="finger_middle_to_lower_joint_0" pos="0 0 0" axis="1 0 0" limited="true"
                            range="-3.00197 3.00197"/>
-                    <geom name="finger_tip_0" friction="0.9 0.005 0.0001" pos="0.014 0 0" quat="0.707107 0.707107 0 0"
-                          type="mesh" rgba="0.5 0 0 1" mesh="SIM__BL_FINGER_TIP_LINK"/>
+                    <geom name="finger_tip_0" type="mesh" rgba="0.5 0 0 1" mesh="SIM__BL_FINGER_TIP_LINK" 
+                          friction="0.95 0.005 0.0001" margin="0"
+                          contype="1" conaffinity="6" pos="0.014 0 0" quat="0.707107 0.707107 0 0"/>
                     <site rgba="0.5 0.0 0.0 1" size="0.001" pos="0 0 -0.16" name="finger_tip_0"/>
                 </body>
             </body>
@@ -75,19 +101,21 @@
                       diaginertia="0.000353333 0.000353333 5.33333e-05"/>
             <joint name="finger_base_to_upper_joint_120" pos="0 0 0" axis="0 1 0" limited="true"
                    range="-1.5708 1.5708"/>
-            <geom pos="0 -0.02695 0" type="mesh" rgba="0 0.5 0 1" mesh="SIM__BL_Finger_Proximal"/>
+            <geom pos="0 -0.02695 0" type="mesh" rgba="0 0.5 0 1" mesh="SIM__BL_Finger_Proximal" 
+                  contype="1" conaffinity="6" margin="0"/>
             <body name="finger_middle_link_120" pos="0 0 0">
                 <inertial pos="0.028 0 -0.08" mass="0.2" diaginertia="0.000353333 0.000353333 5.33333e-05"/>
                 <joint name="finger_upper_to_middle_joint_120" pos="0 0 0" axis="-1 0 0" limited="true"
                        range="-1.35263 4.49422"/>
                 <geom pos="0.014 0 0" quat="0.707107 0.707107 0 0" type="mesh" rgba="0 0.5 0 1"
-                      mesh="SIM__BL_Finger_Intermediate"/>
+                      mesh="SIM__BL_Finger_Intermediate" contype="1" conaffinity="6" margin="0"/>
                 <body name="finger_lower_link_120" pos="0 0 -0.16">
                     <inertial pos="0 0 -0.126667" mass="0.03" diaginertia="8.36667e-05 8.36667e-05 1e-06"/>
                     <joint name="finger_middle_to_lower_joint_120" pos="0 0 0" axis="1 0 0" limited="true"
                            range="-3.00197 3.00197"/>
-                    <geom name="finger_tip_120" friction="0.9 0.005 0.0001" pos="0.014 0 0" quat="0.707107 0.707107 0 0"
-                          type="mesh" rgba="0 0.5 0 1" mesh="SIM__BL_FINGER_TIP_LINK"/>
+                    <geom name="finger_tip_120" type="mesh" rgba="0 0.5 0 1" mesh="SIM__BL_FINGER_TIP_LINK" 
+                          friction="0.95 0.005 0.0001" margin="0"
+                          contype="1" conaffinity="6" pos="0.014 0 0" quat="0.707107 0.707107 0 0"/>
                     <site rgba="0.0 0.5 0.00 1" size="0.001" pos="0 0 -0.16" name="finger_tip_120"/>
                 </body>
             </body>
@@ -99,30 +127,38 @@
                       diaginertia="0.000353333 0.000353333 5.33333e-05"/>
             <joint name="finger_base_to_upper_joint_240" pos="0 0 0" axis="0 1 0" limited="true"
                    range="-1.5708 1.5708"/>
-            <geom pos="0 -0.02695 0" type="mesh" rgba="0 0.5 0.5 1" mesh="SIM__BL_Finger_Proximal"/>
+            <geom pos="0 -0.02695 0" type="mesh" rgba="0 0.5 0.5 1" mesh="SIM__BL_Finger_Proximal" 
+                  contype="1" conaffinity="6" margin="0"/>
             <body name="finger_middle_link_240" pos="0 0 0">
                 <inertial pos="0.028 0 -0.08" mass="0.2" diaginertia="0.000353333 0.000353333 5.33333e-05"/>
                 <joint name="finger_upper_to_middle_joint_240" pos="0 0 0" axis="-1 0 0" limited="true"
                        range="-1.35263 4.49422"/>
                 <geom pos="0.014 0 0" quat="0.707107 0.707107 0 0" type="mesh" rgba="0 0.5 0.5 1"
-                      mesh="SIM__BL_Finger_Intermediate"/>
+                      mesh="SIM__BL_Finger_Intermediate" contype="1" conaffinity="6" margin="0"/>
                 <body name="finger_lower_link_240" pos="0 0 -0.16">
                     <inertial pos="0 0 -0.126667" mass="0.03" diaginertia="8.36667e-05 8.36667e-05 1e-06"/>
                     <joint name="finger_middle_to_lower_joint_240" pos="0 0 0" axis="1 0 0" limited="true"
                            range="-3.00197 3.00197"/>
-                    <geom name="finger_tip_240" friction="0.9 0.005 0.0001" pos="0.014 0 0" quat="0.707107 0.707107 0 0"
-                          type="mesh" rgba="0 0.5 0.5 1" mesh="SIM__BL_FINGER_TIP_LINK"/>
+                    <geom name="finger_tip_240" type="mesh" rgba="0 0.5 0.5 1" mesh="SIM__BL_FINGER_TIP_LINK" 
+                          friction="0.95 0.005 0.0001" margin="0"
+                          contype="1" conaffinity="6" pos="0.014 0 0" quat="0.707107 0.707107 0 0"/>
                     <site rgba="0.0 0.0 0.5 1" size="0.001" pos="0 0 -0.16" name="finger_tip_240"/>
                 </body>
             </body>
         </body>
 
-        <!-- =================== Adding the Cube =========.========== -->
+        <!-- =================== Adding the Cube =================== -->
         <body name="cube_link" pos="0 0 0">
             <!-- Free joint (6-DOF) -->
             <joint type="free"/>
+            <!-- Inertial properties for the cube -->
+            <inertial pos="0.0125 0.0125 0.0125" mass="0.05" 
+                      diaginertia="0.0000052167 0.0000052167 0.0000052167"/>
             <!-- Geometry of the cube -->
-            <geom name="cube_geom" type="box" size="0.025 0.025 0.025" rgba="0.0 0.0 1.0 1.0" material="cube_material"/>
+            <geom name="cube_geom" type="box" size="0.025 0.025 0.025" rgba="0.0 0.0 1.0 1.0" 
+                  material="cube_material" 
+                  friction="0.95 0.005 0.0001" margin="0"
+                  contype="2" conaffinity="5"/> <!-- Enabled collisions with Robot and Table -->
         </body>
         <!-- =================== End of Cube Definition =================== -->
 

@@ -115,12 +115,12 @@ set(${PROJECT_NAME}_HEADERS
   include/${CUSTOM_HEADER_DIR}/actions/differential-contact-mujoco.hxx
   include/${CUSTOM_HEADER_DIR}/actions/integrated-contact-mujoco.hpp
   include/${CUSTOM_HEADER_DIR}/actions/integrated-contact-mujoco.hxx
-  include/${CUSTOM_HEADER_DIR}/utils/pin-mj-conversion.hpp
+  include/${CUSTOM_HEADER_DIR}/utils/pin-mj-conversion-finger.hpp
   include/${CUSTOM_HEADER_DIR}/utils/pyboost11-converter.hpp
 )
 
 set(${PROJECT_NAME}_SOURCES
-  src/utils/pin-mj-conversion.cpp
+  src/utils/pin-mj-conversion-finger.cpp
 )
 
 # Create a library target for mim-cio
