@@ -312,7 +312,7 @@
             <!-- Let it move freely -->
             <joint type="free"/>
             <inertial pos="0.0125 0.0125 0.0125"
-                      mass="0.1"
+                      mass="0.2"
                       diaginertia="0.0000104 0.0000104 0.0000104"/>
             <geom name="cube_geom" type="box"
                   size="0.025 0.025 0.025"
@@ -324,42 +324,42 @@
              <!-- top face (red) -->
             <geom name="cube_top" type="box"
                   pos="0 0 0.025"
-                  size="0.025 0.025 0.000001"
+                  size="0.025 0.025 0.0001"
                   rgba="1.0 0.0 0.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- bottom face (green) -->
             <geom name="cube_bottom" type="box"
                   pos="0 0 -0.025"
-                  size="0.025 0.025 0.000001"
+                  size="0.025 0.025 0.0001"
                   rgba="0.0 1.0 0.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- front face (blue) -->
             <geom name="cube_front" type="box"
                   pos="0 0.025 0"
-                  size="0.025 0.000001 0.025"
+                  size="0.025 0.0001 0.025"
                   rgba="0.0 0.0 1.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- back face (yellow) -->
             <geom name="cube_back" type="box"
                   pos="0 -0.025 0"
-                  size="0.025 0.000001 0.025"
+                  size="0.025 0.0001 0.025"
                   rgba="1.0 1.0 0.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- right face (magenta) -->
             <geom name="cube_right" type="box"
                   pos="0.025 0 0"
-                  size="0.000001 0.025 0.025"
+                  size="0.0001 0.025 0.025"
                   rgba="1.0 0.0 1.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- left face (cyan) -->
             <geom name="cube_left" type="box"
                   pos="-0.025 0 0"
-                  size="0.000001 0.025 0.025"
+                  size="0.0001 0.025 0.025"
                   rgba="0.0 1.0 1.0 1.0"
                   contype="0" conaffinity="0" />
         </body>
