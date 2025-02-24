@@ -11,11 +11,7 @@ lambda: 0.25      # Temperature parameter for trajectory cost weighting.
 horizon: 40       # Prediction horizon (number of time steps).
 n_workers: 8      # Number of parallel workers for optimization.
 seed: 42          # Random seed for reproducibility.
-<<<<<<< HEAD
 beta: 0.7        # Noist filtering parameter for MPPI.
-=======
-beta: 0.9        # Noist filtering parameter for MPPI.
->>>>>>> bd3f84cb0e8694c2d2dd3738e2fde1e0e1cc9305
 
 # ============================
 # Model Parameters for Contact Dynamics
