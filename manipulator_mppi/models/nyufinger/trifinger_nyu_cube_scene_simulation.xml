@@ -319,7 +319,7 @@
                   rgba="0.0 0.0 1.0 1.0"
                   material="cube_material"
                   friction="0.6 0.005 0.0001"
-                  margin="0.0001"
+                  margin="0.00001"
                   contype="1" conaffinity="1"/>
              <!-- top face (red) -->
             <geom name="cube_top" type="box"
