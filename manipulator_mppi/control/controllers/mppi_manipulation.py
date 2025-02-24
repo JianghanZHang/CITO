@@ -74,8 +74,6 @@ class manipulation_MPPI(BaseMPPI):
         # Initialize planner and goals
         self.reset_planner()
 
-        self.tips_frame_pos_ref_1d = np.array(self.task_data['finger_tips_pos']).flatten()
-        self.tips_frame_pos_ref = np.tile(self.tips_frame_pos_ref_1d[None, :], (self.horizon, 1))
 
         self.joints_ref_1d = np.hstack((self.model.key_qpos[0, :9], self.model.key_qvel[0, :9])) # Key qpos and qvel of the robot
 
