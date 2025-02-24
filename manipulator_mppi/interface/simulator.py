@@ -2,9 +2,9 @@ import os
 
 import matplotlib.pyplot as plt
 import mujoco
-import mujoco_viewer
 import numpy as np
 import tqdm
+import mujoco.viewer 
 from PIL import Image
 
 
@@ -102,7 +102,8 @@ class Simulator:
 
         # viewer
         if viewer:
-            self.viewer = mujoco_viewer.MujocoViewer(self.model, self.data, hide_menus=True)
+            self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
+            # self.viewer = mujoco_viewer.MujocoViewer(self.model, self.data, hide_menus=True)
         else:
             self.viewer = None
 
@@ -205,17 +206,8 @@ class Simulator:
 
 
             # Render
-            if self.viewer is not None and self.viewer.is_alive:
-                # Example marker usage
-                if self.agent is not None and hasattr(self.agent, "body_ref"):
-                    self.viewer.add_marker(
-                        pos=self.agent.body_ref[:3],
-                        size=[0.02, 0.02, 0.02],
-                        rgba=[1, 0, 1, 1],
-                        type=mujoco.mjtGeom.mjGEOM_SPHERE,
-                        label=""
-                    )
-                self.viewer.render()
+            if self.viewer is not None and self.viewer.is_running():
+                self.viewer.sync()
 
                 if self.save_frames:
                     self.capture_frame(t)
