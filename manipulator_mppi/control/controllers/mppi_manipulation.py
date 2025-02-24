@@ -120,7 +120,7 @@ class manipulation_MPPI(BaseMPPI):
 
 
         # Calculate costs for each sampled trajectory
-        costs_sum = self.cost_func(self.state_rollouts[:, :, 1:], actions, self.sensor_datas, self.joints_ref, self.tips_frame_pos_ref, self.cube_state_ref)
+        costs_sum = self.cost_func(self.state_rollouts[:, :, 1:], actions, self.sensor_datas, self.joints_ref, self.cube_state_ref)
 
         # Calculate MPPI weights for the samples
         min_cost = np.min(costs_sum)
@@ -157,7 +157,7 @@ class manipulation_MPPI(BaseMPPI):
         return 1 - np.abs(dot_products)
 
 
-    def trifinger_cost_np(self, x, action, joints_ref, cube_state_ref, sensor_data, sensor_data_ref):
+    def trifinger_cost_np(self, x, action, joints_ref, cube_state_ref, sensor_data):
         """
         Compute the cost for trifinger based on state, action, and some FK errors.
 
@@ -188,9 +188,9 @@ class manipulation_MPPI(BaseMPPI):
         cube_state_error = cube_state - cube_state_ref
 
         tips_frame_pos = sensor_data[:, :9]
-        tips_frame_pos_ref = sensor_data_ref[:, :9]
+        # tips_frame_pos_ref = sensor_data_ref[:, :9]
 
-        # cube_length = 0.025
+        # Set the reference position of the tips frame to be the center of the cube
         tips_frame_pos_ref = np.tile(cube_state[:, :3], (1,3))
 
         tips_frame_pos_error = tips_frame_pos - tips_frame_pos_ref
@@ -230,7 +230,7 @@ class manipulation_MPPI(BaseMPPI):
         return cost
 
 
-    def calculate_total_cost(self, states, actions, sensor_datas, joints_ref, tips_frame_pos_ref, cube_state_ref):
+    def calculate_total_cost(self, states, actions, sensor_datas, joints_ref, cube_state_ref):
         """
         Calculate the total cost for all rollouts.
 
@@ -254,13 +254,11 @@ class manipulation_MPPI(BaseMPPI):
 
         joints_ref = np.tile(joints_ref, (num_samples, 1))
 
-        # tips_frame_pos_ref = tips_frame_pos_ref.T
-        tips_frame_pos_ref = np.tile(tips_frame_pos_ref, (num_samples, 1))
 
         cube_state_ref = np.tile(cube_state_ref, (num_samples, 1))
 
         # Compute cost for each rollout
-        costs = self.trifinger_cost_np(states, actions, joints_ref, cube_state_ref, sensor_datas, tips_frame_pos_ref)
+        costs = self.trifinger_cost_np(states, actions, joints_ref, cube_state_ref, sensor_datas)
 
         # Sum costs across time steps for each sample
         total_costs = costs.reshape(num_samples, num_pairs).sum(axis=1)
@@ -303,7 +301,6 @@ class manipulation_MPPI(BaseMPPI):
         return (self.cost_func(best_rollouts[:,:,1:],
                 np.array([self.selected_trajectory]),
                 sensor_data_rollout, self.joints_ref_1d,
-                self.tips_frame_pos_ref_1d,
                 self.cube_state_ref_1d))[0]
 
     # def __del__(self):
