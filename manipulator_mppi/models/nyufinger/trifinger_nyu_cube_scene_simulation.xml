@@ -364,6 +364,8 @@
                   contype="0" conaffinity="0" />
         </body>
 
+      <site name="goal_marker" pos="0 0 0" size="0.025 0.025 0.025" type="box" rgba="0 1 0 0.5"/>
+
     </worldbody>
 
     <!-- ============ ACTUATORS ============ -->

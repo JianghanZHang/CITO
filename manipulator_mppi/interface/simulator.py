@@ -2,6 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 import mujoco
+import mujoco_viewer
 import numpy as np
 import tqdm
 import mujoco.viewer 
@@ -117,6 +118,13 @@ class Simulator:
         self.time = np.zeros(self.T)
         self.cost = np.zeros((1, self.T))  # depends on agent
 
+        self.marker_idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, 'goal_marker')
+        self.goal_ref = "cube_state_ref_1d"
+        self.goal_ori = np.zeros((9,)) 
+        self.goal_pos = self.agent.cube_state_ref_1d[:3]
+        mujoco.mju_quat2Mat(self.goal_ori, self.agent.cube_state_ref_1d[3:])
+
+
     def get_sensor(self):
         return self.data.sensordata
 
@@ -187,17 +195,6 @@ class Simulator:
                     observation = np.concatenate([self.data.qpos, self.data.qvel], axis=0)
                     action = self.agent.update(observation)
 
-                    # print(f'finger0 action: {action[:3]}')
-                    # print(f'finger120 action: {action[3:6]}')
-                    # print(f'finger240 action: {action[6:9]}')
-
-                    # print(f'finger0 position:{self.data.qpos[:3]}')
-                    # print(f'finger120 position:{self.data.qpos[3:6]}')
-                    # print(f'finger240 position:{self.data.qpos[6:9]}')
-
-                    # print(f'cube position:{self.data.qpos[9:12]}')
-                    # import pdb; pdb.set_trace()
-
                     self.data.ctrl[:] = action
 
             # step
@@ -206,13 +203,47 @@ class Simulator:
 
 
             # Render
-            if self.viewer is not None and self.viewer.is_running():
-                self.viewer.sync()
+            #  self.viewer.is_alive:
+                # Example marker usage
+                # if self.agent is not None and hasattr(self.agent, "body_ref"):
+                #     self.viewer.add_marker(
+                #         pos=self.agent.body_ref[:3],
+                #         size=[0.02, 0.02, 0.02],
+                #         rgba=[1, 0, 1, 1],
+                #         type=mujoco.mjtGeom.mjGEOM_SPHERE,
+                #         label=""
+                #     )
 
+            #     self.viewer.add_marker(
+            #     pos=[0, 0, 0],
+            #     size=[0.03, 0.03, 0.03],
+            #     rgba=[0, 1, 0, 0.3],
+            #     type=mujoco.mjtGeom.mjGEOM_BOX,
+            #     label=""
+            # )
+                # self.viewer.render()
+            # if self.viewer is not None and self.viewer.is_running():
+
+                
+            #     self.viewer.sync()
+
+            #     if self.save_frames:
+            #         self.capture_frame(t)
+            # else:
+            #     break
+
+            # Render the scene
+            if self.viewer is not None and self.viewer.is_running():
+                
+                # import pdb; pdb.set_trace()
+                self.data.site_xpos[self.marker_idx, :] = self.goal_pos
+                self.data.site_xmat[self.marker_idx, :] = self.goal_ori
+
+                self.viewer.sync()
                 if self.save_frames:
                     self.capture_frame(t)
             else:
-                pass
+                break
 
             # import pdb; pdb.set_trace()
 
