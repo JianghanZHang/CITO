@@ -290,7 +290,7 @@
             <!-- Let it move freely -->
             <joint type="free"/>
             <inertial pos="0.0125 0.0125 0.0125"
-                      mass="0.1"
+                      mass="0.2"
                       diaginertia="0.0000104 0.0000104 0.0000104"/>
             <geom name="cube_geom" type="box"
                   size="0.025 0.025 0.025"
