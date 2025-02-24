@@ -49,6 +49,8 @@ class manipulation_MPPI(BaseMPPI):
         super().__init__(MODEL_PATH, CONFIG_PATH)
         cube_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'cube_link')
         geom_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, 'cube_geom')
+
+
         self.model.body_mass[cube_id] = 0.2 # Increase cube mass perception to the controller for manipulation task
         # self.model.body_inertia[cube_id] = [0.2, 0.3, 0.4]
         # self.model.geom_friction[geom_id] = [0.4, 0.1, 0.005]
