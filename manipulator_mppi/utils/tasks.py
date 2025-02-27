@@ -12,6 +12,8 @@ Each task is represented as a dictionary containing key parameters:
 - `config_path`: Path to the robot's configuration file.
 - `sim_path`: Path to the simulation file.
 """
+
+import numpy as np
 # DEFAULT_MODEL_PATH = 'models/trifinger/trifinger_scene.xml'
 # DEFAULT_CONFIG_PATH = 'configs/mppi_trifinger_reaching.yml'
 # DEFAULT_SIM_PATH = 'models/trifinger/trifinger_scene.xml'
@@ -33,6 +35,11 @@ MANIPULATION_MODEL_PATH = 'models/nyufinger/trifinger_nyu_cube_scene.xml'
 MANIPULATION_CONFIG_PATH = 'configs/mppi_trifinger_manipulation.yml'
 MANIPULATION_SIM_PATH = 'models/nyufinger/trifinger_nyu_cube_scene_simulation.xml'
 
+PLANAR_PUSH_MODEL_PATH = 'models/nyufinger/trifinger_nyu_cube_scene.xml'
+PLANAR_PUSH_CONFIG_PATH = 'configs/mppi_trifinger_planar_push.yml'
+PLANAR_PUSH_SIM_PATH = 'models/nyufinger/trifinger_nyu_cube_scene_simulation.xml'
+
+
 DEFAULT_ORIENTATION = [[1, 0, 0, 0]]
 
 TASKS = {
@@ -48,12 +55,22 @@ TASKS = {
 
     "cube_manipulation": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "cube_state":[0, 0, 0.15, # Postion - x, y, z
-                      0, 0, 0], # Orientation - roll, pitch, yaw
+        "cube_state":[-0.0, 0.0, 0.06, # Postion - x, y, z
+                      0, 0, np.pi/2], # Orientation - roll, pitch, yaw
 
         "model_path": MANIPULATION_MODEL_PATH, # this is the one that controller gets.
         "config_path": MANIPULATION_CONFIG_PATH,
         "sim_path": MANIPULATION_SIM_PATH # this is the one that simulator gets.
+    },
+
+    "cube_planar_push": {
+        # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
+        "cube_state":[0., -0.05, 0.03, # Postion - x, y, z
+                        0, 0, np.pi/3], # Orientation - roll, pitch, yaw
+
+        "model_path": PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.
+        "config_path": PLANAR_PUSH_CONFIG_PATH,
+        "sim_path": PLANAR_PUSH_SIM_PATH # this is the one that simulator gets.
     }
 }
 

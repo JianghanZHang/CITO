@@ -14,7 +14,7 @@ def main(task):
     # ---------------------------
     # Simulation and Controller Parameters
     # ---------------------------
-    T = 300  # total steps, e.g. 20 seconds if dt=0.01
+    T = 2000  # total steps, e.g. 20 seconds if dt=0.01
 
     # ---------------------------
     # Get trifinger-specific task data
@@ -31,6 +31,9 @@ def main(task):
         agent = reaching_MPPI(task=task)
 
     elif task == "cube_manipulation":
+        agent = manipulation_MPPI(task=task)
+
+    elif task == "cube_planar_push":
         agent = manipulation_MPPI(task=task)
 
 
@@ -71,7 +74,7 @@ if __name__ == "__main__":
 
     # Example trifinger tasks:
 
-    VALID_TASKS = ["reaching", "cube_manipulation"]
+    VALID_TASKS = ["reaching", "cube_manipulation", "cube_planar_push"]
 
     parser = argparse.ArgumentParser(description="Run trifinger MPPI simulation.")
     parser.add_argument('--task',
