@@ -118,11 +118,16 @@ class Simulator:
         self.time = np.zeros(self.T)
         self.cost = np.zeros((1, self.T))  # depends on agent
 
-        self.marker_idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, 'goal_marker')
+        # self.marker_idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, 'goal_marker')
+        self.marker_idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'goal')
+
+        self.marker_idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, 'goal_geom')
+
+        
         self.goal_ref = "cube_state_ref_1d"
-        self.goal_ori = np.zeros((9,)) 
+        self.goal_ori = self.agent.cube_state_ref_1d[3:]
         self.goal_pos = self.agent.cube_state_ref_1d[:3]
-        mujoco.mju_quat2Mat(self.goal_ori, self.agent.cube_state_ref_1d[3:])
+        # mujoco.mju_quat2Mat(self.goal_ori, self.agent.cube_state_ref_1d[3:])
 
 
     def get_sensor(self):
@@ -193,52 +198,24 @@ class Simulator:
                 if t % self.update_ratio == 0:
                     # The agent might want obs = [qpos; qvel] or something similar
                     observation = np.concatenate([self.data.qpos, self.data.qvel], axis=0)
+
                     action = self.agent.update(observation)
 
                     self.data.ctrl[:] = action
 
-            # step
+             # step
             mujoco.mj_step(self.model, self.data)
             mujoco.mj_forward(self.model, self.data)
 
 
             # Render
-            #  self.viewer.is_alive:
-                # Example marker usage
-                # if self.agent is not None and hasattr(self.agent, "body_ref"):
-                #     self.viewer.add_marker(
-                #         pos=self.agent.body_ref[:3],
-                #         size=[0.02, 0.02, 0.02],
-                #         rgba=[1, 0, 1, 1],
-                #         type=mujoco.mjtGeom.mjGEOM_SPHERE,
-                #         label=""
-                #     )
-
-            #     self.viewer.add_marker(
-            #     pos=[0, 0, 0],
-            #     size=[0.03, 0.03, 0.03],
-            #     rgba=[0, 1, 0, 0.3],
-            #     type=mujoco.mjtGeom.mjGEOM_BOX,
-            #     label=""
-            # )
-                # self.viewer.render()
-            # if self.viewer is not None and self.viewer.is_running():
-
-                
-            #     self.viewer.sync()
-
-            #     if self.save_frames:
-            #         self.capture_frame(t)
-            # else:
-            #     break
-
-            # Render the scene
             if self.viewer is not None and self.viewer.is_running():
                 
-                # import pdb; pdb.set_trace()
-                self.data.site_xpos[self.marker_idx, :] = self.goal_pos
-                self.data.site_xmat[self.marker_idx, :] = self.goal_ori
+                # Visualize the goal pose
+                self.data.mocap_pos[0, :] = self.goal_pos
+                self.data.mocap_quat[0, :] = self.goal_ori                   
 
+                # self.viewer.render()
                 self.viewer.sync()
                 if self.save_frames:
                     self.capture_frame(t)

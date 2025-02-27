@@ -34,7 +34,7 @@
 
     <compiler angle="radian" meshdir="assets"/>
 
-    <option cone="elliptic" impratio="100.0" integrator="Euler"
+    <option cone="elliptic" impratio="10.0" integrator="Euler"
             iterations="5" ls_iterations="20" solver="Newton"
             tolerance="0" noslip_iterations="0">
         <flag
@@ -88,7 +88,7 @@
         <!-- Table: collides with contype=1, conaffinity=1 -->
         <geom name="table" type="plane" material="groundplane"
               size="0 0 0.05" rgba="0.8 0.8 0.8 1.0"
-              friction="0.3" condim="6"
+              friction="0.9" condim="6"
               margin="0.0001"
               contype="1" conaffinity="1"/>
 
@@ -308,63 +308,113 @@
         </body>
 
         <!-- ===================== ADD THE CUBE HERE ===================== -->
-        <body name="cube_link" pos="0 0 0">
+      <body name="cube_link" pos="0 0 0">
             <!-- Let it move freely -->
             <joint type="free"/>
-            <inertial pos="0.0125 0.0125 0.0125"
-                      mass="0.2"
-                      diaginertia="0.0000104 0.0000104 0.0000104"/>
+            <!-- <inertial pos="0.015 0.015 0.015"
+                      mass="0.01"
+                      diaginertia="0.0000104 0.0000104 0.0000104"/> -->
             <geom name="cube_geom" type="box"
-                  size="0.025 0.025 0.025"
+                  pos="0 0 0"
+                  mass="0.01"
+                  quat="1 0 0 0 "
+                  size="0.03 0.03 0.03"
                   rgba="0.0 0.0 1.0 1.0"
                   material="cube_material"
-                  friction="0.6 0.005 0.0001"
-                  margin="0.00001"
+                  friction="0.5 0.005 0.0001"
+                  margin="0.0001"
                   contype="1" conaffinity="1"/>
+            
+            <geom name="cube_axis_x" type="cylinder"
+                  pos="0.03 0 0" size="0.005 0.04"
+                  quat="0.7071 0 -0.7071 0"
+                  rgba="1 0 0 1" contype="0" conaffinity="0"/>
+
+            <!-- y-axis (green): rotate -90° about x -->
+            <geom name="cube_axis_y" type="cylinder"
+                  pos="0 0.03 0" size="0.005 0.04"
+                  quat="0.7071 -0.7071 0 0"
+                  rgba="0 1 0 1" contype="0" conaffinity="0"/>
+
+            <!-- z-axis (blue): no rotation needed -->
+            <geom name="cube_axis_z" type="cylinder"
+                  pos="0 0 0.03" size="0.005 0.04"
+                  quat="1 0 0 0"
+                  rgba="0 0 1 1" contype="0" conaffinity="0"/>
+
              <!-- top face (red) -->
             <geom name="cube_top" type="box"
-                  pos="0 0 0.025"
-                  size="0.025 0.025 0.0001"
+                  pos="0 0 0.03"
+                  size="0.03 0.03 0.0001"
                   rgba="1.0 0.0 0.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- bottom face (green) -->
             <geom name="cube_bottom" type="box"
-                  pos="0 0 -0.025"
-                  size="0.025 0.025 0.0001"
+                  pos="0 0 -0.03"
+                  size="0.03 0.03 0.0001"
                   rgba="0.0 1.0 0.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- front face (blue) -->
             <geom name="cube_front" type="box"
-                  pos="0 0.025 0"
-                  size="0.025 0.0001 0.025"
+                  pos="0 0.03 0"
+                  size="0.03 0.0001 0.03"
                   rgba="0.0 0.0 1.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- back face (yellow) -->
             <geom name="cube_back" type="box"
-                  pos="0 -0.025 0"
-                  size="0.025 0.0001 0.025"
+                  pos="0 -0.03 0"
+                  size="0.03 0.0001 0.03"
                   rgba="1.0 1.0 0.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- right face (magenta) -->
             <geom name="cube_right" type="box"
-                  pos="0.025 0 0"
-                  size="0.0001 0.025 0.025"
+                  pos="0.03 0 0"
+                  size="0.0001 0.03 0.03"
                   rgba="1.0 0.0 1.0 1.0"
                   contype="0" conaffinity="0" />
 
             <!-- left face (cyan) -->
             <geom name="cube_left" type="box"
-                  pos="-0.025 0 0"
-                  size="0.0001 0.025 0.025"
+                  pos="-0.03 0 0"
+                  size="0.0001 0.03 0.03"
                   rgba="0.0 1.0 1.0 1.0"
                   contype="0" conaffinity="0" />
         </body>
 
-      <site name="goal_marker" pos="0 0 0" size="0.025 0.025 0.025" type="box" rgba="0 1 0 0.5"/>
+      <body name="goal" pos="0 0 0" mocap="true">
+            <geom name="goal_geom" type="box"
+                  pos="0 0 0"
+                  quat="1 0 0 0 "
+                  size="0.03 0.03 0.03"
+                  rgba="0.0 0.0 1.0 0.5"
+                  material="cube_material"
+                  friction="0.5 0.005 0.0001"
+                  margin="0.0001"
+                  contype="0" conaffinity="0"/>
+                  
+                  <geom name="goal_axis_x" type="cylinder"
+                        pos="0.03 0 0" size="0.005 0.04"
+                        quat="0.7071 0 -0.7071 0"
+                        rgba="1 0 0 1" contype="0" conaffinity="0"/>
+
+                  <!-- y-axis (green): rotate -90° about x -->
+                  <geom name="goal_axis_y" type="cylinder"
+                        pos="0 0.03 0" size="0.005 0.04"
+                        quat="0.7071 -0.7071 0 0"
+                        rgba="0 1 0 1" contype="0" conaffinity="0"/>
+
+                  <!-- z-axis (blue): no rotation needed -->
+                  <geom name="goal_axis_z" type="cylinder"
+                        pos="0 0 0.03" size="0.005 0.04"
+                        quat="1 0 0 0"
+                        rgba="0 0 1 1" contype="0" conaffinity="0"/>
+        </body>
+
+
 
     </worldbody>
 
@@ -395,6 +445,8 @@
         <!-- Optional sensor to track the cube position (as in XML2) -->
         <framepos name="cube_position" objtype="body" objname="cube_link"
                   reftype="geom" refname="table"/>
+      
+        
     </sensor>
 
     <!-- ============ KEYFRAME (Optional) ============ -->
