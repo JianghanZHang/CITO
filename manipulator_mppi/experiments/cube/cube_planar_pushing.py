@@ -46,9 +46,11 @@ def main():
         print("\n------------------------------------------------")
         print(f"Trail {i}")
 
-        x = np.random.uniform(-0.06, 0.06)
-        y = np.random.uniform(-0.06, 0.06)
-        alpha = np.random.uniform(-np.pi/2, np.pi/2)
+        rng = np.random.default_rng(101)  # Create a Generator with a fixed seed
+
+        x = rng.uniform(-0.06, 0.06)
+        y = rng.uniform(-0.06, 0.06)
+        alpha = rng.uniform(-np.pi/2, np.pi/2)
 
         goal_position = (x, y)
         goal_orientation = alpha    
