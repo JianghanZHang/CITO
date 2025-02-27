@@ -68,10 +68,6 @@ class BaseMPPI:
 
         self.cost_func = self.calculate_total_cost
 
-        # Threading
-        # self.thread_local = threading.local()
-        # self.executor = ThreadPoolExecutor(max_workers=self.num_workers, initializer=self.thread_initializer)
-
         # Rollouts
         self.state_rollouts = np.zeros(
             (self.n_samples, self.horizon, mujoco.mj_stateSize(self.model, mujoco.mjtState.mjSTATE_FULLPHYSICS.value))
@@ -151,6 +147,17 @@ class BaseMPPI:
             cubic_spline = CubicSpline(indices, knot_points, axis=1)
             actions = cubic_spline(np.arange(self.horizon))
             actions = np.clip(actions, self.act_min, self.act_max)
+            
+
+            # # Expand self.trajectory to match actions dimensions: (1, horizon, 9)
+            # trajectory_expanded = self.trajectory[None, :, :]
+
+            # # Clip the deviation (actions - trajectory) to be within ±0.01
+            # deviation_clipped = np.clip(actions - trajectory_expanded, -0.01, 0.01)
+
+            # # Reconstruct the actions as the sum of the trajectory and the clipped deviation
+            # actions = trajectory_expanded + deviation_clipped
+
             return actions
 
     def generate_Gaussian(self, size, noise_sigma):
@@ -240,87 +247,6 @@ class BaseMPPI:
             sensordata=sensor_data,
             chunk_size=None
         )
-
-    # def thread_initializer(self):
-    #     """Initialize thread-local storage for MuJoCo data."""
-    #     self.thread_local.data = mujoco.MjData(self.model)
-
-    # def shutdown(self):
-    #     """Shutdown the thread pool executor."""
-    #     self.executor.shutdown(wait=True)
-
-    # def call_rollout(self, initial_state, ctrl, state, sensor_data):
-    #     """
-    #     Perform a rollout of the model given the initial state and control actions.
-
-    #     Args:
-    #         initial_state (np.ndarray): Initial state of the model.
-    #         ctrl (np.ndarray): Control actions to apply during the rollout.
-    #         state (np.ndarray): State array to store the results of the rollout.
-    #     """
-    #     # rollout.rollout(self.model, self.thread_local.data, skip_checks=True,
-    #     #                 nroll=state.shape[0], nstep=state.shape[1],
-    #     #                 initial_state=initial_state, control=ctrl, state=state)
-
-    #     # see https://mujoco.readthedocs.io/en/latest/changelog.html#id1 for changes in rollout function
-
-    #     rollout.rollout(
-    #     model=self.model,
-    #     data=self.thread_local.data,
-    #     # nstep=state.shape[1],        # horizon
-    #     initial_state=initial_state, # shape (N, ) or (Nq+Nv, ) or something else
-    #     control=ctrl,               # shape (nstep, nu)
-    #     state=state,                # shape (nstep+1, state_dim)
-    #     sensordata=sensor_data      # shape (nstep, nsensordata)
-    #     )
-
-    # def threaded_rollout(self, state, ctrl, initial_state, sensor_data, num_workers=32, nstep=5):
-    #     """
-    #     Perform rollouts in parallel using a thread pool.
-
-    #     Args:
-    #         state (np.ndarray): Array to store the results of the rollouts.
-    #         ctrl (np.ndarray): Control actions for the rollouts.
-    #         initial_state (np.ndarray): Initial states for the rollouts.
-    #         num_workers (int): Number of parallel threads to use.
-    #         nstep (int): Number of steps in each rollout.
-    #     """
-
-
-    #     n = len(initial_state) // num_workers
-
-    #     actual_workers = min(num_workers, len(initial_state))
-    #     if actual_workers == 0:
-    #         # Means there's no data or zero rollouts to run
-    #         print('No avaiable worker!')
-    #         return
-    #     # Divide tasks into chunks for each worker
-
-    #     chunks = [(initial_state[i * n:(i + 1) * n], ctrl[i * n:(i + 1) * n], state[i * n:(i + 1) * n], sensor_data[i * n:(i + 1) * n])
-    #             for i in range(num_workers - 1)]
-
-
-    #     chunks.append((initial_state[(num_workers - 1) * n:],
-    #                 ctrl[(num_workers - 1) * n:],
-    #                 state[(num_workers - 1) * n:],
-    #                 sensor_data[(num_workers - 1) * n:]))
-
-    #     print("initial_state shape:", initial_state.shape)
-    #     print("ctrl shape:", ctrl.shape)
-    #     print("state shape:", state.shape)
-    #     print("sensor_data shape:", sensor_data.shape)
-    #     print("num_workers:", num_workers)
-
-    #     # Submit tasks to thread pool
-    #     futures = [self.executor.submit(self.call_rollout, *chunk) for chunk in chunks]
-    #     for future in concurrent.futures.as_completed(futures):
-    #         future.result()  # Ensure all threads complete execution
-
-
-    # def __del__(self):
-    #     self.shutdown()
-
-
 
     def set_params(self, horizon, lambda_, N):
         """

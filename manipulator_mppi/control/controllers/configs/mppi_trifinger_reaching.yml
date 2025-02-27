@@ -4,13 +4,13 @@
 
 # MPPI Parameters
 # These control the behavior of the Model Predictive Path Integral optimization.
-dt: 0.01          # Time step size for simulation (in seconds).
+dt: 0.1          # Time step size for simulation (in seconds).
 n_samples: 50     # Number of trajectory samples per iteration.
 lambda: 0.3       # Temperature parameter for trajectory cost weighting.
 horizon: 100       # Prediction horizon (number of time steps).
 n_workers: 1      # Number of parallel workers for optimization.
 seed: 42          # Random seed for reproducibility.
-beta: 0.7
+beta: 0.9
 
 # ============================
 # Model Parameters for Contact Dynamics
