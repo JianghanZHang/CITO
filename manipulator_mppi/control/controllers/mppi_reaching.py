@@ -10,7 +10,6 @@ from control.controllers.base_controller import BaseMPPI
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 import sys
 
-NQ = 9
 
 class reaching_MPPI(BaseMPPI):
     """
@@ -30,6 +29,7 @@ class reaching_MPPI(BaseMPPI):
             task (str): The name of the task ('stand', 'walk').
         """
         print("Task: ", task)
+        self.nq_robot = 9
 
         # Retrieve task-specific parameters
         self.task = task
@@ -172,8 +172,8 @@ class reaching_MPPI(BaseMPPI):
 
 
         # Compute joint and velocity errors
-        x_joint = x[:, :NQ]
-        v_joint = x[:, NQ:]
+        x_joint = x[:, :self.nq_robot]
+        v_joint = x[:, self.nq_robot:]
         u_error = kp * (action - x_joint) - kd * v_joint
 
         L2_norm_tips_pos_cost = np.einsum('ij,ik,jk->i', tips_frame_pos_error, tips_frame_pos_error, self.W_frame_pos)

@@ -6,7 +6,7 @@
 # These control the behavior of the Model Predictive Path Integral optimization.
 dt: 0.025          # Time step size for simulation (in seconds).
 n_samples: 100     # Number of trajectory samples per iteration.
-lambda: 0.2      # Temperature parameter for trajectory cost weighting. 
+lambda: 0.1      # Temperature parameter for trajectory cost weighting. 
 # 1/lambda = 5%-50% of n_samples gives smooth trajectories: https://arxiv.org/html/2312.02328v2#S1
 horizon: 16       # Prediction horizon (number of time steps).
 n_workers: 8      # Number of parallel workers for optimization.
@@ -116,7 +116,7 @@ W_stability:
   - 50 
 
 W_tips_contact:
-  - 50
+  - 0
 
 
 # Diagonal entries of the control cost matrix R

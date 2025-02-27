@@ -55,10 +55,6 @@ class Simulator:
         if model_path is None:
             print('No model path specified.')
             exit()
-            # model_path = os.path.join(
-            #     os.path.dirname(__file__),
-            #     "../models/trifinger/trifinger_with_ground.xml"
-            # )
 
         # filter
         self.filter = filter
@@ -90,7 +86,6 @@ class Simulator:
         # Make sure your trifinger XML has exactly one key definition at index 0
         # or adjust indices as needed.
 
-        # import pdb; pdb.set_trace()
         self.data.qpos[:] = self.model.key_qpos[0]
         self.data.qvel[:] = self.model.key_qvel[0]
         self.data.ctrl[:] = self.model.key_ctrl[0]
@@ -117,18 +112,32 @@ class Simulator:
         self.noisy_sensordata = np.zeros((self.model.nsensordata, self.T))
         self.time = np.zeros(self.T)
         self.cost = np.zeros((1, self.T))  # depends on agent
-
-        # self.marker_idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, 'goal_marker')
-        self.marker_idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'goal')
-
-        self.marker_idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, 'goal_geom')
-
-        
-        self.goal_ref = "cube_state_ref_1d"
-        self.goal_ori = self.agent.cube_state_ref_1d[3:]
-        self.goal_pos = self.agent.cube_state_ref_1d[:3]
+        if agent is not None:
+            self.goal_ori = self.agent.cube_state_ref_1d[3:]
+            self.goal_pos = self.agent.cube_state_ref_1d[:3]
         # mujoco.mju_quat2Mat(self.goal_ori, self.agent.cube_state_ref_1d[3:])
 
+    def reset(self, agent = None):
+        """
+        Reset the simulation to the initial state.
+        """
+        mujoco.mj_resetData(self.model, self.data)
+        self.data.qpos[:] = self.model.key_qpos[0]
+        self.data.qvel[:] = self.model.key_qvel[0]
+        self.data.ctrl[:] = self.model.key_ctrl[0]
+
+        mujoco.mj_forward(self.model, self.data)
+        self.agent = agent
+
+        if self.agent is not None:
+            self.goal_ori = self.agent.cube_state_ref_1d[3:]
+            self.goal_pos = self.agent.cube_state_ref_1d[:3]
+            
+        if self.viewer is not None:
+             # Visualize the goal pose
+            self.data.mocap_pos[0, :] = self.goal_pos
+            self.data.mocap_quat[0, :] = self.goal_ori        
+            self.viewer.sync()
 
     def get_sensor(self):
         return self.data.sensordata
@@ -141,6 +150,9 @@ class Simulator:
         if ctrl is not None:
             self.data.ctrl[:] = ctrl
         mujoco.mj_step(self.model, self.data)
+        if self.viewer is not None:
+            self.viewer.sync()
+
         return self.data.qpos, self.data.qvel
 
     def store_trajectory(self, t):
@@ -221,9 +233,6 @@ class Simulator:
                     self.capture_frame(t)
             else:
                 break
-
-            # import pdb; pdb.set_trace()
-
 
         # store the last step
         self.store_trajectory(self.T - 1)

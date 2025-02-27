@@ -12,7 +12,6 @@ from utils.tasks import get_task
 # from utils.transforms import batch_world_to_local_velocity, calculate_orientation_quaternion
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-NQ = 9
 
 class manipulation_MPPI(BaseMPPI):
     """
@@ -23,19 +22,22 @@ class manipulation_MPPI(BaseMPPI):
         - Gait scheduler and configurations.
         - MPPI sampling and cost calculation configurations.
     """
-
-    def __init__(self, task='manipulation') -> None:
+    # This constructor is for simulation
+    def __init__(self, task='manipulation', task_data=None) -> None:
         """
         Initialize the MPPI controller with task-specific configurations.
 
         Args:
             task (str): The name of the task ('stand', 'walk').
         """
-        print("Task: ", task)
 
-        # Retrieve task-specific parameters
-        self.task = task
-        self.task_data = get_task(task)
+        self.nq_robot = 9
+        self.task_data = task_data
+
+        if task_data == None:
+            # Retrieve task-specific parameters
+            self.task = task
+            self.task_data = get_task(task)
 
         model_path = self.task_data['model_path']
         config_path = self.task_data['config_path']
@@ -47,13 +49,7 @@ class manipulation_MPPI(BaseMPPI):
 
         # Initialize base MPPI
         super().__init__(MODEL_PATH, CONFIG_PATH)
-        cube_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'cube_link')
-        geom_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, 'cube_geom')
 
-
-        # self.model.body_mass[cube_id] = 0.2 # Increase cube mass perception to the controller for manipulation task
-        # self.model.body_inertia[cube_id] = [0.2, 0.3, 0.4]
-        # self.model.geom_friction[geom_id] = [0.4, 0.1, 0.005]
         # load the configuration file
         with open(CONFIG_PATH, 'r') as file:
             params = yaml.safe_load(file)
@@ -97,8 +93,6 @@ class manipulation_MPPI(BaseMPPI):
 
         self.cube_state_ref_1d = np.hstack((cube_position, cube_orientation))
         self.cube_state_ref = np.tile(self.cube_state_ref_1d[None, :], (self.horizon, 1))
-
-        self.task_success = False
 
     # @profile
     def update(self, obs):
@@ -315,14 +309,14 @@ class manipulation_MPPI(BaseMPPI):
         kd = 0   # Derivative gain for joint velocity error
 
         # Compute state error relative to the reference
-        q_joint = x[:, :NQ]
-        v_joint = x[:, NQ+7:2*NQ+7]
+        q_joint = x[:, :self.nq_robot]
+        v_joint = x[:, self.nq_robot+7:2*self.nq_robot+7]
 
         joints_state = np.hstack((q_joint, v_joint))
 
         joints_error = joints_state - joints_ref
 
-        cube_state = x[:, NQ:NQ+7]
+        cube_state = x[:, self.nq_robot:self.nq_robot+7]
 
         # cube_position_error = cube_state[:,:3] - cube_state_ref[:,:3]
         # cube_orientation_error = self.compute_orientation_distance(cube_state[:,3:], cube_state_ref[:,3:])
@@ -338,8 +332,8 @@ class manipulation_MPPI(BaseMPPI):
         tips_contact_error = self.compute_contact_cost(sensor_data, 12, 15)
 
         # Compute joint and velocity errors
-        x_joint = x[:, :NQ]
-        v_joint = x[:, NQ+7:2*NQ+7]
+        x_joint = x[:, :self.nq_robot]
+        v_joint = x[:, self.nq_robot+7:2*self.nq_robot+7]
         u_error = kp * (action - x_joint) - kd * v_joint
 
         # Assign terminal cost

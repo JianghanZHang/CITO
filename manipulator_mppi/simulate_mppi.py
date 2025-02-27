@@ -23,7 +23,6 @@ def main(task):
     task_data = get_task(task)
     sim_path = task_data["sim_path"]  # path to your trifinger xml
 
-    import pdb; pdb.set_trace()
     # ---------------------------
     # Initialize MPPI and simulator
     # ---------------------------
@@ -37,13 +36,6 @@ def main(task):
     elif task == "cube_planar_push":
         agent = manipulation_MPPI(task=task)
 
-
-    # CTRL_HORIZON = 40
-    # CTRL_LAMBDA = 0.1
-    # CTRL_N_SAMPLES = 50
-    # agent.set_params(horizon=CTRL_HORIZON,
-    #                  lambda_=CTRL_LAMBDA,
-    #                  N=CTRL_N_SAMPLES)
 
     VIEWER = True
     SIMULATION_STEP = 0.01
