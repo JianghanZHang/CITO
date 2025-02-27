@@ -101,19 +101,19 @@ Q_diag:
 
 # Diagonal entries of an individual cost term for frame position (This need to correspesond to the order in Mujoco's sensor_data)
 W_frame_pos:
- - 1000 # distance (finger 0 tip frame)
- - 1000 # distance (finger 120 tip frame)
- - 1000 # distance (finger 240 tip frame)
+ - 500 # distance (finger 0 tip frame)
+ - 500 # distance (finger 120 tip frame)
+ - 500 # distance (finger 240 tip frame)
 
 
 
 W_cube_state:
   - 5000 # position
 
-  - 1000 # orientation
+  - 2500 # orientation
 
 W_stability:
-  - 50 
+  - 10 
 
 W_tips_contact:
   - 0
