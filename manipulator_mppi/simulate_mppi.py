@@ -23,6 +23,7 @@ def main(task):
     task_data = get_task(task)
     sim_path = task_data["sim_path"]  # path to your trifinger xml
 
+    import pdb; pdb.set_trace()
     # ---------------------------
     # Initialize MPPI and simulator
     # ---------------------------

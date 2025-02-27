@@ -4,11 +4,11 @@
 
 # MPPI Parameters
 # These control the behavior of the Model Predictive Path Integral optimization.
-dt: 0.01          # Time step size for simulation (in seconds).
-n_samples: 200     # Number of trajectory samples per iteration.
-lambda: 0.05      # Temperature parameter for trajectory cost weighting. 
+dt: 0.04          # Time step size for simulation (in seconds).
+n_samples: 160     # Number of trajectory samples per iteration.
+lambda: 0.08      # Temperature parameter for trajectory cost weighting. 
 # 1/lambda = 5%-10% of n_samples gives smooth trajectories: https://arxiv.org/html/2312.02328v2#S1
-horizon: 100       # Prediction horizon (number of time steps).
+horizon: 10       # Prediction horizon (number of time steps).
 n_workers: 8      # Number of parallel workers for optimization.
 seed: 42          # Random seed for reproducibility.
 beta: 0.7        # Noist filtering parameter for MPPI.
@@ -101,17 +101,17 @@ Q_diag:
 
 # Diagonal entries of an individual cost term for frame position (This need to correspesond to the order in Mujoco's sensor_data)
 W_frame_pos:
- - 1000 # distance (finger 0 tip frame)
- - 1000 # distance (finger 120 tip frame)
- - 1000 # distance (finger 240 tip frame)
+ - 10000 # distance (finger 0 tip frame)
+ - 10000 # distance (finger 120 tip frame)
+ - 10000 # distance (finger 240 tip frame)
 
 
 W_cube_state:
-  - 50000 # position distance
+  - 500000 # position distance
   - 5000 # orientation distance
 
 W_stability:
-  - 100 
+  - 1000 
 
 W_tips_contact:
   - 0

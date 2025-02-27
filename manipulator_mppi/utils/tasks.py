@@ -55,8 +55,8 @@ TASKS = {
 
     "cube_manipulation": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "cube_state":[-0.0, 0.0, 0.06, # Postion - x, y, z
-                      0, 0, np.pi/2], # Orientation - roll, pitch, yaw
+        "cube_state":[-0.0, 0.0, 0.10, # Postion - x, y, z
+                      0, np.pi/4, np.pi/4], # Orientation - roll, pitch, yaw
 
         "model_path": MANIPULATION_MODEL_PATH, # this is the one that controller gets.
         "config_path": MANIPULATION_CONFIG_PATH,
@@ -65,7 +65,7 @@ TASKS = {
 
     "cube_planar_push": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "cube_state":[0., -0.05, 0.03, # Postion - x, y, z
+        "cube_state":[-0.06, -0.06, 0.03, # Postion - x, y, z
                         0, 0, np.pi/3], # Orientation - roll, pitch, yaw
 
         "model_path": PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.
