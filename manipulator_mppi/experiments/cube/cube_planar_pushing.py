@@ -19,7 +19,7 @@ def main():
     # ---------------------------
     T = 2000  # total steps, e.g. 20 seconds if dt=0.01
 
-    position_threshold = 0.02
+    position_threshold = 0.01
     orientation_threshold = 0.2
 
     total_trail = 100
@@ -41,13 +41,13 @@ def main():
         model_path=SIM_PATH,
         ctrl_rate=CTRL_UPDATE_RATE
     )
+    rng = np.random.default_rng(101)  # Create a Generator with a fixed seed
+
 
     for i in range(total_trail):
         print("\n------------------------------------------------")
         print(f"Trail {i}")
-
-        rng = np.random.default_rng(101)  # Create a Generator with a fixed seed
-
+        
         x = rng.uniform(-0.06, 0.06)
         y = rng.uniform(-0.06, 0.06)
         alpha = rng.uniform(-np.pi/2, np.pi/2)
