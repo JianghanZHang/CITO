@@ -113,9 +113,8 @@ class Simulator:
         self.time = np.zeros(self.T)
         self.cost = np.zeros((1, self.T))  # depends on agent
         if agent is not None:
-            self.goal_ori = self.agent.cube_state_ref_1d[3:]
-            self.goal_pos = self.agent.cube_state_ref_1d[:3]
-        # mujoco.mju_quat2Mat(self.goal_ori, self.agent.cube_state_ref_1d[3:])
+            self.goal_ori = self.agent.object_state_ref_1d[3:]
+            self.goal_pos = self.agent.object_state_ref_1d[:3]
 
     def reset(self, agent = None):
         """
@@ -130,8 +129,8 @@ class Simulator:
         self.agent = agent
 
         if self.agent is not None:
-            self.goal_ori = self.agent.cube_state_ref_1d[3:]
-            self.goal_pos = self.agent.cube_state_ref_1d[:3]
+            self.goal_ori = self.agent.object_state_ref_1d[3:]
+            self.goal_pos = self.agent.object_state_ref_1d[:3]
             
         if self.viewer is not None:
              # Visualize the goal pose

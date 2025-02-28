@@ -4,14 +4,14 @@
 
 # MPPI Parameters
 # These control the behavior of the Model Predictive Path Integral optimization.
-dt: 0.025          # Time step size for simulation (in seconds).
-n_samples: 100     # Number of trajectory samples per iteration.
-lambda: 0.1      # Temperature parameter for trajectory cost weighting. 
-# 1/lambda = 5%-50% of n_samples gives smooth trajectories: https://arxiv.org/html/2312.02328v2#S1
-horizon: 16       # Prediction horizon (number of time steps).
+dt: 0.01          # Time step size for simulation (in seconds).
+n_samples: 40     # Number of trajectory samples per iteration.
+lambda: 0.5      # Temperature parameter for trajectory cost weighting. 
+# 1/lambda = 5%-10% of n_samples gives smooth trajectories: https://arxiv.org/html/2312.02328v2#S1
+horizon: 40       # Prediction horizon (number of time steps).
 n_workers: 8      # Number of parallel workers for optimization.
 seed: 42          # Random seed for reproducibility.
-beta: 0.7        # Noist filtering parameter for MPPI.
+beta: 0.8      # Noist filtering parameter for MPPI.
 
 # ============================
 # Model Parameters for Contact Dynamics
@@ -107,27 +107,27 @@ W_frame_pos:
 
 
 
-W_cube_state:
-  - 5000 # position
+W_object_state:
+  - 10000 # position
 
-  - 2500 # orientation
+  - 1000 # orientation
 
 W_stability:
   - 10 
 
 W_tips_contact:
-  - 0
+  - 10
 
 
 # Diagonal entries of the control cost matrix R
 # Penalizes excessive control effort (torque commands).
 R_diag:
-  - 50.00 # Upper joint (finger 0)
-  - 50.00  # Middle joint (finger 0)
-  - 50.00  # Lower joint (finger 0)
-  - 50.00 # Upper joint (finger 120)
-  - 50.00  # Middle joint (finger 120)
-  - 50.00  # Lower joint (finger 120)
-  - 50.00 # Upper joint (finger 240)
-  - 50.00  # Middle joint (finger 240)
-  - 50.00  # Lower joint (finger 240)
+  - 10.00 # Upper joint (finger 0)
+  - 10.00  # Middle joint (finger 0)
+  - 10.00  # Lower joint (finger 0)
+  - 10.00 # Upper joint (finger 120)
+  - 10.00  # Middle joint (finger 120)
+  - 10.00  # Lower joint (finger 120)
+  - 10.00 # Upper joint (finger 240)
+  - 10.00  # Middle joint (finger 240)
+  - 10.00  # Lower joint (finger 240)

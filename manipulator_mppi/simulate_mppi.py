@@ -30,12 +30,8 @@ def main(task):
     if task == "reaching":
         agent = reaching_MPPI(task=task)
 
-    elif task == "cube_manipulation":
+    else:
         agent = manipulation_MPPI(task=task)
-
-    elif task == "cube_planar_push":
-        agent = manipulation_MPPI(task=task)
-
 
     VIEWER = True
     SIMULATION_STEP = 0.01
@@ -67,7 +63,10 @@ if __name__ == "__main__":
 
     # Example trifinger tasks:
 
-    VALID_TASKS = ["reaching", "cube_manipulation", "cube_planar_push"]
+
+    VALID_TASKS = ["reaching", "cube_manipulation", "cube_planar_push", "bowl_planar_push", 
+                   "mug_planar_push", "can_planar_push", "lightbulb_planar_push", "flashlight_planar_push","rubberduck_planar_push",
+                   "elephant_planar_push", "torus_planar_push", "airplane_planar_push", "camera_planar_push"]
 
     parser = argparse.ArgumentParser(description="Run trifinger MPPI simulation.")
     parser.add_argument('--task',

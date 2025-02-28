@@ -46,10 +46,7 @@ class BaseMPPI:
 
 
         self.sampling_init = np.array(self.model.key_qpos[0, :9])
-
-        self.q_cube = [0.0, 0.0, 0.03,
-                       1.0, 0.0, 0.0, 0.0]
-
+        
         ##########  DEBUG   ############
         # import mujoco.viewer as viewer
         # Mjdata = mujoco.MjData(self.model)

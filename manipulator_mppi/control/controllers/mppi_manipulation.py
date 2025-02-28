@@ -61,7 +61,7 @@ class manipulation_MPPI(BaseMPPI):
 
         self.W_frame_pos = np.diag(np.array(params['W_frame_pos']))
 
-        self.W_cube_state = np.diag(np.array(params['W_cube_state']))
+        self.W_object_state = np.diag(np.array(params['W_object_state']))
 
         self.W_stability = np.diag(np.array(params['W_stability']))
 
@@ -80,19 +80,19 @@ class manipulation_MPPI(BaseMPPI):
 
         self.joints_ref = np.tile(self.joints_ref_1d[None, :], (self.horizon, 1))
 
-        # self.cube_state_ref_1d = np.array(self.task_data['cube_state'])
-        cube_position = self.task_data['cube_state'][:3]
-        cube_orientation_rpy = self.task_data['cube_state'][3:]
+        # self.object_state_ref_1d = np.array(self.task_data['object_state'])
+        object_position = self.task_data['object_state'][:3]
+        object_orientation_rpy = self.task_data['object_state'][3:]
 
         # Converting RPY to quaternion
-        r = R.from_euler('xyz', cube_orientation_rpy, degrees=False)  # MuJoCo uses XYZ order
+        r = R.from_euler('xyz', object_orientation_rpy, degrees=False)  # MuJoCo uses XYZ order
         quat_xyzw = r.as_quat()  # SciPy returns [x, y, z, w]
         quat_wxyz = np.roll(quat_xyzw, shift=1)  # Convert to [w, x, y, z]
 
-        cube_orientation = quat_wxyz
+        object_orientation = quat_wxyz
 
-        self.cube_state_ref_1d = np.hstack((cube_position, cube_orientation))
-        self.cube_state_ref = np.tile(self.cube_state_ref_1d[None, :], (self.horizon, 1))
+        self.object_state_ref_1d = np.hstack((object_position, object_orientation))
+        self.object_state_ref = np.tile(self.object_state_ref_1d[None, :], (self.horizon, 1))
 
     # @profile
     def update(self, obs):
@@ -117,7 +117,7 @@ class manipulation_MPPI(BaseMPPI):
 
 
         # Calculate costs for each sampled trajectory
-        costs_sum = self.cost_func(self.state_rollouts[:, :, 1:], actions, self.sensor_datas, self.joints_ref, self.cube_state_ref)
+        costs_sum = self.cost_func(self.state_rollouts[:, :, 1:], actions, self.sensor_datas, self.joints_ref, self.object_state_ref)
 
         # Calculate MPPI weights for the samples
         min_cost = np.min(costs_sum)
@@ -153,7 +153,7 @@ class manipulation_MPPI(BaseMPPI):
         dot_products = np.einsum('ij,ij->i', q1, q2)
         # Compute distance as 1 - absolute dot product
 
-        distance = 1 - np.abs(dot_products)
+        distance = 1 - np.abs(dot_products)**2
         return distance.reshape(size, 1)
 
     def compute_orientation_distance(self, q1, q2):
@@ -205,7 +205,7 @@ class manipulation_MPPI(BaseMPPI):
         distances = np.linalg.norm(x1_reshaped - x2_reshaped, axis=2)
         return distances
     
-    def compute_cube_distance(self, x1, x2):
+    def compute_object_distance(self, x1, x2):
         # Calculate the element-wise difference
         diff = x1 - x2  # Shape: (N, 3)
         # Compute the Euclidean distance (norm) for each row and keep dimensions (N, 1)
@@ -290,7 +290,7 @@ class manipulation_MPPI(BaseMPPI):
         return inContact.sum(axis=1).reshape(inContact.shape[0], 1)
 
     
-    def trifinger_cost_np(self, x, action, joints_ref, cube_state_ref, sensor_data):
+    def trifinger_cost_np(self, x, action, joints_ref, object_state_ref, sensor_data):
         """
         Compute the cost for trifinger based on state, action, and some FK errors.
 
@@ -316,19 +316,19 @@ class manipulation_MPPI(BaseMPPI):
 
         joints_error = joints_state - joints_ref
 
-        cube_state = x[:, self.nq_robot:self.nq_robot+7]
+        object_state = x[:, self.nq_robot:self.nq_robot+7]
 
-        # cube_position_error = cube_state[:,:3] - cube_state_ref[:,:3]
-        # cube_orientation_error = self.compute_orientation_distance(cube_state[:,3:], cube_state_ref[:,3:])
+        # object_position_error = object_state[:,:3] - object_state_ref[:,:3]
+        # object_orientation_error = self.compute_orientation_distance(object_state[:,3:], object_state_ref[:,3:])
 
-        cube_position_error = self.compute_cube_distance(cube_state[:,:3], cube_state_ref[:,:3])
-        cube_orientation_error = self.compute_quaternion_distance(cube_state[:,3:], cube_state_ref[:,3:])
+        object_position_error = self.compute_object_distance(object_state[:,:3], object_state_ref[:,:3])
+        object_orientation_error = self.compute_quaternion_distance(object_state[:,3:], object_state_ref[:,3:])
 
         tips_frame_pos = sensor_data[:, :9]
-        # Set the reference position of the tips frame to be the center of the cube
-        tips_frame_pos_ref = np.tile(cube_state[:, :3], (1,3))
+        # Set the reference position of the tips frame to be the center of the object
+        tips_frame_pos_ref = np.tile(object_state[:, :3], (1,3))
         tips_position_error = self.compute_tips_distance(tips_frame_pos, tips_frame_pos_ref)
-        tips_object_stability_error = self.compute_stability_cost(cube_state, tips_frame_pos)
+        tips_object_stability_error = self.compute_stability_cost(object_state, tips_frame_pos)
         tips_contact_error = self.compute_contact_cost(sensor_data, 12, 15)
 
         # Compute joint and velocity errors
@@ -338,17 +338,17 @@ class manipulation_MPPI(BaseMPPI):
 
         # Assign terminal cost
         # Set the some costs to zero except for the terminal node
-        mask = np.zeros_like(cube_position_error)
+        mask = np.zeros_like(object_position_error)
         mask[self.horizon-1::self.horizon, :] = 1
 
-        cube_position_error *= mask  # This sets all other rows to zero
-        cube_orientation_error *= mask
+        # object_position_error *= mask  # This sets all other rows to zero
+        # object_orientation_error *= mask
         
-        cube_position_error[self.horizon-1::self.horizon, :] *= self.horizon # Scale the selected rows
-        cube_orientation_error[self.horizon-1::self.horizon, :] *= self.horizon
+        object_position_error[self.horizon-1::self.horizon, :] *= self.horizon # Scale the selected rows
+        object_orientation_error[self.horizon-1::self.horizon, :] *= self.horizon
 
-        L1_norm_cube_position_cost = np.abs(np.dot(cube_position_error, self.W_cube_state[:1, :1])).sum(axis=1)
-        L1_norm_cube_orientation_cost = np.abs(np.dot(cube_orientation_error, self.W_cube_state[1:, 1:])).sum(axis=1)
+        L1_norm_object_position_cost = np.abs(np.dot(object_position_error, self.W_object_state[:1, :1])).sum(axis=1)
+        L1_norm_object_orientation_cost = np.abs(np.dot(object_orientation_error, self.W_object_state[1:, 1:])).sum(axis=1)
         L1_norm_tips_position_cost = np.abs(np.dot(tips_position_error, self.W_frame_pos)).sum(axis=1)
         L1_norm_joint_cost = np.abs(np.dot(joints_error, self.Q)).sum(axis=1)  
         L1_norm_control_cost = np.abs(np.dot(u_error, self.R)).sum(axis=1)  
@@ -357,8 +357,8 @@ class manipulation_MPPI(BaseMPPI):
         
 
         # # Compute positional cost (L1 norm for positional error)
-        L2_norm_cube_position_cost = np.einsum('ij,ik,jk->i', cube_position_error, cube_position_error, self.W_cube_state[:1, :1])
-        L2_norm_cube_orientation_cost = np.einsum('ij,ik,jk->i', cube_orientation_error, cube_orientation_error, self.W_cube_state[1:, 1:])
+        L2_norm_object_position_cost = np.einsum('ij,ik,jk->i', object_position_error, object_position_error, self.W_object_state[:1, :1])
+        L2_norm_object_orientation_cost = np.einsum('ij,ik,jk->i', object_orientation_error, object_orientation_error, self.W_object_state[1:, 1:])
         L2_norm_tips_position_cost = np.einsum('ij,ik,jk->i', tips_position_error, tips_position_error, self.W_frame_pos)
         L2_norm_joint_cost = np.einsum('ij,ik,jk->i', joints_error, joints_error, self.Q)
         L2_norm_control_cost = np.einsum('ij,ik,jk->i', u_error, u_error, self.R) 
@@ -366,10 +366,10 @@ class manipulation_MPPI(BaseMPPI):
         L2_norm_tips_contact_cost = np.einsum('ij,ik,jk->i', tips_contact_error, tips_contact_error, self.W_tips_contact) 
 
         cost = (
-            L1_norm_joint_cost +
-            L1_norm_control_cost +
-            L1_norm_cube_orientation_cost+
-            L1_norm_cube_position_cost+
+            L2_norm_joint_cost +
+            L2_norm_control_cost +
+            L1_norm_object_orientation_cost+
+            L2_norm_object_position_cost+
             L1_norm_tips_position_cost+
             L1_norm_stability_cost+
             L1_norm_tips_contact_cost
@@ -378,7 +378,7 @@ class manipulation_MPPI(BaseMPPI):
         return cost
 
 
-    def calculate_total_cost(self, states, actions, sensor_datas, joints_ref, cube_state_ref):
+    def calculate_total_cost(self, states, actions, sensor_datas, joints_ref, object_state_ref):
         """
         Calculate the total cost for all rollouts.
 
@@ -403,10 +403,10 @@ class manipulation_MPPI(BaseMPPI):
         joints_ref = np.tile(joints_ref, (num_samples, 1))
 
 
-        cube_state_ref = np.tile(cube_state_ref, (num_samples, 1))
+        object_state_ref = np.tile(object_state_ref, (num_samples, 1))
 
         # Compute cost for each rollout
-        costs = self.trifinger_cost_np(states, actions, joints_ref, cube_state_ref, sensor_datas)
+        costs = self.trifinger_cost_np(states, actions, joints_ref, object_state_ref, sensor_datas)
 
         # Sum costs across time steps for each sample
         total_costs = costs.reshape(num_samples, num_pairs).sum(axis=1)
@@ -449,7 +449,7 @@ class manipulation_MPPI(BaseMPPI):
         return (self.cost_func(best_rollouts[:,:,1:],
                 np.array([self.selected_trajectory]),
                 sensor_data_rollout, self.joints_ref_1d,
-                self.cube_state_ref_1d))[0]
+                self.object_state_ref_1d))[0]
 
     # def __del__(self):
     #     self.shutdown()
