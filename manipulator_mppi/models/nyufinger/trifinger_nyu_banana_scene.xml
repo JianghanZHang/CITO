@@ -35,7 +35,7 @@
         <mesh name="upper_link"  file="upper_link.stl"/>
         <mesh name="middle_link" file="middle_link.stl"/>
         <mesh name="lower_link"  file="lower_link.stl"/>
-        <mesh name="camera"       file="objects/camera.stl"/>
+        <mesh name="banana"       file="objects/banana.stl"/>
 
         <!-- Ground plane material/texture -->
         <texture type="2d" name="groundplane" builtin="checker" mark="edge"
@@ -44,7 +44,7 @@
         <material name="groundplane" texture="groundplane" texuniform="true"
                   texrepeat="5 5" reflectance="0.0"/>
 
-        <mesh name="object" file="objects/camera.stl" scale="0.7 0.7 0.7"/>
+        <mesh name="object" file="objects/banana.stl" scale="0.7 0.7 0.7"/>
         <texture name='surface' file="assets/textures/general_block.png" gridsize="3 4" gridlayout=".U..LFRB.D.."/>
         <material name="obj_surface" texture="surface" specular="1" shininess="0.3" reflectance="0.4"/>
 
@@ -293,7 +293,7 @@
             <joint type="free" name="object_table"/>
             <geom name="object" type="mesh" mesh="object" material="obj_surface"
                 pos="0.0 0.0 0.0" quat="1 0 0 0"
-                mass="0.1"
+                mass="0.01"
                 condim="6"
                 friction="0.5" />
             

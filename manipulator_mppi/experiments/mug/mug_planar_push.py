@@ -1,7 +1,7 @@
 # Adjust these imports to match where you have placed the trifinger code:
-MODEL_PATH = 'models/nyufinger/trifinger_nyu_cube_scene.xml'
+MODEL_PATH = 'models/nyufinger/trifinger_nyu_mug_scene.xml'
 CONFIG_PATH = 'configs/mppi_trifinger_planar_push.yml'
-SIM_PATH = 'models/nyufinger/trifinger_nyu_cube_scene_simulation.xml'
+SIM_PATH = 'models/nyufinger/trifinger_nyu_mug_scene.xml'
 import numpy as np
 
 import os 
