@@ -14,22 +14,10 @@ Each task is represented as a dictionary containing key parameters:
 """
 
 import numpy as np
-# DEFAULT_MODEL_PATH = 'models/trifinger/trifinger_scene.xml'
-# DEFAULT_CONFIG_PATH = 'configs/mppi_trifinger_reaching.yml'
-# DEFAULT_SIM_PATH = 'models/trifinger/trifinger_scene.xml'
 
 DEFAULT_MODEL_PATH = 'models/nyufinger/trifinger_nyu_scene.xml'
 DEFAULT_CONFIG_PATH = 'configs/mppi_trifinger_reaching.yml'
 DEFAULT_SIM_PATH = 'models/nyufinger/trifinger_nyu_scene.xml'
-
-# DEFAULT_MODEL_PATH = 'models/nyufinger/trifinger_nyu_nocollision.xml'
-# DEFAULT_CONFIG_PATH = 'configs/mppi_trifinger_reaching.yml'
-# DEFAULT_SIM_PATH = 'models/nyufinger/trifinger_nyu_nocollision.xml'
-
-
-# MANIPULATION_MODEL_PATH = 'models/trifinger/trifinger_cube_scene.xml'
-# MANIPULATION_CONFIG_PATH = 'configs/mppi_trifinger_manipulation.yml'
-# MANIPULATION_SIM_PATH = 'models/trifinger/trifinger_cube_scene.xml'
 
 MANIPULATION_MODEL_PATH = 'models/nyufinger/trifinger_nyu_cube_scene.xml'
 MANIPULATION_CONFIG_PATH = 'configs/mppi_trifinger_manipulation.yml'
@@ -62,6 +50,8 @@ CAN_PLANAR_PUSH_MODEL_PATH = 'models/nyufinger/trifinger_nyu_can_scene.xml'
 BUNNY_PLANAR_PUSH_MODEL_PATH = 'models/nyufinger/trifinger_nyu_bunny_scene.xml'
 
 TEAPOT_PLANAR_PUSH_MODEL_PATH = 'models/nyufinger/trifinger_nyu_teapot_scene.xml'
+
+BANANA_PLANAR_PUSH_MODEL_PATH = 'models/nyufinger/trifinger_nyu_banana_scene.xml'
 
 DEFAULT_ORIENTATION = [[1, 0, 0, 0]]
 
@@ -214,7 +204,17 @@ TASKS = {
         "model_path": LIGHTBULB_PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.
         "config_path": PLANAR_PUSH_CONFIG_PATH,
         "sim_path": LIGHTBULB_PLANAR_PUSH_MODEL_PATH # this is the one that simulator gets.
-    }
+    },
+
+    "banana_planar_push": {
+        # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
+        "object_state":[0, 0.04, 0.03, # Postion - x, y, z
+                        0, 0, np.pi/3], # Orientation - roll, pitch, yaw
+
+        "model_path": BANANA_PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.
+        "config_path": PLANAR_PUSH_CONFIG_PATH,
+        "sim_path": BANANA_PLANAR_PUSH_MODEL_PATH # this is the one that simulator gets.
+    },
 }
 
 def get_task(task_name):
