@@ -35,7 +35,7 @@
         <mesh name="upper_link"  file="upper_link.stl"/>
         <mesh name="middle_link" file="middle_link.stl"/>
         <mesh name="lower_link"  file="lower_link.stl"/>
-        <mesh name="flashlight"       file="objects/flashlight.stl"/>
+        <mesh name="teapot"       file="objects/teapot.stl"/>
 
         <!-- Ground plane material/texture -->
         <texture type="2d" name="groundplane" builtin="checker" mark="edge"
@@ -44,7 +44,7 @@
         <material name="groundplane" texture="groundplane" texuniform="true"
                   texrepeat="5 5" reflectance="0.0"/>
 
-        <mesh name="object" file="objects/flashlight.stl" scale="0.7 0.7 0.7"/>
+        <mesh name="object" file="objects/teapot.stl" scale="0.7 0.7 0.7"/>
         <texture name='surface' file="assets/textures/general_block.png" gridsize="3 4" gridlayout=".U..LFRB.D.."/>
         <material name="obj_surface" texture="surface" specular="1" shininess="0.3" reflectance="0.4"/>
 
@@ -295,7 +295,8 @@
                 pos="0.0 0.0 0.0" quat="1 0 0 0"
                 mass="0.01"
                 condim="6"
-                friction="0.5" />
+                friction="0.5" 
+                margin="0.0001"/>
             
             <geom name="cube_axis_x" type="cylinder"
                   pos="0.03 0 0" size="0.005 0.04"

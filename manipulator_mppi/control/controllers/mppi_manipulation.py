@@ -368,9 +368,9 @@ class manipulation_MPPI(BaseMPPI):
         cost = (
             L2_norm_joint_cost +
             L2_norm_control_cost +
-            L1_norm_object_orientation_cost+
-            L2_norm_object_position_cost+
             L1_norm_tips_position_cost+
+            L1_norm_object_orientation_cost+
+            L1_norm_object_position_cost+
             L1_norm_stability_cost+
             L1_norm_tips_contact_cost
         )
