@@ -138,14 +138,21 @@ class BaseMPPI:
             for n in range(1, self.n_knots):
                 filtered_noise[:, n, :] = self.beta * noise[:, n, :] + (1-self.beta) * filtered_noise[:, n-1, :]
 
-            # assert (filtered_noise[0, 1, :] == self.beta * noise[0, 1, :]  +  (1-self.bseta) * filtered_noise[0, 0, :]).all()
 
-            knot_points = self.trajectory[indices] + filtered_noise
-            cubic_spline = CubicSpline(indices, knot_points, axis=1)
-            actions = cubic_spline(np.arange(self.horizon))
-            actions = np.clip(actions, self.act_min, self.act_max)
+
             
+            cubic_spline = CubicSpline(indices, filtered_noise, axis=1)
+            eps = cubic_spline(np.arange(self.horizon))
+            actions = self.trajectory + eps
 
+            # knot_points = self.trajectory[indices] + filtered_noise
+            # cubic_spline = CubicSpline(indices, knot_points, axis=1)
+            # actions = cubic_spline(np.arange(self.horizon))
+            # actions = np.clip(actions, self.act_min, self.act_max)
+            
+            perturbations = actions - self.trajectory
+
+            # assert (perturbations == eps).all()
             # # Expand self.trajectory to match actions dimensions: (1, horizon, 9)
             # trajectory_expanded = self.trajectory[None, :, :]
 
@@ -155,7 +162,7 @@ class BaseMPPI:
             # # Reconstruct the actions as the sum of the trajectory and the clipped deviation
             # actions = trajectory_expanded + deviation_clipped
 
-            return actions
+            return actions, perturbations
 
     def generate_Gaussian(self, size, noise_sigma):
         """

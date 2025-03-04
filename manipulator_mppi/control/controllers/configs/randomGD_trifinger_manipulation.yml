@@ -4,14 +4,14 @@
 
 # MPPI Parameters
 # These control the behavior of the Model Predictive Path Integral optimization.
-dt: 0.01          # Time step size for simulation (in seconds).
-n_samples: 40     # Number of trajectory samples per iteration.
-lambda: 0.25      # Temperature parameter for trajectory cost weighting. 
+dt: 0.025          # Time step size for simulation (in seconds).
+n_samples: 100     # Number of trajectory samples per iteration.
+lambda: 0.1      # Temperature parameter for trajectory cost weighting. 
 # 1/lambda = 5%-10% of n_samples gives smooth trajectories: https://arxiv.org/html/2312.02328v2#S1
-horizon: 40       # Prediction horizon (number of time steps).
+horizon: 16       # Prediction horizon (number of time steps).
 n_workers: 8      # Number of parallel workers for optimization.
 seed: 42          # Random seed for reproducibility.
-beta: 1      # Noise filtering parameter for MPPI.
+beta: 0.5      # Noist filtering parameter for MPPI.
 
 # ============================
 # Model Parameters for Contact Dynamics
@@ -34,20 +34,22 @@ noise_type: "halton" # Spline interpolation type ("cubic" for cubic splines).
 sample_type: "cubic" # Spline interpolation type ("cubic" for cubic splines).
 n_knots: 2          # Number of control points (knots) in the spline.
 
+
+descent_steps: 1
 # ============================
 # Noise Parameters
 # ============================
 # Noise standard deviations applied to control inputs for exploration.
 noise_sigma:
-  - 0.2 # Upper joint (finger 0)
-  - 0.2  # Middle joint (finger 0)
-  - 0.2  # Lower joint (finger 0)
-  - 0.2 # Upper joint (finger 120)
-  - 0.2  # Middle joint (finger 120)
-  - 0.2  # Lower joint (finger 120)
-  - 0.2 # Upper joint (finger 240)
-  - 0.2  # Middle joint (finger 240)
-  - 0.2  # Lower joint (finger 240)
+  - 0.1 # Upper joint (finger 0)
+  - 0.1  # Middle joint (finger 0)
+  - 0.1  # Lower joint (finger 0)
+  - 0.1 # Upper joint (finger 120)
+  - 0.1  # Middle joint (finger 120)
+  - 0.1  # Lower joint (finger 120)
+  - 0.1 # Upper joint (finger 240)
+  - 0.1  # Middle joint (finger 240)
+  - 0.1  # Lower joint (finger 240)
 
 
 # ============================
@@ -101,9 +103,9 @@ Q_diag:
 
 # Diagonal entries of an individual cost term for frame position (This need to correspesond to the order in Mujoco's sensor_data)
 W_frame_pos:
- - 5000 # distance (finger 0 tip frame)
- - 5000 # distance (finger 120 tip frame)
- - 5000 # distance (finger 240 tip frame)
+ - 1000 # distance (finger 0 tip frame)
+ - 1000 # distance (finger 120 tip frame)
+ - 1000 # distance (finger 240 tip frame)
 
 
 
