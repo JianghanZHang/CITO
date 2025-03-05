@@ -39,7 +39,6 @@ class BaseMPPI:
         self.noise_sigma = np.array(params['noise_sigma'])
         self.num_workers = params['n_workers']
         self.beta = params['beta']
-
         self.sensor_data_size = params['sensor_data_size']
 
         print(f'sensor_data_size:{self.sensor_data_size}')
@@ -53,6 +52,21 @@ class BaseMPPI:
         # Mjdata.qpos = np.hstack((self.sampling_init, self.q_cube))
         # mujoco.mj_forward(self.model, Mjdata)
         # viewer.launch(self.model, Mjdata)
+
+        # Differentiation scheme
+        self.differentiation_scheme = params['differentiation_scheme']
+        if self.differentiation_scheme == "central":
+            self.evaluate_costs = self.evaluate_costs_both_side
+            self.estimate_gradient = self.estimate_gradient_central
+            self.n_samples = int(self.n_samples/2)
+        
+        elif self.differentiation_scheme == "forward":
+            self.evaluate_costs = self.evaluate_costs_single_side
+            self.estimate_gradient = self.estimate_gradient_forward
+        
+        else:
+            self.evaluate_costs = self.evaluate_costs_single_side
+            self.estimate_gradient = self.estimate_gradient_forward
 
         # Initialize rollouts and sampling configurations
         self.h = params['dt']
@@ -79,8 +93,6 @@ class BaseMPPI:
 
         self.mujoco_data = [mujoco.MjData(self.model) for _ in range(self.num_workers)]
 
-        self.selected_trajectory = None
-
         # Action space
         self.act_dim = 9
 
@@ -99,6 +111,8 @@ class BaseMPPI:
             self.random_generator = qmc.Halton(d = self.act_dim*self.n_knots, scramble=True, seed=params["seed"])
             self.generate_noise = self.generate_Halton
 
+       
+        
     def reset_planner(self):
         """Reset the action planner to its initial state."""
         self.trajectory = np.zeros((self.horizon, self.act_dim))
@@ -137,30 +151,11 @@ class BaseMPPI:
 
             for n in range(1, self.n_knots):
                 filtered_noise[:, n, :] = self.beta * noise[:, n, :] + (1-self.beta) * filtered_noise[:, n-1, :]
-
-
-
             
             cubic_spline = CubicSpline(indices, filtered_noise, axis=1)
             eps = cubic_spline(np.arange(self.horizon))
             actions = self.trajectory + eps
-
-            # knot_points = self.trajectory[indices] + filtered_noise
-            # cubic_spline = CubicSpline(indices, knot_points, axis=1)
-            # actions = cubic_spline(np.arange(self.horizon))
-            # actions = np.clip(actions, self.act_min, self.act_max)
-            
             perturbations = actions - self.trajectory
-
-            # assert (perturbations == eps).all()
-            # # Expand self.trajectory to match actions dimensions: (1, horizon, 9)
-            # trajectory_expanded = self.trajectory[None, :, :]
-
-            # # Clip the deviation (actions - trajectory) to be within ±0.01
-            # deviation_clipped = np.clip(actions - trajectory_expanded, -0.01, 0.01)
-
-            # # Reconstruct the actions as the sum of the trajectory and the clipped deviation
-            # actions = trajectory_expanded + deviation_clipped
 
             return actions, perturbations
 

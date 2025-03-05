@@ -104,7 +104,7 @@ class reaching_MPPI(BaseMPPI):
         min_cost = np.min(costs_sum)
         max_cost = np.max(costs_sum)
         self.exp_weights = np.exp(-1 / self.temperature * ((costs_sum - min_cost) / (max_cost - min_cost)))
-
+        
         # Weighted average of action deltas
         weighted_delta_u = self.exp_weights.reshape(self.n_samples, 1, 1) * actions
         weighted_delta_u = np.sum(weighted_delta_u, axis=0) / (np.sum(self.exp_weights) + 1e-10)
