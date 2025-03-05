@@ -3,6 +3,7 @@ import faulthandler
 
 # from control.controllers.mppi_reaching import reaching_MPPI
 from control.controllers.mppi_manipulation import manipulation_MPPI
+from control.controllers.randomGD_manipulation import manipulation_randomGD
 from control.controllers.mppi_reaching import reaching_MPPI
 
 # Adjust these imports to match where you have placed the trifinger code:
@@ -31,7 +32,9 @@ def main(task):
         agent = reaching_MPPI(task=task)
 
     else:
-        agent = manipulation_MPPI(task=task)
+        agent = manipulation_randomGD(task=task)
+        # agent = manipulation_MPPI(task=task)
+
 
     VIEWER = True
     SIMULATION_STEP = 0.01

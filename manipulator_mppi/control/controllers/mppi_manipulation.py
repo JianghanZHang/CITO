@@ -123,27 +123,26 @@ class manipulation_MPPI(BaseMPPI):
         # Calculate MPPI weights for the samples
         min_cost = np.min(costs_sum)
 
-        sum_cost = np.sum(costs_sum)
-        self.exp_weights = np.exp(-1 / self.temperature * ((costs_sum - min_cost) / sum_cost))
-
         max_cost = np.max(costs_sum)
-        self.exp_weights_ = np.exp(-1 / self.temperature * ((costs_sum - min_cost) / (max_cost - min_cost)))
+        self.exp_weights = np.exp(-1 / self.temperature * ((costs_sum - min_cost) / (max_cost - min_cost))) 
+
+        sum_exp_weights = (np.sum(self.exp_weights) + 1e-10)
+        self.normalized_weights = self.exp_weights / sum_exp_weights
 
         # Weighted average of action deltas
-        weighted_delta_u = self.exp_weights.reshape(self.n_samples, 1, 1) * (self.trajectory + perturbations)
-
-        weighted_delta_u = self.trajectory +  self.exp_weights.reshape(self.n_samples, 1, 1) * (perturbations)
-
-        weighted_delta_u = np.sum(weighted_delta_u, axis=0) / (np.sum(self.exp_weights) + 1e-10)
-        updated_actions = np.clip(weighted_delta_u, self.act_min, self.act_max)
+        weighted_delta_u = self.normalized_weights.reshape(self.n_samples, 1, 1) * (perturbations)
+        weighted_delta_u = np.sum(weighted_delta_u, axis=0) 
+        updated_actions = self.trajectory + weighted_delta_u
+        updated_actions = np.clip(updated_actions, self.act_min, self.act_max)
         
-        # beta = 0.8
-        # updated_actions = beta * updated_actions + (1-beta) * self.trajectory
+        # weighted_delta_u = self.exp_weights.reshape(self.n_samples, 1, 1) * actions
+        # weighted_delta_u = np.sum(weighted_delta_u, axis=0) 
+        # updated_actions = np.clip(weighted_delta_u, self.act_min, self.act_max)
+
         # Update the trajectory with the optimal action
         self.selected_trajectory = updated_actions
         self.trajectory = np.roll(updated_actions, shift=-1, axis=0)
         self.trajectory[-1] = updated_actions[-1]
-        import pdb; pdb.set_trace()
 
         # Return the first action in the trajectory as the output action
         return updated_actions[0]
@@ -459,8 +458,7 @@ class manipulation_MPPI(BaseMPPI):
         # Compute and return the cost of the best trajectory
         return (self.cost_func(best_rollouts[:,:,1:],
                 np.array([self.selected_trajectory]),
-                sensor_data_rollout, self.joints_ref_1d,
-                self.object_state_ref_1d))[0]
+                sensor_data_rollout))[0]
 
     # def __del__(self):
     #     self.shutdown()

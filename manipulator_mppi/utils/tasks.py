@@ -20,12 +20,17 @@ DEFAULT_CONFIG_PATH = 'configs/mppi_trifinger_reaching.yml'
 DEFAULT_SIM_PATH = 'models/nyufinger/trifinger_nyu_scene.xml'
 
 MANIPULATION_MODEL_PATH = 'models/nyufinger/trifinger_nyu_cube_scene.xml'
-MANIPULATION_CONFIG_PATH = 'configs/mppi_trifinger_manipulation.yml'
 MANIPULATION_SIM_PATH = 'models/nyufinger/trifinger_nyu_cube_scene_simulation.xml'
 
+MANIPULATION_CONFIG_PATH = 'configs/mppi_trifinger_manipulation.yml'
+MANIPULATION_CONFIG_PATH = 'configs/randomGD_trifinger_manipulation.yml'
+
 PLANAR_PUSH_MODEL_PATH = 'models/nyufinger/trifinger_nyu_cube_scene.xml'
-PLANAR_PUSH_CONFIG_PATH = 'configs/mppi_trifinger_planar_push.yml'
 PLANAR_PUSH_SIM_PATH = 'models/nyufinger/trifinger_nyu_cube_scene_simulation.xml'
+
+PLANAR_PUSH_CONFIG_PATH = 'configs/mppi_trifinger_planar_push.yml'
+PLANAR_PUSH_CONFIG_PATH = 'configs/randomGD_trifinger_manipulation.yml'
+
 
 BOWL_PLANAR_PUSH_MODEL_PATH = 'models/nyufinger/trifinger_nyu_bowl_scene.xml'
 

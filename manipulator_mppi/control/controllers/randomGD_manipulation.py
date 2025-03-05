@@ -94,8 +94,60 @@ class manipulation_randomGD(BaseMPPI):
         self.object_state_ref_1d = np.hstack((object_position, object_orientation))
         self.object_state_ref = np.tile(self.object_state_ref_1d[None, :], (self.horizon, 1))
 
-        self.descent_steps = self.task_data['descent_steps']
+        self.descent_steps = params['descent_steps']
     
+    # def update(self, obs):
+    #     """
+    #     Update the MPPI controller based on the current observation.
+
+    #     Args:
+    #         obs (np.ndarray): Current state observation.
+    #     Returns:
+    #         np.ndarray: Selected action based on the optimal trajectory.
+    #     """
+    #         # Generate perturbed actions for rollouts
+    #     actions, perturbations = self.perturb_action()
+    #     self.obs = obs
+
+    #     # Perform rollouts using threaded rollout function
+    #     self.rollout_func(self.rollout_models, self.state_rollouts, actions, np.repeat(np.array([np.concatenate([[0], obs])]), self.n_samples, axis=0), self.sensor_datas, num_workers=self.num_workers, nstep=self.horizon)
+        
+    #     # self.rollout_func(self.state_rollouts, actions, np.repeat(
+    #     #     np.array([np.concatenate([[0], obs])]), self.n_samples, axis=0), self.sensor_datas,
+    #     #     num_workers=self.num_workers, nstep=self.horizon)
+
+
+    #     # Calculate costs for each sampled trajectory
+    #     costs_sum = self.cost_func(self.state_rollouts[:, :, 1:], actions, self.sensor_datas)
+
+    #     # import pdb; pdb.set_trace()
+    #     # Calculate MPPI weights for the samples
+    #     min_cost = np.min(costs_sum)
+
+    #     max_cost = np.max(costs_sum)
+    #     self.exp_weights = np.exp(-1 / self.temperature * ((costs_sum - min_cost) / (max_cost - min_cost))) 
+
+    #     sum_exp_weights = (np.sum(self.exp_weights) + 1e-10)
+    #     self.normalized_weights = self.exp_weights / sum_exp_weights
+
+    #     # Weighted average of action deltas
+    #     weighted_delta_u = self.normalized_weights.reshape(self.n_samples, 1, 1) * (perturbations)
+    #     weighted_delta_u = np.sum(weighted_delta_u, axis=0) 
+    #     updated_actions = self.trajectory + weighted_delta_u
+    #     updated_actions = np.clip(updated_actions, self.act_min, self.act_max)
+        
+    #     # weighted_delta_u = self.exp_weights.reshape(self.n_samples, 1, 1) * actions
+    #     # weighted_delta_u = np.sum(weighted_delta_u, axis=0) 
+    #     # updated_actions = np.clip(weighted_delta_u, self.act_min, self.act_max)
+
+    #     # Update the trajectory with the optimal action
+    #     self.selected_trajectory = updated_actions
+    #     self.trajectory = np.roll(updated_actions, shift=-1, axis=0)
+    #     self.trajectory[-1] = updated_actions[-1]
+
+    #     # Return the first action in the trajectory as the output action
+    #     return updated_actions[0]
+        
     def update(self, obs):
         '''
         Update the MPPI controller based on the current observation.
@@ -107,13 +159,21 @@ class manipulation_randomGD(BaseMPPI):
         
         '''
         for i in range(self.descent_steps):
-
+            # Generate noise
             _, perturbations = self.perturb_action()
+            
+            # Evaluate Costs
             costs = self.evaluate_cost(obs, self.trajectory, perturbations)
-            utilities = self.utility(utilities, self.temperature) # utilities: N x 1
-            step_size = np.max(costs) - np.min(costs) / self.n_samples # step size for the gradient descent
-            estimated_gradient = self.estimate_gradient(costs, perturbations)
+            utilities = self.utility(costs, self.temperature) # utilities: N x 1
+
+            # Compute step size
+            sum_utilities = np.sum(utilities) + 1e-10
+            step_size = self.n_samples / sum_utilities # step size for the gradient descent
+
+            # Compute gradient estimation
+            estimated_gradient = self.estimate_gradient(utilities, perturbations)
             updated_actions = self.trajectory + step_size * estimated_gradient
+
             updated_actions = np.clip(updated_actions, self.act_min, self.act_max)
             self.trajectory = updated_actions
 
@@ -126,7 +186,8 @@ class manipulation_randomGD(BaseMPPI):
 
     def utility(self, costs, temperature):
         min_cost = np.min(costs)
-        utility = np.exp((-1)/temperature * (costs - min_cost))
+        max_cost = np.max(costs)
+        utility = np.exp((-1)/temperature * (costs - min_cost)) / (max_cost - min_cost)
         return utility
     
     def estimate_gradient(self, utilities, perturbations):

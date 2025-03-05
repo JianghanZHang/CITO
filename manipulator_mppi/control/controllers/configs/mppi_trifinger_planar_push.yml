@@ -39,15 +39,15 @@ n_knots: 2          # Number of control points (knots) in the spline.
 # ============================
 # Noise standard deviations applied to control inputs for exploration.
 noise_sigma:
-  - 0.2 # Upper joint (finger 0)
-  - 0.2  # Middle joint (finger 0)
-  - 0.2  # Lower joint (finger 0)
-  - 0.2 # Upper joint (finger 120)
-  - 0.2  # Middle joint (finger 120)
-  - 0.2  # Lower joint (finger 120)
-  - 0.2 # Upper joint (finger 240)
-  - 0.2  # Middle joint (finger 240)
-  - 0.2  # Lower joint (finger 240)
+  - 0.1 # Upper joint (finger 0)
+  - 0.1  # Middle joint (finger 0)
+  - 0.1  # Lower joint (finger 0)
+  - 0.1 # Upper joint (finger 120)
+  - 0.1  # Middle joint (finger 120)
+  - 0.1  # Lower joint (finger 120)
+  - 0.1 # Upper joint (finger 240)
+  - 0.1  # Middle joint (finger 240)
+  - 0.1  # Lower joint (finger 240)
 
 
 # ============================
@@ -101,9 +101,9 @@ Q_diag:
 
 # Diagonal entries of an individual cost term for frame position (This need to correspesond to the order in Mujoco's sensor_data)
 W_frame_pos:
- - 5000 # distance (finger 0 tip frame)
- - 5000 # distance (finger 120 tip frame)
- - 5000 # distance (finger 240 tip frame)
+ - 1000 # distance (finger 0 tip frame)
+ - 1000 # distance (finger 120 tip frame)
+ - 1000 # distance (finger 240 tip frame)
 
 
 
