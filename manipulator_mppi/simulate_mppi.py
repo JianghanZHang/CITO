@@ -57,6 +57,7 @@ def main(task):
     # Run simulation + plotting
     # ---------------------------
     simulator.run()
+    
     simulator.plot_trajectory()
 
 

@@ -22,7 +22,7 @@ DEFAULT_SIM_PATH = 'models/nyufinger/trifinger_nyu_scene.xml'
 MANIPULATION_MODEL_PATH = 'models/nyufinger/trifinger_nyu_cube_scene.xml'
 MANIPULATION_SIM_PATH = 'models/nyufinger/trifinger_nyu_cube_scene_simulation.xml'
 
-MANIPULATION_CONFIG_PATH = 'configs/mppi_trifinger_manipulation.yml'
+# MANIPULATION_CONFIG_PATH = 'configs/mppi_trifinger_manipulation.yml'
 MANIPULATION_CONFIG_PATH = 'configs/randomGD_trifinger_manipulation.yml'
 
 PLANAR_PUSH_MODEL_PATH = 'models/nyufinger/trifinger_nyu_cube_scene.xml'
@@ -73,7 +73,7 @@ TASKS = {
 
     "cube_manipulation": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "object_state":[-0.0, 0.0, 0.10, # Postion - x, y, z
+        "object_state":[-0.0, 0.0, 0.13, # Postion - x, y, z
                       0, np.pi/4, np.pi/4], # Orientation - roll, pitch, yaw
 
         "model_path": MANIPULATION_MODEL_PATH, # this is the one that controller gets.

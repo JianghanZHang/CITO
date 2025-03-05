@@ -1,6 +1,8 @@
 # Adjust these imports to match where you have placed the trifinger code:
 MODEL_PATH = 'models/nyufinger/trifinger_nyu_camera_scene.xml'
-CONFIG_PATH = 'configs/mppi_trifinger_planar_push.yml'
+# CONFIG_PATH = 'configs/mppi_trifinger_planar_push.yml'
+CONFIG_PATH = 'configs/randomGD_trifinger_manipulation.yml'
+
 SIM_PATH = 'models/nyufinger/trifinger_nyu_camera_scene.xml'
 import numpy as np
 
@@ -10,6 +12,8 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 from control.controllers.mppi_manipulation import manipulation_MPPI
+from control.controllers.randomGD_manipulation import manipulation_randomGD
+
 from interface.simulator import Simulator
 
 
@@ -64,7 +68,8 @@ def main():
             "sim_path": SIM_PATH # this is the one that simulator gets.
         }
 
-        agent = manipulation_MPPI(task = None, task_data=task_data)
+        # agent = manipulation_MPPI(task = None, task_data=task_data)
+        agent = manipulation_randomGD(task = None, task_data=task_data)
         simulator.reset(agent)
 
         obj_position_idx = agent.nq_robot
