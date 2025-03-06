@@ -190,6 +190,29 @@ class Simulator:
         image = Image.fromarray(np.flipud(frame))
         image.save(filename)
 
+    
+    def trajopt(self, path=None):
+        mujoco.mj_forward(self.model, self.data)
+
+        observation = np.concatenate([self.data.qpos, self.data.qvel], axis=0)
+
+        _ = self.agent.update(observation)
+
+        self.cost_list = np.array(self.agent.cost_list)
+
+         # -- Cost   
+        fig_cost = plt.figure()
+        plt.title("Cost vs Iteration")
+        plt.plot(self.cost_list.reshape(self.agent.descent_steps+1,), label="cost")
+        plt.xlabel("Iteration")
+        plt.ylabel("Cost")
+        plt.legend()
+
+        if path is not None:
+            fig_cost.savefig(path + "cost.pdf", dpi=300)
+
+        print(f'Plots saved to {path}')
+
     def run(self):
         """
         Main rollout loop: run T-1 steps of simulation, optionally calling agent to get actions.
@@ -241,13 +264,9 @@ class Simulator:
 
 
 
-    def plot_trajectory(self):
-        """
-        Example plotting of states, controls, etc.
-        Customize for trifinger data.
-        """
+    def plot_trajectory(self, path=None):
         # -- Example: position (qpos) over time
-        plt.figure()
+        fig_qpos = plt.figure()
         for i in range(self.model.nq):
             plt.plot(self.time, self.qpos[i, :], label=f"qpos[{i}]")
         plt.xlabel("Time (s)")
@@ -255,7 +274,7 @@ class Simulator:
         plt.legend()
 
         # -- Example: velocity (qvel) over time
-        plt.figure()
+        fig_qvel = plt.figure()
         for i in range(self.model.nv):
             plt.plot(self.time, self.qvel[i, :], label=f"qvel[{i}]")
         plt.xlabel("Time (s)")
@@ -263,7 +282,7 @@ class Simulator:
         plt.legend()
 
         # -- Example: controls
-        plt.figure()
+        fig_ctrl = plt.figure()
         for i in range(self.model.nu):
             plt.plot(self.time, self.ctrl[i, :], label=f"ctrl[{i}]")
         plt.xlabel("Time (s)")
@@ -271,27 +290,44 @@ class Simulator:
         plt.legend()
 
         # -- Example: sensor data (9 = tip0, tip120, tip240 in x,y,z)
-        plt.figure()
+        fig_sensors = plt.figure()
         for i in range(self.model.nsensordata):
             plt.plot(self.time, self.sensordata[i, :], label=f"sensor[{i}]")
         plt.xlabel("Time (s)")
         plt.ylabel("Sensor reading")
         plt.legend()
 
-        plt.figure()
-
+        # -- Cube position
+        fig_cube = plt.figure()
         plt.title("Cube Positions")
-            # Cube (indices 9..11)
         plt.plot(self.time, self.sensordata[9, :], label="cube_x")
         plt.plot(self.time, self.sensordata[10, :], label="cube_y")
         plt.plot(self.time, self.sensordata[11, :], label="cube_z")
-        plt.axhline(y=0.2, color='r', linestyle=':', label='desired z position')
-
         plt.xlabel("Time (s)")
         plt.ylabel("Position (m)")
         plt.legend()
 
+        # -- Cost   
+        fig_cost = plt.figure()
+        plt.title("Costs")
+        plt.plot(self.time, self.cost.reshape(500,), label="cost")
+        plt.xlabel("Time (s)")
+        plt.ylabel("Cost")
+        plt.legend()
+
+        if path is not None:
+            fig_qpos.savefig(path + "qpos.pdf",     dpi=300)
+            fig_qvel.savefig(path + "qvel.pdf",     dpi=300)
+            fig_ctrl.savefig(path + "ctrl.pdf",     dpi=300)
+            fig_sensors.savefig(path + "sensors.pdf", dpi=300)
+            fig_cube.savefig(path + "cube_positions.pdf", dpi=300)
+            fig_cost.savefig(path + "cost.pdf", dpi=300)
+
+        print(f'Plots saved to {path}')
+
+        # For interactive backends only -- won't show windows if you're using Agg
         plt.show()
+
 
 
 if __name__ == "__main__":

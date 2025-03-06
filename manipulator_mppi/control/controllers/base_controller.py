@@ -55,18 +55,25 @@ class BaseMPPI:
 
         # Differentiation scheme
         self.differentiation_scheme = params['differentiation_scheme']
+        
+         # Set differentiation scheme
         if self.differentiation_scheme == "central":
             self.evaluate_costs = self.evaluate_costs_both_side
             self.estimate_gradient = self.estimate_gradient_central
-            self.n_samples = int(self.n_samples/2)
+            self.n_samples = self.n_samples//2
         
         elif self.differentiation_scheme == "forward":
             self.evaluate_costs = self.evaluate_costs_single_side
             self.estimate_gradient = self.estimate_gradient_forward
         
-        else:
+        elif self.differentiation_scheme == "simplified":
             self.evaluate_costs = self.evaluate_costs_single_side
-            self.estimate_gradient = self.estimate_gradient_forward
+            self.estimate_gradient = self.estimate_gradient_simplified
+
+        else:
+            print(f'differentiation scheme: {self.differentiation_scheme} is not implemented')
+            exit()
+            
 
         # Initialize rollouts and sampling configurations
         self.h = params['dt']
@@ -153,9 +160,8 @@ class BaseMPPI:
                 filtered_noise[:, n, :] = self.beta * noise[:, n, :] + (1-self.beta) * filtered_noise[:, n-1, :]
             
             cubic_spline = CubicSpline(indices, filtered_noise, axis=1)
-            eps = cubic_spline(np.arange(self.horizon))
-            actions = self.trajectory + eps
-            perturbations = actions - self.trajectory
+            perturbations = cubic_spline(np.arange(self.horizon))
+            actions = self.trajectory + perturbations
 
             return actions, perturbations
 

@@ -17,7 +17,7 @@ def main(task):
     # ---------------------------
     # Simulation and Controller Parameters
     # ---------------------------
-    T = 2000  # total steps, e.g. 20 seconds if dt=0.01
+    T = 500  # total steps, e.g. 20 seconds if dt=0.01
 
     # ---------------------------
     # Get trifinger-specific task data
@@ -58,16 +58,14 @@ def main(task):
     # ---------------------------
     # Run simulation + plotting
     # ---------------------------
-    simulator.run()
 
-    # result_path = "results/mpc/differentiation_schemes/simp/simplified_differentiation_"
+    result_path = "results/trajopt/differentiation_schemes/simp/simplified_differentiation_"
     
-    # result_path = "results/mpc/differentiation_schemes/forward/forward_differentiation_"
+    # result_path = "results/trajopt/differentiation_schemes/forward/forward_differentiation_"
 
-    # result_path = "results/mpc/differentiation_schemes/central/central_differentiation_"
+    # result_path = "results/trajopt/differentiation_schemes/central/central_differentiation_"
 
-    # simulator.plot_trajectory(result_path)
-
+    simulator.trajopt(result_path)
 
 if __name__ == "__main__":
 

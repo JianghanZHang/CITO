@@ -5,8 +5,8 @@
 # MPPI Parameters
 # These control the behavior of the Model Predictive Path Integral optimization.
 dt: 0.025          # Time step size for simulation (in seconds).
-n_samples: 32     # Number of trajectory samples per iteration.
-lambda: 0.01      # Temperature parameter for trajectory cost weighting. 
+n_samples: 100     # Number of trajectory samples per iteration.
+lambda: 0.1      # Temperature parameter for trajectory cost weighting. 
 # 1/lambda = 5%-10% of n_samples gives smooth trajectories: https://arxiv.org/html/2312.02328v2#S1
 horizon: 16       # Prediction horizon (number of time steps).
 n_workers: 16      # Number of parallel workers for optimization.
@@ -32,13 +32,13 @@ sensor_data_size: 15
 noise_type: "halton" # Spline interpolation type ("cubic" for cubic splines).
 
 sample_type: "cubic" # Spline interpolation type ("cubic" for cubic splines).
-n_knots: 2         # Number of control points (knots) in the spline.
+n_knots: 3         # Number of control points (knots) in the spline.
 
 
 # ============================
 # Gradient Descent Parametes
 # ============================
-descent_steps: 10
+descent_steps: 5
 # differentiation_scheme: "simplified"
 # differentiation_scheme: "forward"
 differentiation_scheme: "central"
@@ -50,15 +50,15 @@ record_details: False
 # ============================
 # Noise standard deviations applied to control inputs for exploration.
 noise_sigma:
-  - 0.01 # Upper joint (finger 0)
-  - 0.01  # Middle joint (finger 0)
-  - 0.01  # Lower joint (finger 0)
-  - 0.01 # Upper joint (finger 120)
-  - 0.01  # Middle joint (finger 120)
-  - 0.01  # Lower joint (finger 120)
-  - 0.01 # Upper joint (finger 240)
-  - 0.01  # Middle joint (finger 240)
-  - 0.01  # Lower joint (finger 240)
+  - 0.1 # Upper joint (finger 0)
+  - 0.1  # Middle joint (finger 0)
+  - 0.1  # Lower joint (finger 0)
+  - 0.1 # Upper joint (finger 120)
+  - 0.1  # Middle joint (finger 120)
+  - 0.1  # Lower joint (finger 120)
+  - 0.1 # Upper joint (finger 240)
+  - 0.1  # Middle joint (finger 240)
+  - 0.1  # Lower joint (finger 240)
 
 
 # ============================
@@ -119,7 +119,7 @@ W_frame_pos:
 
 
 W_object_state:
-  - 20000 # position
+  - 10000 # position
 
   - 1000 # orientation
 

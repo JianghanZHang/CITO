@@ -103,7 +103,7 @@ TASKS = {
 
     "camera_planar_push": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "object_state":[0, 0.04, 0.03, # Postion - x, y, z
+        "object_state":[0, 0.00, 0.13, # Postion - x, y, z
                         0, 0, np.pi/3], # Orientation - roll, pitch, yaw
 
         "model_path": CAMERA_PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.
@@ -123,7 +123,7 @@ TASKS = {
 
     "elephant_planar_push": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "object_state":[0, 0.04, 0.03, # Postion - x, y, z
+        "object_state":[0, 0.0, 0.13, # Postion - x, y, z
                         0, 0, np.pi/3], # Orientation - roll, pitch, yaw
 
         "model_path": ELEPHANT_PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.
@@ -133,7 +133,7 @@ TASKS = {
 
     "flashlight_planar_push": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "object_state":[0, 0.04, 0.03, # Postion - x, y, z
+        "object_state":[0, 0.00, 0.13, # Postion - x, y, z
                         0, 0, np.pi/3], # Orientation - roll, pitch, yaw
 
         "model_path": FLASHLIGHT_PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.
@@ -183,7 +183,7 @@ TASKS = {
 
     "bunny_planar_push": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "object_state":[0, 0.04, 0.03, # Postion - x, y, z
+        "object_state":[0, 0.04, 0.13, # Postion - x, y, z
                         0, 0, np.pi/3], # Orientation - roll, pitch, yaw
 
         "model_path": BUNNY_PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.
@@ -203,7 +203,7 @@ TASKS = {
 
     "lightbulb_planar_push": {
         # The center of the cube staying on the table is (0, 0, 0.013 = 0.125 + 0.005)
-        "object_state":[0, 0.04, 0.03, # Postion - x, y, z
+        "object_state":[0, 0.0, 0.13, # Postion - x, y, z
                         0, 0, np.pi/3], # Orientation - roll, pitch, yaw
 
         "model_path": LIGHTBULB_PLANAR_PUSH_MODEL_PATH, # this is the one that controller gets.

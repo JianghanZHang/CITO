@@ -97,16 +97,18 @@ class manipulation_randomGD(BaseMPPI):
         self.descent_steps = params['descent_steps']
 
         self.trajectory_cost = np.inf
-        self.selected_trajectory = self.trajectory.copy()
 
         self.min_cost = -np.inf
         self.max_cost = np.inf
 
+       
+        self.record_details = params['record_details']
 
-        # This is for central differentiation of the derivatives
-        self.estimate_gradient = self.estimate_gradient_central
-        self.evaluate_costs = self.evaluate_costs_both_side
+        self.cost_list = None
+        if self.record_details:
+            self.cost_list = []
 
+        
     def update(self, obs):
         '''
         Update the MPPI controller based on the current observation.
@@ -118,12 +120,21 @@ class manipulation_randomGD(BaseMPPI):
         
         '''
         self.obs = obs.copy()
-        self.trajectory_cost = self.eval_best_trajectory()
+
+        if self.cost_list is not None:
+            self.cost_list = []
 
         for i in range(self.descent_steps):
-            # Generate noise
+
+            # Compute the cost of the current action trajectory
+            self.trajectory_cost = self.eval_trajectory()
+
+            # Save the cost of the current updated trajectory
+            if self.cost_list is not None:
+                self.cost_list.append(self.trajectory_cost)
+
+            # Generate random variables
             _, perturbations = self.perturb_action()
-            
             # Evaluate Costs of perturbed trajectories
             costs = self.evaluate_costs(obs, self.trajectory, perturbations)
 
@@ -133,14 +144,21 @@ class manipulation_randomGD(BaseMPPI):
 
             # Compute step size
             sum_utilities = np.sum(utilities) + 1e-10
-            step_size = self.n_samples / (sum_utilities/2) # step size for the gradient descent
+            step_size = self.n_samples / (sum_utilities) # step size for the gradient descent
 
             # Compute gradient estimation
             estimated_gradient = self.estimate_gradient(utilities, perturbations)
-            updated_actions = self.trajectory + step_size * estimated_gradient
 
+            # Descent step
+            updated_actions = self.trajectory + step_size * estimated_gradient
+            # Projection onto the feasible set
             updated_actions = np.clip(updated_actions, self.act_min, self.act_max)
+            # Update trajectory
             self.trajectory = updated_actions
+
+        if self.cost_list is not None:
+            self.trajectory_cost = self.eval_trajectory()
+            self.cost_list.append(self.trajectory_cost)
 
         self.selected_trajectory = updated_actions
         self.trajectory = np.roll(updated_actions, shift=-1, axis=0)
@@ -160,8 +178,8 @@ class manipulation_randomGD(BaseMPPI):
         costs is the cost of each trajectory in the batch (#samples x 1)
         perturbations is the perturbation applied to each trajectory in the batch (#samples x horizon x control_dim)
         '''
-        sampled_gradients = utilities[:, None, None] * perturbations # sampled_gradients: N x horizon x control_dim
-        utility_gradient = np.sum(sampled_gradients, axis=0) / self.n_samples
+        sampled_gradients = utilities[:, None, None] * perturbations # sampled_gradients: #samples x horizon x control_dim
+        utility_gradient = (1/self.n_samples) * np.sum(sampled_gradients, axis=0)
 
         return utility_gradient
     
@@ -173,8 +191,8 @@ class manipulation_randomGD(BaseMPPI):
 
         trajectory_utility = self.utility_func(self.trajectory_cost, self.temperature)
 
-        sampled_gradients = (utilities[:, None, None] - trajectory_utility) * perturbations # sampled_gradients: N x horizon x control_dim
-        utility_gradient = np.sum(sampled_gradients, axis=0) / self.n_samples
+        sampled_gradients = (utilities[:, None, None] - trajectory_utility) * perturbations # sampled_gradients: #samples x horizon x control_dim
+        utility_gradient = (1/self.n_samples) * np.sum(sampled_gradients, axis=0) 
 
         return utility_gradient
     
@@ -186,8 +204,8 @@ class manipulation_randomGD(BaseMPPI):
 
         utilities_plus = utilities[:self.n_samples]
         utilities_minus = utilities[self.n_samples:]
-        sampled_gradients = (utilities_plus[:, None, None] - utilities_minus[:, None, None])/2 * perturbations # sampled_gradients: N x horizon x control_dim
-        utility_gradient = np.sum(sampled_gradients, axis=0) / self.n_samples
+        sampled_gradients = (utilities_plus[:, None, None] - utilities_minus[:, None, None])/2 * perturbations # sampled_gradients: #samples x horizon x control_dim
+        utility_gradient = (1/self.n_samples) * np.sum(sampled_gradients, axis=0) 
 
         return utility_gradient
     
@@ -537,6 +555,35 @@ class manipulation_randomGD(BaseMPPI):
         # Compute and return the cost of the best trajectory
         return (self.cost_func(best_rollouts[:,:,1:],
                 np.array([self.selected_trajectory]),
+                sensor_data_rollout))[0]
+    
+    def eval_trajectory(self):
+        """
+        Evaluate the cost of the current trajectory.
+
+        Returns:
+            float: Cost of the best trajectory, or None if no observation is available.
+        """
+        if self.obs is None:
+            # If no observation is available, return None
+            return None
+        else:
+            # Create a rollout array for the best trajectory
+            best_rollouts = np.zeros((1, self.horizon, mujoco.mj_stateSize(self.model, mujoco.mjtState.mjSTATE_FULLPHYSICS.value)))
+            # Perform rollout for the best trajectory
+            sensor_data_rollout = np.zeros((1, self.horizon, self.sensor_data_size))
+
+            self.rollout_func(self.rollout_model,
+                              best_rollouts,
+                              np.array([self.trajectory]),
+                              np.repeat(np.array([np.concatenate([[0],self.obs])]), 1, axis=0),
+                              sensor_data_rollout,
+                              num_workers=self.num_workers,
+                              nstep=self.horizon)
+            
+        # Compute and return the cost of the best trajectory
+        return (self.cost_func(best_rollouts[:,:,1:],
+                np.array([self.trajectory]),
                 sensor_data_rollout))[0]
 
 if __name__ == "__main__":
